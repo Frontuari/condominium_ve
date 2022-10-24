@@ -1,0 +1,82 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "VIVIENDA-.#####",
+ "creation": "2022-10-24 08:39:02.705373",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "condominium",
+  "housing",
+  "owner_customer",
+  "column_break_4",
+  "aliquot",
+  "address",
+  "active"
+ ],
+ "fields": [
+  {
+   "fieldname": "condominium",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Condominium",
+   "options": "Condominium",
+   "reqd": 1
+  },
+  {
+   "fieldname": "housing",
+   "fieldtype": "Data",
+   "label": "Housing"
+  },
+  {
+   "fieldname": "column_break_4",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "aliquot",
+   "fieldtype": "Percent",
+   "label": "Aliquot"
+  },
+  {
+   "fieldname": "address",
+   "fieldtype": "Data",
+   "label": "Address"
+  },
+  {
+   "fieldname": "owner_customer",
+   "fieldtype": "Link",
+   "label": "Owner Customer",
+   "options": "Customer"
+  },
+  {
+   "default": "1",
+   "fieldname": "active",
+   "fieldtype": "Check",
+   "label": "Activo"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2022-10-24 15:20:36.337842",
+ "modified_by": "Administrator",
+ "module": "Condominium Ve",
+ "name": "Housing",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC"
+}

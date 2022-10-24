@@ -1,0 +1,7 @@
+{
+    "name": "Condominio",
+    "customer_group_name": "Condominio",
+    "parent_customer_group": "Todas las categorías de clientes",
+    "is_group": 0,
+    "doctype": "Customer Group"
+}

@@ -1,0 +1,77 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "field:code",
+ "creation": "2022-10-24 08:25:37.599377",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "code",
+  "condominium_name",
+  "n_houses_active",
+  "column_break_3",
+  "n_houses",
+  "address"
+ ],
+ "fields": [
+  {
+   "fieldname": "condominium_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Condominium",
+   "reqd": 1,
+   "unique": 1
+  },
+  {
+   "fieldname": "address",
+   "fieldtype": "Data",
+   "label": "Address"
+  },
+  {
+   "fieldname": "code",
+   "fieldtype": "Data",
+   "label": "Code",
+   "reqd": 1,
+   "unique": 1
+  },
+  {
+   "fieldname": "n_houses",
+   "fieldtype": "Int",
+   "label": "Number of Houses"
+  },
+  {
+   "fieldname": "column_break_3",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "n_houses_active",
+   "fieldtype": "Int",
+   "label": "Active Number of Houses"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2022-10-24 12:07:29.407902",
+ "modified_by": "Administrator",
+ "module": "Condominium Ve",
+ "name": "Condominium",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "track_changes": 1
+}

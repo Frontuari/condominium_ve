@@ -1,0 +1,116 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "GCC-.YYYY.-.MM.-.#####",
+ "creation": "2022-10-24 09:26:56.149040",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "posting_date",
+  "total",
+  "active_units",
+  "column_break_2",
+  "condominium",
+  "total_per_unit",
+  "section_break_4",
+  "condominium_common_expenses_detail",
+  "condominium_common_expenses_invoices",
+  "amended_from"
+ ],
+ "fields": [
+  {
+   "fieldname": "condominium",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Condominium",
+   "options": "Condominium",
+   "reqd": 1
+  },
+  {
+   "fieldname": "posting_date",
+   "fieldtype": "Date",
+   "label": "Date",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_2",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "section_break_4",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "condominium_common_expenses_invoices",
+   "fieldtype": "Table",
+   "label": "Invoices",
+   "options": "Condominium Common Expenses Invoices",
+   "read_only": 1
+  },
+  {
+   "fieldname": "condominium_common_expenses_detail",
+   "fieldtype": "Table",
+   "options": "Condominium Common Expenses Detail",
+   "read_only": 1
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Condominium Common Expenses",
+   "print_hide": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "total",
+   "fieldtype": "Currency",
+   "label": "Total",
+   "read_only": 1
+  },
+  {
+   "fieldname": "total_per_unit",
+   "fieldtype": "Currency",
+   "label": "Total Per Unit"
+  },
+  {
+   "fieldname": "active_units",
+   "fieldtype": "Data",
+   "label": "Unidades Activas",
+   "read_only": 1
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "is_submittable": 1,
+ "links": [
+  {
+   "group": "Factura de Venta",
+   "link_doctype": "Sales Invoice",
+   "link_fieldname": "gc_condo"
+  }
+ ],
+ "modified": "2022-10-24 15:09:49.799001",
+ "modified_by": "Administrator",
+ "module": "Condominium Ve",
+ "name": "Condominium Common Expenses",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "set_user_permissions": 1,
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC"
+}
