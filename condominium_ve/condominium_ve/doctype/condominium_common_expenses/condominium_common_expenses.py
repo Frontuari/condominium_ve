@@ -1,6 +1,6 @@
 # Copyright (c) 2022, Armando Rojas and contributors
 # For license information, please see license.txt
-from attr import field
+# from attr import field
 import frappe
 from frappe.model.document import Document
 from frappe.utils.response import build_response
@@ -49,7 +49,8 @@ class CondominiumCommonExpenses(Document):
                         income_account="Ventas - D"
                     )
                 ],
-                gc_condo=doc.name
+                gc_condo=doc.name,
+                select_print_heading="Recibo de Condominio"
             )).insert()
             sales_invoice.submit()
 

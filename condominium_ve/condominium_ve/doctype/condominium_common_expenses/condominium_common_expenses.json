@@ -72,7 +72,8 @@
   {
    "fieldname": "total_per_unit",
    "fieldtype": "Currency",
-   "label": "Total Per Unit"
+   "label": "Total Per Unit",
+   "read_only": 1
   },
   {
    "fieldname": "active_units",
@@ -90,7 +91,7 @@
    "link_fieldname": "gc_condo"
   }
  ],
- "modified": "2022-10-24 15:09:49.799001",
+ "modified": "2022-10-24 17:16:48.068280",
  "modified_by": "Administrator",
  "module": "Condominium Ve",
  "name": "Condominium Common Expenses",

@@ -1,0 +1,53 @@
+{
+ "cards_label": "Condominio",
+ "category": "Domains",
+ "charts": [],
+ "creation": "2022-10-24 16:37:48.892060",
+ "developer_mode_only": 0,
+ "disable_user_customization": 0,
+ "docstatus": 0,
+ "doctype": "Workspace",
+ "extends_another_page": 0,
+ "hide_custom": 0,
+ "idx": 0,
+ "is_default": 0,
+ "is_standard": 1,
+ "label": "Condominio",
+ "links": [
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Condominio",
+   "link_to": "Condominium",
+   "link_type": "DocType",
+   "onboard": 1,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Condominium Common Expenses",
+   "link_to": "Condominium Common Expenses",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Viviendas",
+   "link_to": "Housing",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  }
+ ],
+ "modified": "2022-10-24 16:37:48.892060",
+ "modified_by": "Administrator",
+ "module": "Condominium Ve",
+ "name": "Condominio",
+ "owner": "Administrator",
+ "pin_to_bottom": 0,
+ "pin_to_top": 0,
+ "shortcuts": []
+}
