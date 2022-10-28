@@ -2,7 +2,7 @@
  "cards_label": "Condominio",
  "category": "Domains",
  "charts": [],
- "creation": "2022-10-24 16:37:48.892060",
+ "creation": "2022-10-25 11:04:14.184535",
  "developer_mode_only": 0,
  "disable_user_customization": 0,
  "docstatus": 0,
@@ -17,19 +17,19 @@
   {
    "hidden": 0,
    "is_query_report": 0,
-   "label": "Condominio",
-   "link_to": "Condominium",
+   "label": "Maestros",
    "link_type": "DocType",
-   "onboard": 1,
-   "type": "Link"
+   "onboard": 0,
+   "type": "Card Break"
   },
   {
    "hidden": 0,
    "is_query_report": 0,
-   "label": "Condominium Common Expenses",
-   "link_to": "Condominium Common Expenses",
+   "label": "Condominio",
+   "link_to": "Condominium",
    "link_type": "DocType",
-   "onboard": 0,
+   "onboard": 1,
+   "only_for": "Venezuela",
    "type": "Link"
   },
   {
@@ -39,10 +39,38 @@
    "link_to": "Housing",
    "link_type": "DocType",
    "onboard": 0,
+   "only_for": "Venezuela",
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Condominium Sectors",
+   "link_to": "Condominium Sectors",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Procesos",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Condominium Common Expenses",
+   "link_to": "Condominium Common Expenses",
+   "link_type": "DocType",
+   "onboard": 1,
+   "only_for": "Venezuela",
    "type": "Link"
   }
  ],
- "modified": "2022-10-24 16:37:48.892060",
+ "modified": "2022-10-25 11:55:20.178517",
  "modified_by": "Administrator",
  "module": "Condominium Ve",
  "name": "Condominio",

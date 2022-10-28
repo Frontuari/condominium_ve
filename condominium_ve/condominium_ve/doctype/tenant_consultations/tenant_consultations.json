@@ -1,0 +1,73 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2022-10-28 08:40:36.759696",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "code",
+  "search",
+  "section_break_2",
+  "condominium_receipt",
+  "payments_made",
+  "condominium_common_expenses"
+ ],
+ "fields": [
+  {
+   "fieldname": "code",
+   "fieldtype": "Data",
+   "label": "Code"
+  },
+  {
+   "fieldname": "section_break_2",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "condominium_receipt",
+   "fieldtype": "Table",
+   "label": "Condominium Receipt",
+   "options": "Condominium Receipt Table"
+  },
+  {
+   "fieldname": "payments_made",
+   "fieldtype": "Table",
+   "label": "Payments Made",
+   "options": "Payment Table"
+  },
+  {
+   "fieldname": "condominium_common_expenses",
+   "fieldtype": "Table",
+   "label": "Condominium Common Expenses",
+   "options": "Condominium Common Expenses Table"
+  },
+  {
+   "fieldname": "search",
+   "fieldtype": "Button",
+   "label": "Search"
+  }
+ ],
+ "in_create": 1,
+ "index_web_pages_for_search": 1,
+ "issingle": 1,
+ "links": [],
+ "modified": "2022-10-28 09:45:45.237536",
+ "modified_by": "Administrator",
+ "module": "Condominium Ve",
+ "name": "Tenant Consultations",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "delete": 1,
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "restrict_to_domain": "Condominium Ve",
+ "sort_field": "modified",
+ "sort_order": "DESC"
+}

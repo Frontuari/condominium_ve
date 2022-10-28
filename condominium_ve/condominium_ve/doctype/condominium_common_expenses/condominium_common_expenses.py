@@ -1,11 +1,11 @@
 # Copyright (c) 2022, Armando Rojas and contributors
 # For license information, please see license.txt
-# from attr import field
 import frappe
 from frappe.model.document import Document
 from frappe.utils.response import build_response
 from datetime import datetime  # from python std library
 from frappe.utils import add_to_date
+from frappe.core.doctype.communication import email
 
 
 class CondominiumCommonExpenses(Document):
@@ -22,6 +22,11 @@ class CondominiumCommonExpenses(Document):
 
         for house in housings:
             total = doc.total * (house.aliquot / 100)
+
+            owner = frappe.get_doc('Customer', house.owner_customer)
+
+            emails = get_emails(owner)
+
             sales_invoice = frappe.get_doc(dict(
                 doctype="Sales Invoice",
                 docstatus=0,
@@ -54,6 +59,10 @@ class CondominiumCommonExpenses(Document):
             )).insert()
             sales_invoice.submit()
 
+            if len(emails) > 0:
+                send_email(emails, sales_invoice.name, description='Cuota de Condominio {0} {1} '.format(
+                    get_month(doc.posting_date.month), doc.posting_date.year))
+
             for invoice in doc.condominium_common_expenses_invoices:
                 doc_invoice = frappe.get_doc(
                     'Purchase Invoice', invoice.invoice)
@@ -72,10 +81,39 @@ class CondominiumCommonExpenses(Document):
             sales_invoice.cancel()
 
         for invoice in doc.condominium_common_expenses_invoices:
-                doc_invoice = frappe.get_doc(
-                    'Purchase Invoice', invoice.invoice)
-                doc_invoice.apply_process_condo = 0
-                doc_invoice.save(ignore_permissions=True)
+            doc_invoice = frappe.get_doc(
+                'Purchase Invoice', invoice.invoice)
+            doc_invoice.apply_process_condo = 0
+            doc_invoice.save(ignore_permissions=True)
+
+
+def get_emails(owner):
+    emails = ""
+
+    results = frappe.db.sql(
+        "select email_id  from `tabContact Email` tce where parent like '%{0}' ".format(owner.name))
+
+    for r in results:
+        emails = emails + r[0] + ","
+
+    return emails
+
+
+def send_email(emails, name, description=""):
+    return email.make(recipients=emails,
+                      subject="Recibo de Condominio: " + name,
+                      content="<div class='ql-editor read-mode'> {0} <p><br></p></div>".format(
+                          description),
+                      doctype="Sales Invoice",
+                      name=name,
+                      send_email="1",
+                      print_html="",
+                      send_me_a_copy=0,
+                      print_format="Standard",
+                      attachments=[],
+                      _lang="es",
+                      read_receipt=0,
+                      print_letterhead=1)
 
 
 def get_month(number):
@@ -96,6 +134,21 @@ def get_month(number):
     }
 
     return months[number]
+
+
+@frappe.whitelist()
+def send(name):
+    cce_doc = frappe.db.get_doc("Condominium Common Expenses")
+
+    invoices_list = frappe.db.get_list("Sales Invoice", fields=['*'], filters={
+        'name': cce_doc.name,
+    })
+
+    for invoice in invoices_list:
+        customer = frappe.get("Customer", invoice.customer)
+
+        pass
+        # customer.email_id
 
 
 @frappe.whitelist()
