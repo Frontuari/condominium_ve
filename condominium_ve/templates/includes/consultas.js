@@ -1,5 +1,5 @@
-frappe.provide("frappe.ui");
-frappe.provide("frappe.web_form");
+// Copyright (c) 2015, Frappe Technologies Pvt. Ltd. and Contributors
+// MIT License. See license.txt
 
 frappe.ready(function () {
 
@@ -8,65 +8,22 @@ frappe.ready(function () {
 	}
 
 	$('#consultar').off("click").on("click", function () {
-		alert()
-	})
+		frappe.call({
+			method: "condominium_ve.www.consultas.query_code",
+			args: {
+				code: $('[name="code"]').val(),
+			},
 
-	$(document).ready(function () {
-		setTimeout(() => {
-			$(".web-form-actions").html("")
-			$(".web-form-footer").html("")
+			btn: $(".primary-action"),
 
-			frappe.web_form.doc.condominium_receipt = []
-
-
-			$('#consultar').off("click").on("click", function () {
-
-				frappe.call({
-					method: "condominium_ve.www.consultas.query_code",
-					args: {
-						code: frappe.web_form.get_field('code').value,
-					},
-
-					btn: $(".primary-action"),
-
-					freeze: true,
-					callback: (response) => {
-						let data = response.data
-						console.log(frappe.web_form.doc)
-						console.log(this)
-						console.log(data.customer.customer_name)
-						$(".customer-name").html(data.customer.customer_name)
-						$(".customer-name").css("display", "")
-						let indice = 0
-
-						data.sales_invoices.forEach(sales_invoice => {
-							indice++; 
-							frappe.web_form.doc.condominium_receipt.push({
-								posting_date: sales_invoice.posting_date,
-								voucher: sales_invoice.name ,
-								name: `row ${indice}` ,
-								idx: indice 
-							});
-							
-							
-						})
-
-						
-						
-
-
-
-					},
-					error: (r) => {
-						console.log(r)
-					},
-				});
-
-			})
-
-
-
-		}, 500)
+			freeze: true,
+			callback: (response) => {
+				console.log(response)
+			},
+			error: (r) => {
+				console.log(r)
+			},
+		});
 
 	})
 
@@ -108,8 +65,20 @@ frappe.ready(function () {
 var msgprint = function (txt) {
 	if (txt) $("#contact-alert").html(txt).toggle(true);
 }
+/*
 
-
-
-
+frappe.ui.form.on("Consultas", {
+	refresh(frm) {
+		frm.set_query('link_doctype', "links", function() {
+			return {
+				query: "frappe.contacts.address_and_contact.filter_dynamic_link_doctypes",
+				filters: {
+					fieldtype: ["in", ["HTML", "Text Editor"]],
+					fieldname: ["in", ["contact_html", "company_description"]],
+				}
+			};
+		});
+		frm.refresh_field("links");
+	}
+});*/
 

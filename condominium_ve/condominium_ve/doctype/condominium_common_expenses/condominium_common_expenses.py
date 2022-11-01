@@ -55,6 +55,7 @@ class CondominiumCommonExpenses(Document):
                     )
                 ],
                 gc_condo=doc.name,
+                housing=house.housing,
                 select_print_heading="Recibo de Condominio"
             )).insert()
             sales_invoice.submit()

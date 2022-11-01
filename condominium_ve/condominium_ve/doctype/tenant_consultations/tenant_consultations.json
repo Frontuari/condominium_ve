@@ -27,19 +27,21 @@
    "fieldname": "condominium_receipt",
    "fieldtype": "Table",
    "label": "Condominium Receipt",
-   "options": "Condominium Receipt Table"
+   "options": "Condominium Receipt Table",
+   "read_only": 1
   },
   {
    "fieldname": "payments_made",
    "fieldtype": "Table",
-   "label": "Payments Made",
+   "label": "Pagos Realizados",
    "options": "Payment Table"
   },
   {
    "fieldname": "condominium_common_expenses",
    "fieldtype": "Table",
    "label": "Condominium Common Expenses",
-   "options": "Condominium Common Expenses Table"
+   "options": "Condominium Common Expenses Table",
+   "read_only": 1
   },
   {
    "fieldname": "search",
@@ -51,7 +53,7 @@
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2022-10-28 09:45:45.237536",
+ "modified": "2022-11-01 16:51:10.560591",
  "modified_by": "Administrator",
  "module": "Condominium Ve",
  "name": "Tenant Consultations",
