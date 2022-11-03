@@ -188,24 +188,24 @@ def get_invoice_condo(condo, date):
             cost_center_doc = frappe.get_doc(
                 'Cost Center', invoice.cost_center)
             invoice.cost_center = cost_center_doc.cost_center_name
-            invoice.cost_center = invoice.remarks 
+            invoice.cost_center = invoice.remarks
             
-            
+        
 
-        if not invoice.cost_center in data_cost_center.keys():
-            data_cost_center[invoice.cost_center] = {
+        if not invoice.remarks in data_cost_center.keys():
+            data_cost_center[invoice.remarks] = {
                 'amount': 0,
-                'concept': invoice.cost_center,
+                'concept': invoice.remarks,
                 'per_unit': 0
             }
 
-        element = data_cost_center[invoice.cost_center]
+        element = data_cost_center[invoice.remarks]
 
         element['amount'] = element['amount'] + invoice.total
         element['per_unit'] = element['per_unit'] + \
             (invoice.total / doc_condo.n_houses_active)
 
-        data_cost_center[invoice.cost_center] = element
+        data_cost_center[invoice.remarks] = element
 
         for item in invoice.items:
 
