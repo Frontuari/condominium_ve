@@ -10,9 +10,11 @@
   "code",
   "condominium_name",
   "n_houses_active",
+  "company",
   "column_break_3",
   "n_houses",
-  "address"
+  "address",
+  "account"
  ],
  "fields": [
   {
@@ -48,11 +50,25 @@
    "fieldname": "n_houses_active",
    "fieldtype": "Int",
    "label": "Active Number of Houses"
+  },
+  {
+   "fieldname": "account",
+   "fieldtype": "Link",
+   "label": "Account",
+   "options": "Account",
+   "reqd": 1
+  },
+  {
+   "fieldname": "company",
+   "fieldtype": "Link",
+   "label": "Company",
+   "options": "Company",
+   "reqd": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2022-10-24 12:07:29.407902",
+ "modified": "2022-11-03 09:38:14.981052",
  "modified_by": "Administrator",
  "module": "Condominium Ve",
  "name": "Condominium",

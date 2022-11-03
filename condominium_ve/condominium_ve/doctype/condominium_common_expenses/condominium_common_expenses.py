@@ -30,6 +30,7 @@ class CondominiumCommonExpenses(Document):
             sales_invoice = frappe.get_doc(dict(
                 doctype="Sales Invoice",
                 docstatus=0,
+                company=doc_condo.company,
                 customer=house.owner_customer,
                 posting_date=doc.posting_date,
                 due_date=after_days,
@@ -51,7 +52,7 @@ class CondominiumCommonExpenses(Document):
                         rate=total,
                         base_amount=total,
                         amount=total,
-                        income_account="Ventas - D"
+                        income_account=doc_condo.account
                     )
                 ],
                 gc_condo=doc.name,
