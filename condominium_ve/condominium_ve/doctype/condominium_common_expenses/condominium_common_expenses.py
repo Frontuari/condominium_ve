@@ -182,11 +182,15 @@ def get_invoice_condo(condo, date):
             "Purchase Invoice", purchase_invoice_data.name)
 
         if not invoice.cost_center:
-            invoice.cost_center = "Gastos de Condominio"
+            invoice.cost_center = "Gastos de Condominio Variables"
+            invoice.remarks = "Gastos de Condominio Variables"
         else:
             cost_center_doc = frappe.get_doc(
                 'Cost Center', invoice.cost_center)
             invoice.cost_center = cost_center_doc.cost_center_name
+            invoice.cost_center = invoice.remarks 
+            
+            
 
         if not invoice.cost_center in data_cost_center.keys():
             data_cost_center[invoice.cost_center] = {
