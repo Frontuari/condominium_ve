@@ -21,7 +21,7 @@ class CondominiumCommonExpenses(Document):
         after_days = add_to_date(doc.posting_date, days=3, as_string=True)
 
         for house in housings:
-            total = doc.total * (house.aliquot / 100)
+            total = doc.total * ( float(house.aliquot) / 100)
 
             owner = frappe.get_doc('Customer', house.owner_customer)
 
@@ -61,9 +61,9 @@ class CondominiumCommonExpenses(Document):
             )).insert()
             sales_invoice.submit()
 
-            if len(emails) > 0:
-                send_email(emails, sales_invoice.name, description='Cuota de Condominio {0} {1} '.format(
-                    get_month(doc.posting_date.month), doc.posting_date.year))
+            #if len(emails) > 0:
+            #    send_email(emails, sales_invoice.name, description='Cuota de Condominio {0} {1} '.format(
+            #        get_month(doc.posting_date.month), doc.posting_date.year))
 
             for invoice in doc.condominium_common_expenses_invoices:
                 doc_invoice = frappe.get_doc(
