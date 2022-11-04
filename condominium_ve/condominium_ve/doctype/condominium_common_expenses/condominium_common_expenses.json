@@ -91,7 +91,7 @@
    "link_fieldname": "gc_condo"
   }
  ],
- "modified": "2022-10-24 17:16:48.068280",
+ "modified": "2022-11-03 16:28:37.006671",
  "modified_by": "Administrator",
  "module": "Condominium Ve",
  "name": "Condominium Common Expenses",
@@ -107,6 +107,19 @@
    "report": 1,
    "role": "System Manager",
    "set_user_permissions": 1,
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Purchase Manager",
    "share": 1,
    "submit": 1,
    "write": 1
