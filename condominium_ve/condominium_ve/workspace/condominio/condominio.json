@@ -45,15 +45,6 @@
   {
    "hidden": 0,
    "is_query_report": 0,
-   "label": "Condominium Sectors",
-   "link_to": "Condominium Sectors",
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "hidden": 0,
-   "is_query_report": 0,
    "label": "Procesos",
    "link_type": "DocType",
    "onboard": 0,
@@ -70,7 +61,7 @@
    "type": "Link"
   }
  ],
- "modified": "2022-10-25 11:55:20.178517",
+ "modified": "2022-11-03 23:18:40.024428",
  "modified_by": "Administrator",
  "module": "Condominium Ve",
  "name": "Condominio",
