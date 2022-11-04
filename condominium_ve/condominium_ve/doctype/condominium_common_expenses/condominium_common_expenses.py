@@ -33,7 +33,7 @@ class CondominiumCommonExpenses(Document):
                 company=doc_condo.company,
                 customer=house.owner_customer,
                 posting_date=doc.posting_date,
-                due_date=after_days,
+                due_date=after_days,s
                 is_return=0,
                 disable_rounded_total=0,
                 items=[
@@ -65,11 +65,11 @@ class CondominiumCommonExpenses(Document):
                 send_email(emails, sales_invoice.name, description='Cuota de Condominio {0} {1} '.format(
                     get_month(doc.posting_date.month), doc.posting_date.year))
 
-            for invoice in doc.condominium_common_expenses_invoices:
-                doc_invoice = frappe.get_doc(
-                    'Purchase Invoice', invoice.invoice)
-                doc_invoice.apply_process_condo = 1
-                doc_invoice.save(ignore_permissions=True)
+        for invoice in doc.condominium_common_expenses_invoices:
+            doc_invoice = frappe.get_doc(
+                'Purchase Invoice', invoice.invoice)
+            doc_invoice.apply_process_condo = 1
+            doc_invoice.save(ignore_permissions=True)
 
     def on_cancel(self):
         doc = self.get_doc_before_save()
