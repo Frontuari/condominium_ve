@@ -33,7 +33,7 @@ class CondominiumCommonExpenses(Document):
                 company=doc_condo.company,
                 customer=house.owner_customer,
                 posting_date=doc.posting_date,
-                due_date=after_days,s
+                due_date=after_days,
                 is_return=0,
                 disable_rounded_total=0,
                 items=[
@@ -59,7 +59,7 @@ class CondominiumCommonExpenses(Document):
                 housing=house.housing,
                 select_print_heading="Recibo de Condominio"
             )).insert()
-            sales_invoice.submit()
+            sales_invoice.queue_action('submit')
 
             #if len(emails) > 0:
             #    send_email(emails, sales_invoice.name, description='Cuota de Condominio {0} {1} '.format(
