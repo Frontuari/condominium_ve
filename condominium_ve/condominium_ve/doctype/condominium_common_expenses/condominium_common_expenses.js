@@ -41,7 +41,8 @@ frappe.ui.form.on('Condominium Common Expenses', {
 									invoice: e.invoice,
 									date: e.date,
 									supplier: e.supplier,
-									amount: e.amount,
+									amount: e.amount
+								
 
 								});
 
@@ -57,7 +58,7 @@ frappe.ui.form.on('Condominium Common Expenses', {
 									amount: e.amount,
 									tax: e.tax,
 									net: e.net,
-
+									parent_concept: e.parent_cost_center
 								});
 
 

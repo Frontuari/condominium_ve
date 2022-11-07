@@ -15,7 +15,7 @@ data = {
         ],
     },
 
-    "property_setters": [
+    "properties": [
         {
             "name": "Purchase Invoice-cost_center-mandatory_depends_on",
             "doctype_or_field": "DocField",
@@ -24,7 +24,7 @@ data = {
                         "property": "mandatory_depends_on",
                         "property_type": "Data",
                         "value": "eval:doc.is_for_condominium == 1",
-                        "doctype": "Property Setter",
+                        "doctype": "Purchase Invoice",
         },
         {
             "name": "Purchase Invoice-remarks-fetch_from",
@@ -33,7 +33,7 @@ data = {
                         "property": "fetch_from",
                         "property_type": "Small Text",
                         "value": "cost_center.name",
-                        "doctype": "Property Setter"
+                        "doctype": "Purchase Invoice"
         },
         {
             "name": "Purchase Invoice-remarks-ignore_user_permissions",
@@ -43,7 +43,7 @@ data = {
                     "property": "ignore_user_permissions",
                     "property_type": "Check",
                     "value": "1",
-                    "doctype": "Property Setter"
+                    "doctype": "Purchase Invoice"
         }
     ]
 }

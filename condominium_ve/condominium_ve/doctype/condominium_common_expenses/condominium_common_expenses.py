@@ -21,11 +21,11 @@ class CondominiumCommonExpenses(Document):
         after_days = add_to_date(doc.posting_date, days=3, as_string=True)
 
         for house in housings:
-            total = doc.total * ( float(house.aliquot) / 100)
+            total = doc.total * (float(house.aliquot) / 100)
 
-            owner = frappe.get_doc('Customer', house.owner_customer)
+            # owner = frappe.get_doc('Customer', house.owner_customer)
 
-            emails = get_emails(owner)
+            # emails = get_emails(owner)
 
             sales_invoice = frappe.get_doc(dict(
                 doctype="Sales Invoice",
@@ -33,7 +33,7 @@ class CondominiumCommonExpenses(Document):
                 company=doc_condo.company,
                 customer=house.owner_customer,
                 posting_date=doc.posting_date,
-                due_date=after_days,
+                due_date=after_days, 
                 is_return=0,
                 disable_rounded_total=0,
                 items=[
@@ -59,9 +59,9 @@ class CondominiumCommonExpenses(Document):
                 housing=house.housing,
                 select_print_heading="Recibo de Condominio"
             )).insert()
-            sales_invoice.queue_action('submit')
+            sales_invoice.submit()
 
-            #if len(emails) > 0:
+            # if len(emails) > 0:
             #    send_email(emails, sales_invoice.name, description='Cuota de Condominio {0} {1} '.format(
             #        get_month(doc.posting_date.month), doc.posting_date.year))
 
@@ -175,6 +175,7 @@ def get_invoice_condo(condo, date):
     total = 0
     total_per_unit = 0
     active_units = doc_condo.n_houses_active
+    parent_cost_center = ""
 
     for purchase_invoice_data in purchase_invoice_list:
 
@@ -182,21 +183,22 @@ def get_invoice_condo(condo, date):
             "Purchase Invoice", purchase_invoice_data.name)
 
         if not invoice.cost_center:
+            parent_cost_center = "Gastos de Condominio Variables"
             invoice.cost_center = "Gastos de Condominio Variables"
             invoice.remarks = "Gastos de Condominio Variables"
         else:
             cost_center_doc = frappe.get_doc(
                 'Cost Center', invoice.cost_center)
-            invoice.cost_center = cost_center_doc.cost_center_name
+            parent_cost_center = cost_center_doc.parent_cost_center
             invoice.cost_center = invoice.remarks
-            
-        
 
         if not invoice.remarks in data_cost_center.keys():
             data_cost_center[invoice.remarks] = {
                 'amount': 0,
                 'concept': invoice.remarks,
-                'per_unit': 0
+                'per_unit': 0 ,
+                'parent_cost_center' : parent_cost_center,
+
             }
 
         element = data_cost_center[invoice.remarks]
