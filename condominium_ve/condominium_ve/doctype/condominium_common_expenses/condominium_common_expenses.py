@@ -59,7 +59,7 @@ class CondominiumCommonExpenses(Document):
                 housing=house.housing,
                 select_print_heading="Recibo de Condominio"
             )).insert()
-            sales_invoice.submit()
+            sales_invoice.queue_action('submit')
 
             # if len(emails) > 0:
             #    send_email(emails, sales_invoice.name, description='Cuota de Condominio {0} {1} '.format(
@@ -80,7 +80,7 @@ class CondominiumCommonExpenses(Document):
 
         for d in sales_invoices:
             sales_invoice = frappe.get_doc('Sales Invoice', d.name)
-            sales_invoice.cancel()
+            sales_invoice.queue_action('cancel')
 
         for invoice in doc.condominium_common_expenses_invoices:
             doc_invoice = frappe.get_doc(
