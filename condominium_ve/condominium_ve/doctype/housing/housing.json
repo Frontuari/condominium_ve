@@ -12,6 +12,7 @@
   "housing",
   "owner_customer",
   "code",
+  "sector",
   "column_break_4",
   "aliquot",
   "address",
@@ -27,6 +28,7 @@
    "reqd": 1
   },
   {
+   "columns": 1,
    "fieldname": "housing",
    "fieldtype": "Data",
    "label": "Housing",
@@ -50,6 +52,7 @@
    "label": "Address"
   },
   {
+   "columns": 2,
    "fieldname": "owner_customer",
    "fieldtype": "Link",
    "in_list_view": 1,
@@ -70,11 +73,20 @@
    "label": "Code",
    "read_only": 1,
    "unique": 1
+  },
+  {
+   "fetch_from": "owner_customer.territory",
+   "fetch_if_empty": 1,
+   "fieldname": "sector",
+   "fieldtype": "Link",
+   "in_standard_filter": 1,
+   "label": "Sector",
+   "options": "Territory"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2022-11-04 08:48:12.066600",
+ "modified": "2022-11-08 08:43:23.601518",
  "modified_by": "Administrator",
  "module": "Condominium Ve",
  "name": "Housing",
