@@ -9,7 +9,10 @@
   "concept",
   "amount",
   "amount_per_unit",
-  "account"
+  "account",
+  "previous_amount",
+  "current_amount",
+  "availability"
  ],
  "fields": [
   {
@@ -21,7 +24,7 @@
   },
   {
    "fieldname": "amount",
-   "fieldtype": "Data",
+   "fieldtype": "Currency",
    "in_list_view": 1,
    "label": "Importe",
    "reqd": 1
@@ -38,12 +41,27 @@
    "fieldtype": "Link",
    "label": "Account",
    "options": "Account"
+  },
+  {
+   "fieldname": "previous_amount",
+   "fieldtype": "Currency",
+   "label": "Acumulado Mes Anterior"
+  },
+  {
+   "fieldname": "current_amount",
+   "fieldtype": "Currency",
+   "label": "Acumulado del Mes"
+  },
+  {
+   "fieldname": "availability",
+   "fieldtype": "Currency",
+   "label": "Fondo Disponible"
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2022-11-10 06:59:40.239576",
+ "modified": "2022-11-10 09:29:23.333519",
  "modified_by": "Administrator",
  "module": "Condominium Ve",
  "name": "Condominium Funds",

@@ -1,5 +1,6 @@
 {
  "actions": [],
+ "allow_import": 1,
  "allow_rename": 1,
  "autoname": "GCC-.YYYY.-.MM.-.#####",
  "creation": "2022-10-24 09:26:56.149040",
@@ -15,10 +16,10 @@
   "total_per_unit",
   "section_break_4",
   "condominium_common_expenses_detail",
-  "condominium_common_expenses_invoices",
   "amended_from",
   "funds",
-  "expense"
+  "expense",
+  "condominium_common_expenses_invoices"
  ],
  "fields": [
   {
@@ -106,7 +107,7 @@
    "link_fieldname": "gc_condo"
   }
  ],
- "modified": "2022-11-10 07:02:59.298157",
+ "modified": "2022-11-10 08:53:39.083500",
  "modified_by": "Administrator",
  "module": "Condominium Ve",
  "name": "Condominium Common Expenses",

@@ -187,6 +187,14 @@ def send(name):
         # customer.email_id
 
 
+def is_fund(cost_center):
+    if cost_center != "Gastos Comunes Variables":
+        cc = frappe.get_doc("Cost Center" , cost_center)
+        parent_cc = frappe.get_doc("Cost Center" , cc.parent_cost_center)
+        return parent_cc.is_reserve
+    return 0
+
+
 @frappe.whitelist()
 def get_invoice_condo(condo, date):
 
@@ -206,12 +214,6 @@ def get_invoice_condo(condo, date):
 
     doc_condo = frappe.get_doc('Condominium', condo)
 
-    for fund in doc_condo.reserve:
-        funds.append({'concept': fund.description, 'amount': fund.amount,
-                     'amount_per_unit': fund.amount / doc_condo.n_houses_active,  'account': fund.account})
-        total = total + fund.amount
-        total_per_unit = total_per_unit + fund.amount / doc_condo.n_houses_active
-
     data_invoice = []
     data_item = []
     data_cost_center = {}
@@ -225,6 +227,10 @@ def get_invoice_condo(condo, date):
             "Purchase Invoice", purchase_invoice_data.name)
 
         is_for_fund = 0
+        
+        cost_center_aux = invoice.cost_center
+        
+        
 
         if not invoice.cost_center:
             parent_cost_center = "Gastos Comunes Variables"
@@ -239,7 +245,7 @@ def get_invoice_condo(condo, date):
 
             parent_cost_center = parent_cost_center_doc.cost_center_name
 
-            invoice.cost_center = invoice.remarks
+            # invoice.cost_center = invoice.remarks
 
             is_for_fund = parent_cost_center_doc.is_reserve
 
@@ -263,53 +269,75 @@ def get_invoice_condo(condo, date):
 
         data_cost_center[invoice.remarks + invoice.supplier] = element
 
-        for item in invoice.items:
+        # for item in invoice.items:
 
-            taxes = 0
+        #     taxes = 0
 
-            if not item.item_tax_template:
-                item.item_tax_template = " "
+        #     if not item.item_tax_template:
+        #         item.item_tax_template = " "
 
-            if "16" in item.item_tax_template:
-                taxes = 0.16
-            elif "8" in item.item_tax_template:
-                taxes = 0.08
+        #     if "16" in item.item_tax_template:
+        #         taxes = 0.16
+        #     elif "8" in item.item_tax_template:
+        #         taxes = 0.08
 
-            data_item.append({
-                'supplier':  invoice.supplier,
-                'amount': item.amount + (item.amount * taxes),
-                'net': item.amount,
-                'tax': taxes,
-                'concept': item.item_name,
-                'item_code': item.item_code,
-                'per_unit': item.amount / doc_condo.n_houses_active
-            })
+        #     data_item.append({
+        #         'supplier':  invoice.supplier,
+        #         'amount': item.amount + (item.amount * taxes),
+        #         'net': item.amount,
+        #         'tax': taxes,
+        #         'concept': item.item_name,
+        #         'item_code': item.item_code,
+        #         'per_unit': item.amount / doc_condo.n_houses_active
+        #     })
 
+        
         data_invoice.append({
             'date': invoice.posting_date,
             'invoice': invoice.name,
             'supplier': invoice.supplier,
             'amount': invoice.total
         })
-
-        total = total + invoice.total
-        total_per_unit = total_per_unit + \
-            (invoice.total / doc_condo.n_houses_active)
+        if is_fund(invoice.cost_center) == 0:
+            total = total + invoice.total
+            total_per_unit = total_per_unit + \
+                (invoice.total / doc_condo.n_houses_active)
 
     data_cost_center_copy = data_cost_center
     data_cost_center = []
     data_cost_center_fund = []
-    
-    print("\n\n\n")
-    print(data_cost_center_copy)
-    print("\n\n\n")
+
+    keys_reserve = []
+    fund_total_reserve = []
+
+    for fund in doc_condo.reserve:
+        keys_reserve.append(fund.cost_center_name)
 
     for dd in data_cost_center_copy.keys():
-     
+
         if data_cost_center_copy[dd]['is_for_fund'] == 0:
             data_cost_center.append(data_cost_center_copy[dd])
         else:
             data_cost_center_fund.append(data_cost_center_copy[dd])
+            # for kr in keys_reserve:
+            #     if kr in data_cost_center_copy[dd][parent_cost_center]:
+            #         fund_total_reserve
+
+            #         if not (kr) in data_cost_center.keys():
+            #             fund_total_reserve[kr] = {
+            #                 'expense': 0.0
+            #             }
+                        
+            #         fund_total_reserve[kr]['expense'] = fund_total_reserve[kr]['expense'] + data_cost_center_copy[dd]['amount']
+
+            # parent_cost_center
+
+    for fund in doc_condo.reserve:
+        # fund_total_reserve[kr]['expense']
+        funds.append({'concept': fund.description, 'amount': fund.amount,
+                     'amount_per_unit': fund.amount / doc_condo.n_houses_active,  'account': fund.account})
+        total = total + fund.amount
+        total_per_unit = total_per_unit + fund.amount / doc_condo.n_houses_active
 
     frappe.local.response.update({"data": {
         'invoices': data_invoice,

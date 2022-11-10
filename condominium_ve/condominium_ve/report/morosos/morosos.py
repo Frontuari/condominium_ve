@@ -97,7 +97,7 @@ class AccountsReceivableSummary(ReceivablePayableReport):
 
     def get_number_months(self, housing, report_date):
         count_sales_invoice = frappe.db.sql(
-            "select coalesce(((TIMESTAMPDIFF(month,min(DATE_FORMAT(due_date,'%Y-%m-%d')),(SELECT DATE_ADD(CAST(DATE_FORMAT( '{1}','%Y-%m-%d') AS DATE),INTERVAL -1 DAY))))),0) from `tabSales Invoice` tsi where gc_condo is not null  and housing='{0}' and  docstatus=1 and status <> 'Paid' and due_date<=(SELECT DATE_ADD(CAST(DATE_FORMAT( '{1}','%Y-%m-01') AS DATE),INTERVAL -1 DAY)) ".format(housing,report_date))
+            "select coalesce((period_diff((SELECT DATE_FORMAT( '{1}','%Y%m') ),min(DATE_FORMAT(due_date,'%Y%m')))),0) from `tabSales Invoice` tsi where gc_condo is not null  and housing='{0}' and  docstatus=1 and status <> 'Paid' and due_date<=(SELECT DATE_ADD(CAST(DATE_FORMAT( '{1}','%Y-%m-01') AS DATE),INTERVAL -1 DAY)) ".format(housing,report_date))
         print(count_sales_invoice)
         
         if not count_sales_invoice:
