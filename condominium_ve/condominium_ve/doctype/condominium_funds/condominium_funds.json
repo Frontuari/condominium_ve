@@ -1,0 +1,54 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2022-11-09 16:25:28.180630",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "concept",
+  "amount",
+  "amount_per_unit",
+  "account"
+ ],
+ "fields": [
+  {
+   "fieldname": "concept",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Concept",
+   "reqd": 1
+  },
+  {
+   "fieldname": "amount",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Importe",
+   "reqd": 1
+  },
+  {
+   "fieldname": "amount_per_unit",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Por Unidad",
+   "reqd": 1
+  },
+  {
+   "fieldname": "account",
+   "fieldtype": "Link",
+   "label": "Account",
+   "options": "Account"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2022-11-10 06:59:40.239576",
+ "modified_by": "Administrator",
+ "module": "Condominium Ve",
+ "name": "Condominium Funds",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC"
+}

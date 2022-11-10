@@ -1,0 +1,91 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2022-11-10 07:01:04.450701",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "concept",
+  "supplier",
+  "column_break_3",
+  "amount",
+  "item_code",
+  "tax",
+  "net",
+  "detail",
+  "parent_concept"
+ ],
+ "fields": [
+  {
+   "columns": 2,
+   "fieldname": "concept",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Concept",
+   "reqd": 1
+  },
+  {
+   "columns": 2,
+   "fieldname": "supplier",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Supplier",
+   "options": "Supplier",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_3",
+   "fieldtype": "Column Break"
+  },
+  {
+   "columns": 2,
+   "fieldname": "amount",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Amount",
+   "reqd": 1
+  },
+  {
+   "fieldname": "item_code",
+   "fieldtype": "Link",
+   "hidden": 1,
+   "label": "Item Code",
+   "options": "Item"
+  },
+  {
+   "fieldname": "tax",
+   "fieldtype": "Percent",
+   "hidden": 1,
+   "label": "Tax"
+  },
+  {
+   "fieldname": "net",
+   "fieldtype": "Currency",
+   "hidden": 1,
+   "label": "Net",
+   "print_hide": 1
+  },
+  {
+   "columns": 2,
+   "fieldname": "detail",
+   "fieldtype": "Data",
+   "label": "Detail"
+  },
+  {
+   "fieldname": "parent_concept",
+   "fieldtype": "Text",
+   "label": "Parent"
+  }
+ ],
+ "istable": 1,
+ "links": [],
+ "modified": "2022-11-10 07:01:04.450701",
+ "modified_by": "Administrator",
+ "module": "Condominium Ve",
+ "name": "Reserve Expense Detail",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC"
+}

@@ -33,13 +33,12 @@ class CondominiumCommonExpenses(Document):
                 company=doc_condo.company,
                 customer=house.owner_customer,
                 posting_date=doc.posting_date,
-                due_date=after_days, 
+                due_date=after_days,
                 is_return=0,
                 disable_rounded_total=0,
                 items=[
                     dict(
-                        itemcode='Cuota de Condominio {0} {1} '.format(
-                            get_month(doc.posting_date.month), doc.posting_date.year),
+                        item_code='Cuota de Condominio',
                         item_name='Cuota de Condominio {0} {1} '.format(
                             get_month(doc.posting_date.month), doc.posting_date.year),
                         description='Cuota de Condominio {0} {1} '.format(
@@ -60,6 +59,41 @@ class CondominiumCommonExpenses(Document):
                 select_print_heading="Recibo de Condominio"
             )).insert()
             sales_invoice.queue_action('submit')
+
+            for fund in doc.funds:
+                total_fund = float(fund.amount) * (float(house.aliquot) / 100)
+                sales_invoice_2 = frappe.get_doc(dict(
+                    doctype="Sales Invoice",
+                    docstatus=0,
+                    company=doc_condo.company,
+                    customer=house.owner_customer,
+                    posting_date=doc.posting_date,
+                    due_date=after_days,
+                    is_return=0,
+                    disable_rounded_total=0,
+                    items=[
+                        dict(
+                            item_code='Cuota de Condominio',
+                            item_name='{2}  {0} {1} '.format(
+                                get_month(doc.posting_date.month), doc.posting_date.year, fund.concept),
+                            description='{2}  {0} {1} '.format(
+                                get_month(doc.posting_date.month), doc.posting_date.year, fund.concept),
+                            qty=1,
+                            stock_qty=0,
+                            uom="Nos.",
+                            conversion_factor=1,
+                            base_rate=total_fund,
+                            rate=total_fund,
+                            base_amount=total_fund,
+                            amount=total_fund,
+                            income_account=fund.account
+                        )
+                    ],
+                    gc_condo=doc.name,
+                    housing=house.housing,
+                    select_print_heading="Recibo de Condominio"
+                )).insert()
+                sales_invoice_2.queue_action('submit')
 
             # if len(emails) > 0:
             #    send_email(emails, sales_invoice.name, description='Cuota de Condominio {0} {1} '.format(
@@ -156,6 +190,10 @@ def send(name):
 @frappe.whitelist()
 def get_invoice_condo(condo, date):
 
+    funds = []
+    total = 0
+    total_per_unit = 0
+
     purchase_invoice_list = frappe.db.get_list("Purchase Invoice",  filters={
 
         "is_for_condominium": 1,
@@ -168,12 +206,16 @@ def get_invoice_condo(condo, date):
 
     doc_condo = frappe.get_doc('Condominium', condo)
 
+    for fund in doc_condo.reserve:
+        funds.append({'concept': fund.description, 'amount': fund.amount,
+                     'amount_per_unit': fund.amount / doc_condo.n_houses_active,  'account': fund.account})
+        total = total + fund.amount
+        total_per_unit = total_per_unit + fund.amount / doc_condo.n_houses_active
+
     data_invoice = []
     data_item = []
     data_cost_center = {}
 
-    total = 0
-    total_per_unit = 0
     active_units = doc_condo.n_houses_active
     parent_cost_center = ""
 
@@ -182,32 +224,44 @@ def get_invoice_condo(condo, date):
         invoice = frappe.get_doc(
             "Purchase Invoice", purchase_invoice_data.name)
 
+        is_for_fund = 0
+
         if not invoice.cost_center:
-            parent_cost_center = "Gastos de Condominio Variables"
-            invoice.cost_center = "Gastos de Condominio Variables"
-            invoice.remarks = "Gastos de Condominio Variables"
+            parent_cost_center = "Gastos Comunes Variables"
+            invoice.cost_center = "Gastos Comunes Variables"
+            invoice.remarks = "Gastos Comunes Variables"
         else:
             cost_center_doc = frappe.get_doc(
                 'Cost Center', invoice.cost_center)
-            parent_cost_center = cost_center_doc.parent_cost_center
+
+            parent_cost_center_doc = frappe.get_doc(
+                'Cost Center', cost_center_doc.parent_cost_center)
+
+            parent_cost_center = parent_cost_center_doc.cost_center_name
+
             invoice.cost_center = invoice.remarks
 
-        if not invoice.remarks in data_cost_center.keys():
-            data_cost_center[invoice.remarks] = {
+            is_for_fund = parent_cost_center_doc.is_reserve
+
+        if not (invoice.remarks + invoice.supplier) in data_cost_center.keys():
+            data_cost_center[invoice.remarks + invoice.supplier] = {
                 'amount': 0,
                 'concept': invoice.remarks,
-                'per_unit': 0 ,
-                'parent_cost_center' : parent_cost_center,
+                'per_unit': 0,
+                'parent_cost_center': parent_cost_center,
+                'supplier': invoice.supplier_name,
+                'is_for_fund': is_for_fund
 
             }
 
-        element = data_cost_center[invoice.remarks]
+        element = data_cost_center[invoice.remarks + invoice.supplier]
 
         element['amount'] = element['amount'] + invoice.total
         element['per_unit'] = element['per_unit'] + \
             (invoice.total / doc_condo.n_houses_active)
+        element['supplier'] = element['supplier']
 
-        data_cost_center[invoice.remarks] = element
+        data_cost_center[invoice.remarks + invoice.supplier] = element
 
         for item in invoice.items:
 
@@ -235,7 +289,7 @@ def get_invoice_condo(condo, date):
             'date': invoice.posting_date,
             'invoice': invoice.name,
             'supplier': invoice.supplier,
-            'amount': invoice.total,
+            'amount': invoice.total
         })
 
         total = total + invoice.total
@@ -244,9 +298,18 @@ def get_invoice_condo(condo, date):
 
     data_cost_center_copy = data_cost_center
     data_cost_center = []
+    data_cost_center_fund = []
+    
+    print("\n\n\n")
+    print(data_cost_center_copy)
+    print("\n\n\n")
 
     for dd in data_cost_center_copy.keys():
-        data_cost_center.append(data_cost_center_copy[dd])
+     
+        if data_cost_center_copy[dd]['is_for_fund'] == 0:
+            data_cost_center.append(data_cost_center_copy[dd])
+        else:
+            data_cost_center_fund.append(data_cost_center_copy[dd])
 
     frappe.local.response.update({"data": {
         'invoices': data_invoice,
@@ -254,7 +317,9 @@ def get_invoice_condo(condo, date):
         'detail_2': data_item,
         'active_units': active_units,
         'total': total,
-        'total_per_unit': total_per_unit
+        'total_per_unit': total_per_unit,
+        'funds': funds,
+        'expense_funds': data_cost_center_fund
     }})
 
     return build_response("json")

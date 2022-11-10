@@ -16,7 +16,9 @@
   "section_break_4",
   "condominium_common_expenses_detail",
   "condominium_common_expenses_invoices",
-  "amended_from"
+  "amended_from",
+  "funds",
+  "expense"
  ],
  "fields": [
   {
@@ -51,6 +53,7 @@
   {
    "fieldname": "condominium_common_expenses_detail",
    "fieldtype": "Table",
+   "label": "Gastos Comunes",
    "options": "Condominium Common Expenses Detail",
    "read_only": 1
   },
@@ -80,6 +83,18 @@
    "fieldtype": "Data",
    "label": "Unidades Activas",
    "read_only": 1
+  },
+  {
+   "fieldname": "funds",
+   "fieldtype": "Table",
+   "label": "Fondos",
+   "options": "Condominium Funds"
+  },
+  {
+   "fieldname": "expense",
+   "fieldtype": "Table",
+   "label": "Relacion de Gasto de Fondos",
+   "options": "Reserve Expense Detail"
   }
  ],
  "index_web_pages_for_search": 1,
@@ -91,7 +106,7 @@
    "link_fieldname": "gc_condo"
   }
  ],
- "modified": "2022-11-03 16:28:37.006671",
+ "modified": "2022-11-10 07:02:59.298157",
  "modified_by": "Administrator",
  "module": "Condominium Ve",
  "name": "Condominium Common Expenses",

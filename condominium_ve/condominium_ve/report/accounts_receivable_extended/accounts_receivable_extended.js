@@ -154,7 +154,7 @@ frappe.query_reports["Accounts Receivable Extended"] = {
 		},
 		{
 			"fieldname": "group_by_territory",
-			"label": __("Agrupar por Territorio"),
+			"label": __("Agrupar por Sector"),
 			"fieldtype": "Check"
 		},
 		{

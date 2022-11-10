@@ -14,7 +14,9 @@
   "column_break_3",
   "n_houses",
   "address",
-  "account"
+  "account",
+  "section_break_9",
+  "reserve"
  ],
  "fields": [
   {
@@ -64,11 +66,21 @@
    "label": "Company",
    "options": "Company",
    "reqd": 1
+  },
+  {
+   "fieldname": "reserve",
+   "fieldtype": "Table",
+   "label": "Fondo de Reserva",
+   "options": "Condominium Reserve Fund"
+  },
+  {
+   "fieldname": "section_break_9",
+   "fieldtype": "Section Break"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2022-11-03 09:38:14.981052",
+ "modified": "2022-11-09 16:19:31.972537",
  "modified_by": "Administrator",
  "module": "Condominium Ve",
  "name": "Condominium",
