@@ -1,0 +1,108 @@
+{
+ "add_total_row": 0,
+ "columns": [
+  {
+   "fieldname": "posting_date",
+   "fieldtype": "Date",
+   "label": "Fecha",
+   "width": 0
+  },
+  {
+   "fieldname": "type",
+   "fieldtype": "Data",
+   "label": "Ref.",
+   "width": 90
+  },
+  {
+   "fieldname": "customer_name",
+   "fieldtype": "Data",
+   "label": "Propietario",
+   "width": 300
+  },
+  {
+   "fieldname": "document",
+   "fieldtype": "Data",
+   "label": "No. Doc.",
+   "width": 0
+  },
+  {
+   "fieldname": "concept",
+   "fieldtype": "Data",
+   "label": "Concepto",
+   "width": 0
+  },
+  {
+   "fieldname": "total",
+   "fieldtype": "Currency",
+   "label": "Cargos",
+   "width": 90
+  },
+  {
+   "fieldname": "amount",
+   "fieldtype": "Currency",
+   "label": "Abono",
+   "width": 90
+  },
+  {
+   "fieldname": "running_total",
+   "fieldtype": "Currency",
+   "label": "Saldo",
+   "width": 90
+  }
+ ],
+ "creation": "2022-11-11 16:02:04.640002",
+ "disable_prepared_report": 0,
+ "disabled": 0,
+ "docstatus": 0,
+ "doctype": "Report",
+ "filters": [
+  {
+   "fieldname": "company",
+   "fieldtype": "Link",
+   "label": "Company",
+   "mandatory": 1,
+   "options": "Company",
+   "wildcard_filter": 0
+  },
+  {
+   "fieldname": "customer",
+   "fieldtype": "Link",
+   "label": "Propietario",
+   "mandatory": 1,
+   "options": "Customer",
+   "wildcard_filter": 0
+  },
+  {
+   "fieldname": "to_date",
+   "fieldtype": "Date",
+   "label": "Hasta",
+   "mandatory": 1,
+   "wildcard_filter": 0
+  }
+ ],
+ "idx": 1,
+ "is_standard": "Yes",
+ "json": "{}",
+ "letter_head": "Casa de Campo",
+ "modified": "2022-11-14 09:38:17.446061",
+ "modified_by": "Administrator",
+ "module": "Condominium Ve",
+ "name": "Summary CxC Statement",
+ "owner": "Administrator",
+ "prepared_report": 0,
+ "query": "select t.posting_date,t.type,t.customer_name,t.document, t.concept, t.total, t.amount,\n@running_total := @running_total + t.total-t.amount AS cumulative_sum\n\nfrom (\n\nSelect \nsi.posting_date  , \n'ND' as type , \nsi.customer_name ,\nsi.name as document, \n(select tsii.item_name  from `tabSales Invoice Item` tsii where tsii.parent = si.name limit 1) as concept,\nROUND(si.grand_total,2) as total , 0 as 'amount'  \n\n\nfrom `tabSales Invoice` as si \n\n\nwhere si.customer =  %(customer)s and si.posting_date <=  %(to_date)s   \n\nunion all\n\n Select \npay.posting_date  , \n'NC' as type , \npay.party_name ,\npay.name as document, \npay.remarks as concept,\n0 as total , pay.total_allocated_amount as 'amount'  \n\n\nfrom `tabPayment Entry` as pay\n\nwhere pay.party_name =  %(customer)s and pay.posting_date <=  %(to_date)s   \n\n)t JOIN (select @running_total := 0) r",
+ "ref_doctype": "Sales Invoice",
+ "report_name": "Summary CxC Statement",
+ "report_type": "Query Report",
+ "roles": [
+  {
+   "role": "Accounts User"
+  },
+  {
+   "role": "Accounts Manager"
+  },
+  {
+   "role": "Employee Self Service"
+  }
+ ]
+}
