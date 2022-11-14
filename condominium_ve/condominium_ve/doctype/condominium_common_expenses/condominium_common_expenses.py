@@ -227,15 +227,15 @@ def get_invoice_condo(condo, date):
             "Purchase Invoice", purchase_invoice_data.name)
 
         is_for_fund = 0
-        
+
         cost_center_aux = invoice.cost_center
-        
-        
+
+
 
         if not invoice.cost_center:
             parent_cost_center = "Gastos Comunes Variables"
             invoice.cost_center = "Gastos Comunes Variables"
-            invoice.remarks = "Gastos Comunes Variables"
+            invoice.description = "Gastos Comunes Variables"
         else:
             cost_center_doc = frappe.get_doc(
                 'Cost Center', invoice.cost_center)
@@ -245,14 +245,18 @@ def get_invoice_condo(condo, date):
 
             parent_cost_center = parent_cost_center_doc.cost_center_name
 
-            # invoice.cost_center = invoice.remarks
+            if not invoice.description:
+                invoice.description = invoice.remarks
+
+
+            # invoice.cost_center = invoice.description
 
             is_for_fund = parent_cost_center_doc.is_reserve
 
-        if not (invoice.remarks + invoice.supplier) in data_cost_center.keys():
-            data_cost_center[invoice.remarks + invoice.supplier] = {
+        if not (invoice.description + invoice.supplier) in data_cost_center.keys():
+            data_cost_center[invoice.description + invoice.supplier] = {
                 'amount': 0,
-                'concept': invoice.remarks,
+                'concept': invoice.description,
                 'per_unit': 0,
                 'parent_cost_center': parent_cost_center,
                 'supplier': invoice.supplier_name,
@@ -260,14 +264,14 @@ def get_invoice_condo(condo, date):
 
             }
 
-        element = data_cost_center[invoice.remarks + invoice.supplier]
+        element = data_cost_center[invoice.description + invoice.supplier]
 
         element['amount'] = element['amount'] + invoice.total
         element['per_unit'] = element['per_unit'] + \
             (invoice.total / doc_condo.n_houses_active)
         element['supplier'] = element['supplier']
 
-        data_cost_center[invoice.remarks + invoice.supplier] = element
+        data_cost_center[invoice.description + invoice.supplier] = element
 
         # for item in invoice.items:
 
@@ -291,7 +295,7 @@ def get_invoice_condo(condo, date):
         #         'per_unit': item.amount / doc_condo.n_houses_active
         #     })
 
-        
+
         data_invoice.append({
             'date': invoice.posting_date,
             'invoice': invoice.name,
@@ -327,7 +331,7 @@ def get_invoice_condo(condo, date):
             #             fund_total_reserve[kr] = {
             #                 'expense': 0.0
             #             }
-                        
+
             #         fund_total_reserve[kr]['expense'] = fund_total_reserve[kr]['expense'] + data_cost_center_copy[dd]['amount']
 
             # parent_cost_center
