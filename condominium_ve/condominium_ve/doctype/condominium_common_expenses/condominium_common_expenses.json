@@ -11,15 +11,20 @@
   "posting_date",
   "total",
   "active_units",
+  "funds_received",
+  "previous_funds",
   "column_break_2",
   "condominium",
   "total_per_unit",
+  "funds_expenditure",
+  "funds_current",
   "section_break_4",
   "condominium_common_expenses_detail",
   "amended_from",
   "funds",
   "expense",
-  "condominium_common_expenses_invoices"
+  "condominium_common_expenses_invoices",
+  "detail_funds"
  ],
  "fields": [
   {
@@ -96,6 +101,33 @@
    "fieldtype": "Table",
    "label": "Relacion de Gasto de Fondos",
    "options": "Reserve Expense Detail"
+  },
+  {
+   "fieldname": "previous_funds",
+   "fieldtype": "Currency",
+   "label": "Fondos Anteriores"
+  },
+  {
+   "fieldname": "funds_received",
+   "fieldtype": "Currency",
+   "label": "Ingreso de Fondos"
+  },
+  {
+   "fieldname": "funds_expenditure",
+   "fieldtype": "Currency",
+   "label": "Egreso de Fondos"
+  },
+  {
+   "fieldname": "funds_current",
+   "fieldtype": "Currency",
+   "label": "Fondos Actual"
+  },
+  {
+   "fieldname": "detail_funds",
+   "fieldtype": "Table",
+   "hidden": 1,
+   "label": "Fondos",
+   "options": "Detail Funds"
   }
  ],
  "index_web_pages_for_search": 1,
@@ -107,7 +139,7 @@
    "link_fieldname": "gc_condo"
   }
  ],
- "modified": "2022-11-10 08:53:39.083500",
+ "modified": "2022-11-14 14:26:44.133968",
  "modified_by": "Administrator",
  "module": "Condominium Ve",
  "name": "Condominium Common Expenses",

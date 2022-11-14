@@ -24,12 +24,20 @@ frappe.ui.form.on("Condominium Common Expenses", {
 
               frm.set_value("condominium_common_expenses_invoices", []);
               frm.set_value("condominium_common_expenses_detail", []);
+              frm.set_value("detail_funds", []);
               frm.set_value("funds", []);
               frm.set_value("expense", []);
 
               frm.doc.total_per_unit = data.total_per_unit;
               frm.doc.total = data.total;
               frm.doc.active_units = data.active_units;
+
+              frm.doc.funds_current = data.funds_current_total;
+              frm.doc.funds_expenditure = data.funds_expenditure_total;
+              frm.doc.funds_received = data.funds_receive_total;
+              frm.doc.previous_funds = data.previous_funds;
+
+
 
               data.invoices.forEach((e) => {
                 frm.add_child("condominium_common_expenses_invoices", {
@@ -73,6 +81,19 @@ frappe.ui.form.on("Condominium Common Expenses", {
                 });
               });
 
+
+
+              data.detail_funds_use.forEach((e) => {
+                frm.add_child("detail_funds", {
+                  concept: e.concept,
+                  funds_current: e.funds_current,
+                  funds_receive: e.funds_receive,
+                  previous_funds: e.previous_funds,
+                  funds_expenditure: e.funds_expenditure
+                });
+              });
+
+
               frm.refresh_field("condominium_common_expenses_invoices");
               frm.refresh_field("condominium_common_expenses_detail");
 
@@ -81,6 +102,15 @@ frappe.ui.form.on("Condominium Common Expenses", {
               frm.refresh_field("total");
               frm.refresh_field("expense");
               frm.refresh_field("active_units");
+
+              frm.refresh_field("funds_current");
+              frm.refresh_field("funds_expenditure");
+              frm.refresh_field("funds_received");
+              frm.refresh_field("previous_funds");
+
+              frm.refresh_field("detail_funds");
+
+
             },
 
             error: (r) => {

@@ -64,6 +64,7 @@ class CondominiumCommonExpenses(Document):
                 total_fund = float(fund.amount) * (float(house.aliquot) / 100)
                 sales_invoice_2 = frappe.get_doc(dict(
                     doctype="Sales Invoice",
+                    cost_center=fund.cost_center ,
                     docstatus=0,
                     company=doc_condo.company,
                     customer=house.owner_customer,
@@ -73,7 +74,7 @@ class CondominiumCommonExpenses(Document):
                     disable_rounded_total=0,
                     items=[
                         dict(
-                            item_code='Cuota de Condominio',
+                            item_code='',
                             item_name='{2}  {0} {1} '.format(
                                 get_month(doc.posting_date.month), doc.posting_date.year, fund.concept),
                             description='{2}  {0} {1} '.format(
@@ -189,10 +190,127 @@ def send(name):
 
 def is_fund(cost_center):
     if cost_center != "Gastos Comunes Variables":
-        cc = frappe.get_doc("Cost Center" , cost_center)
-        parent_cc = frappe.get_doc("Cost Center" , cc.parent_cost_center)
+        cc = frappe.get_doc("Cost Center", cost_center)
+        parent_cc = frappe.get_doc("Cost Center", cc.parent_cost_center)
         return parent_cc.is_reserve
     return 0
+
+
+def get_previous_funds(condo, date):
+    previous_funds = 0.0
+    gcc_list = frappe.db.get_list("Condominium Common Expenses",  filters={
+
+        "posting_date": ["<=", date],
+        "docstatus": 1,
+        "condominium": condo
+    }, fields=['*'], order_by='posting_date DESC')
+
+    if gcc_list:
+        gcc = gcc_list[0]
+        if gcc:
+            if gcc.previous_funds:
+                previous_funds = gcc.previous_funds
+
+    return previous_funds
+
+def get_previous_name(condo, date):
+    previous_funds = None
+    gcc_list = frappe.db.get_list("Condominium Common Expenses",  filters={
+
+        "posting_date": ["<=", date],
+        "docstatus": 1,
+        "condominium": condo
+    }, fields=['*'], order_by='posting_date DESC')
+
+    if gcc_list:
+        gcc = gcc_list[0]
+        if gcc:
+            if gcc.name:
+                previous_funds = gcc.name
+
+    return previous_funds
+
+def get_previous_date(condo, date):
+    previous_funds = "2022-01-01"
+    gcc_list = frappe.db.get_list("Condominium Common Expenses",  filters={
+
+        "posting_date": ["<=", date],
+        "docstatus": 1,
+        "condominium": condo
+    }, fields=['*'], order_by='posting_date DESC')
+
+    if gcc_list:
+        gcc = gcc_list[0]
+        if gcc:
+            if gcc.posting_date:
+                previous_funds = gcc.posting_date
+
+    return previous_funds
+
+
+def entry_funds_detail(from_date , to_date , company , cost_center_parent):
+    return frappe.db.sql("""
+SELECT
+	tpi.name ,
+	tpe.posting_date ,
+	tpi.grand_total ,
+	tpi.grand_total  - tpi.outstanding_amount 	 as payment,
+	tpi.cost_center ,
+	tcc.parent_cost_center
+from
+	`tabSales Invoice`  tpi
+join `tabCost Center` tcc ON tcc.name  = tpi.cost_center
+join `tabPayment Entry Reference` tper on tper.reference_name  = tpi.name
+join  `tabPayment Entry` tpe on tpe.name = tper.parent
+ where  tpe.posting_date > '{0}' and tpe.posting_date <= '{1}' and tcc.parent_cost_center = '{2}' and tpi.company = '{3}'   """.format(from_date , to_date , cost_center_parent , company   ))
+
+
+
+def expedition_funds_detail(from_date , to_date , company , cost_center_parent):
+    return frappe.db.sql("""
+SELECT
+	tpi.name ,
+	tpi.posting_date ,
+	tpi.grand_total ,
+	tpi.grand_total  - tpi.outstanding_amount 	 as payment,
+	tpi.cost_center ,
+	tcc.parent_cost_center
+from
+	`tabSales Invoice`  tpi
+ join `tabCost Center` tcc ON tcc.name  = tpi.cost_center
+left join `tabPayment Entry Reference` tper on tper.reference_name  = tpi.name
+left join  `tabPayment Entry` tpe on tpe.name = tper.parent
+
+ where  tpe.posting_date > '{0}' and tpe.posting_date <= '{1}' and tcc.parent_cost_center = '{2}' and tpi.company = '{3}'   """.format(from_date , to_date ,  cost_center_parent , company))
+
+
+
+def entry_funds(from_date , to_date , company , cost_center_parent):
+    sql = """
+        SELECT
+           COALESCE( sum(tpi.grand_total  - tpi.outstanding_amount)  , 0.0)	 as payment
+        from
+            `tabSales Invoice`  tpi
+        join `tabCost Center` tcc ON tcc.name  = tpi.cost_center
+        join `tabPayment Entry Reference` tper on tper.reference_name  = tpi.name
+        join  `tabPayment Entry` tpe on tpe.name = tper.parent
+        where  tpe.posting_date > '{0}' and tpe.posting_date <= '{1}' and tcc.parent_cost_center = '{2}' and tpi.company = '{3}'   """.format(from_date , to_date ,cost_center_parent , company   )
+    print(sql)
+    data = frappe.db.sql(sql)
+
+    print(sql)
+    return data[0][0]
+def expedition_funds(from_date , to_date , company , cost_center_parent):
+    data =  frappe.db.sql("""
+        SELECT
+            COALESCE(sum(tpi.grand_total )  , 0.0	) as payment
+        from
+        `tabPurchase Invoice`  tpi
+        join `tabCost Center` tcc ON tcc.name  = tpi.cost_center
+        left join `tabPayment Entry Reference` tper on tper.reference_name  = tpi.name
+        left join  `tabPayment Entry` tpe on tpe.name = tper.parent
+        where  tpi.posting_date > '{0}' and tpi.posting_date <= '{1}' and tcc.parent_cost_center = '{2}' and tpi.company = '{3}'   """.format(from_date , to_date ,   cost_center_parent , company ))
+    return data[0][0]
 
 
 @frappe.whitelist()
@@ -201,6 +319,15 @@ def get_invoice_condo(condo, date):
     funds = []
     total = 0
     total_per_unit = 0
+
+    previous_funds = get_previous_funds(condo , date)
+    previous_date = get_previous_date(condo , date)
+    previous_name = get_previous_name(condo, date)
+
+
+    funds_receive_total = 0.0
+    funds_expenditure_total = 0.0
+    funds_current_total = 0.0
 
     purchase_invoice_list = frappe.db.get_list("Purchase Invoice",  filters={
 
@@ -227,15 +354,13 @@ def get_invoice_condo(condo, date):
             "Purchase Invoice", purchase_invoice_data.name)
 
         is_for_fund = 0
-        
+
         cost_center_aux = invoice.cost_center
-        
-        
 
         if not invoice.cost_center:
             parent_cost_center = "Gastos Comunes Variables"
             invoice.cost_center = "Gastos Comunes Variables"
-            invoice.remarks = "Gastos Comunes Variables"
+            invoice.description = "Gastos Comunes Variables"
         else:
             cost_center_doc = frappe.get_doc(
                 'Cost Center', invoice.cost_center)
@@ -245,14 +370,18 @@ def get_invoice_condo(condo, date):
 
             parent_cost_center = parent_cost_center_doc.cost_center_name
 
-            # invoice.cost_center = invoice.remarks
+            if not invoice.description:
+                invoice.description = invoice.remarks
+
+
+            # invoice.cost_center = invoice.description
 
             is_for_fund = parent_cost_center_doc.is_reserve
 
-        if not (invoice.remarks + invoice.supplier) in data_cost_center.keys():
-            data_cost_center[invoice.remarks + invoice.supplier] = {
+        if not (invoice.description + invoice.supplier) in data_cost_center.keys():
+            data_cost_center[invoice.description + invoice.supplier] = {
                 'amount': 0,
-                'concept': invoice.remarks,
+                'concept': invoice.description,
                 'per_unit': 0,
                 'parent_cost_center': parent_cost_center,
                 'supplier': invoice.supplier_name,
@@ -260,14 +389,14 @@ def get_invoice_condo(condo, date):
 
             }
 
-        element = data_cost_center[invoice.remarks + invoice.supplier]
+        element = data_cost_center[invoice.description + invoice.supplier]
 
         element['amount'] = element['amount'] + invoice.total
         element['per_unit'] = element['per_unit'] + \
             (invoice.total / doc_condo.n_houses_active)
         element['supplier'] = element['supplier']
 
-        data_cost_center[invoice.remarks + invoice.supplier] = element
+        data_cost_center[invoice.description + invoice.supplier] = element
 
         # for item in invoice.items:
 
@@ -291,7 +420,6 @@ def get_invoice_condo(condo, date):
         #         'per_unit': item.amount / doc_condo.n_houses_active
         #     })
 
-        
         data_invoice.append({
             'date': invoice.posting_date,
             'invoice': invoice.name,
@@ -327,7 +455,7 @@ def get_invoice_condo(condo, date):
             #             fund_total_reserve[kr] = {
             #                 'expense': 0.0
             #             }
-                        
+
             #         fund_total_reserve[kr]['expense'] = fund_total_reserve[kr]['expense'] + data_cost_center_copy[dd]['amount']
 
             # parent_cost_center
@@ -339,6 +467,39 @@ def get_invoice_condo(condo, date):
         total = total + fund.amount
         total_per_unit = total_per_unit + fund.amount / doc_condo.n_houses_active
 
+    detail_funds_use = []
+    previous_gcc = None
+    if previous_name:
+        previous_gcc = frappe.get_doc('Condominium Common Expenses' , previous_name)
+    
+    for reserve in doc_condo.reserve:
+        entry =  entry_funds(previous_date , date , doc_condo.company , reserve.cost_center )
+        exp = expedition_funds(previous_date , date , doc_condo.company , reserve.cost_center)
+
+        funds_receive_total = funds_receive_total + entry
+        funds_expenditure_total =  funds_expenditure_total + exp
+        previous_funds_aux = 0.0
+        
+       
+        
+        if previous_gcc:
+            previous_gcc.detail_funds
+            
+            for pre in previous_gcc.detail_funds:
+                if pre.concept == reserve.description:
+                    previous_funds_aux = pre.funds_current
+                    break
+            
+        detail_funds_use.append({
+            'concept' : reserve.description ,
+            'funds_receive' : entry ,
+            'funds_expenditure' : exp ,
+            'funds_current' : entry - exp ,
+            'previous_funds' : previous_funds_aux
+        })
+
+    funds_current_total =    funds_receive_total + previous_funds  - funds_expenditure_total
+
     frappe.local.response.update({"data": {
         'invoices': data_invoice,
         'detail': data_cost_center,
@@ -347,7 +508,12 @@ def get_invoice_condo(condo, date):
         'total': total,
         'total_per_unit': total_per_unit,
         'funds': funds,
-        'expense_funds': data_cost_center_fund
+        'expense_funds': data_cost_center_fund ,
+        'previous_funds' : previous_funds ,
+        'funds_receive_total' : funds_receive_total,
+        'funds_expenditure_total' : funds_expenditure_total,
+        'funds_current_total' : funds_current_total ,
+        'detail_funds_use': detail_funds_use
     }})
 
     return build_response("json")
