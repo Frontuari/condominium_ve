@@ -1,14 +1,14 @@
 {
  "cards_label": "Condominio",
- "category": "Modules",
+ "category": "Domains",
  "charts": [],
- "creation": "2022-10-25 11:04:14.184535",
+ "creation": "2022-11-15 08:56:36.316018",
  "developer_mode_only": 0,
  "disable_user_customization": 0,
  "docstatus": 0,
  "doctype": "Workspace",
  "extends_another_page": 0,
- "hide_custom": 0,
+ "hide_custom": 1,
  "icon": "organization",
  "idx": 0,
  "is_default": 0,
@@ -21,6 +21,7 @@
    "label": "Maestros",
    "link_type": "DocType",
    "onboard": 0,
+   "only_for": "Venezuela",
    "type": "Card Break"
   },
   {
@@ -50,6 +51,7 @@
    "link_to": "Customer",
    "link_type": "DocType",
    "onboard": 0,
+   "only_for": "Venezuela",
    "type": "Link"
   },
   {
@@ -59,6 +61,7 @@
    "link_to": "Supplier",
    "link_type": "DocType",
    "onboard": 0,
+   "only_for": "Venezuela",
    "type": "Link"
   },
   {
@@ -77,6 +80,7 @@
    "label": "Procesos",
    "link_type": "DocType",
    "onboard": 0,
+   "only_for": "Venezuela",
    "type": "Card Break"
   },
   {
@@ -95,6 +99,7 @@
    "label": "Reportes",
    "link_type": "DocType",
    "onboard": 0,
+   "only_for": "Venezuela",
    "type": "Card Break"
   },
   {
@@ -122,17 +127,6 @@
    "is_query_report": 1,
    "label": "CxC Statement of Account",
    "link_to": "CxC Statement of Account",
-   "link_type": "Report",
-   "onboard": 0,
-   "only_for": "",
-   "type": "Link"
-  },
-  {
-   "dependencies": "payment-entry",
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Cobros del mes",
-   "link_to": "Cobros del mes",
    "link_type": "Report",
    "onboard": 0,
    "only_for": "",
@@ -189,11 +183,10 @@
    "type": "Link"
   }
  ],
- "modified": "2022-11-15 08:46:49.136437",
+ "modified": "2022-11-15 08:56:36.316018",
  "modified_by": "Administrator",
  "module": "Condominium Ve",
  "name": "Condominio",
- "onboarding": "",
  "owner": "Administrator",
  "pin_to_bottom": 0,
  "pin_to_top": 0,
