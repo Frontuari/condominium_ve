@@ -1,6 +1,6 @@
 {
  "cards_label": "Condominio",
- "category": "Domains",
+ "category": "Modules",
  "charts": [],
  "creation": "2022-10-25 11:04:14.184535",
  "developer_mode_only": 0,
@@ -9,6 +9,7 @@
  "doctype": "Workspace",
  "extends_another_page": 0,
  "hide_custom": 0,
+ "icon": "organization",
  "idx": 0,
  "is_default": 0,
  "is_standard": 1,
@@ -61,10 +62,11 @@
    "type": "Link"
   }
  ],
- "modified": "2022-11-03 23:18:40.024428",
+ "modified": "2022-11-15 08:46:49.136437",
  "modified_by": "Administrator",
  "module": "Condominium Ve",
  "name": "Condominio",
+ "onboarding": "",
  "owner": "Administrator",
  "pin_to_bottom": 0,
  "pin_to_top": 0,
