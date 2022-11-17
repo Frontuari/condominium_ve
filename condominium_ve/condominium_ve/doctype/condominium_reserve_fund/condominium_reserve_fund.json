@@ -11,7 +11,8 @@
   "account",
   "freq",
   "cost_center",
-  "cost_center_name"
+  "cost_center_name",
+  "parent_cost_center"
  ],
  "fields": [
   {
@@ -57,12 +58,18 @@
    "fieldtype": "Data",
    "label": "Nombre de Centro de Costo",
    "read_only": 1
+  },
+  {
+   "fetch_from": "cost_center.parent_cost_center",
+   "fieldname": "parent_cost_center",
+   "fieldtype": "Data",
+   "label": "Centro de Costo Padre"
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2022-11-10 09:40:08.668570",
+ "modified": "2022-11-15 09:08:34.792737",
  "modified_by": "Administrator",
  "module": "Condominium Ve",
  "name": "Condominium Reserve Fund",

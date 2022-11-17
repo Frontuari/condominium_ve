@@ -121,6 +121,30 @@ frappe.ui.form.on("Condominium Common Expenses", {
       });
     } else {
       frm.remove_custom_button(__("Search"));
+
+      frm.add_custom_button(__("Enviar Correos"), () => {
+
+
+          frappe.call({
+            method:
+              "condominium_ve.condominium_ve.doctype.condominium_common_expenses.condominium_common_expenses.send_email_test",
+            args: {
+              ggc: frm.doc.name
+            },
+
+            btn: $(".primary-action"),
+
+            freeze: true,
+            callback: (response) => {
+
+            },
+
+            error: (r) => {
+              console.log(r);
+            },
+          });
+
+      });
     }
   },
 });

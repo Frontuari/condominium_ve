@@ -1,7 +1,14 @@
 {
  "cards_label": "Condominio",
- "category": "Domains",
- "charts": [],
+ "category": "Modules",
+ "charts": [
+  {
+   "chart_name": "CxC Condominio"
+  },
+  {
+   "chart_name": "Disponibilidad"
+  }
+ ],
  "creation": "2022-11-15 08:56:36.316018",
  "developer_mode_only": 0,
  "disable_user_customization": 0,
@@ -96,6 +103,15 @@
   {
    "hidden": 0,
    "is_query_report": 0,
+   "label": "Currency Exchange",
+   "link_to": "Currency Exchange",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
    "label": "Reportes",
    "link_type": "DocType",
    "onboard": 0,
@@ -175,15 +191,25 @@
   {
    "hidden": 0,
    "is_query_report": 0,
-   "label": "Factura de Compra",
+   "label": "Factura de Compra ",
    "link_to": "Purchase Invoice",
    "link_type": "DocType",
    "onboard": 0,
    "only_for": "",
    "type": "Link"
+  },
+  {
+   "dependencies": "condominio",
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Condominio Panel de control",
+   "link_to": "dashboard-view",
+   "link_type": "Page",
+   "onboard": 0,
+   "type": "Link"
   }
  ],
- "modified": "2022-11-15 08:56:36.316018",
+ "modified": "2022-11-16 14:31:10.059027",
  "modified_by": "Administrator",
  "module": "Condominium Ve",
  "name": "Condominio",

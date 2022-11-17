@@ -1,0 +1,36 @@
+{
+ "based_on": "",
+ "chart_name": "Disponibilidad",
+ "chart_type": "Report",
+ "creation": "2022-11-16 09:22:54.813341",
+ "docstatus": 0,
+ "doctype": "Dashboard Chart",
+ "document_type": "",
+ "dynamic_filters_json": "{}",
+ "filters_json": "{\"company\":\"Asociacion Civil Condominio Club Residencial Casa de Campo\",\"account\":[\"1300 - Cuentas por cobrar - C\"],\"group_by\":\"Group by Voucher (Consolidated)\",\"cost_center\":[\"Cuota de Condominio - C\",\"Varios (Fondo de Inversion) - C\",\"Varios (Fondo de Mantenimiento) - C\"],\"include_dimensions\":1,\"show_opening_entries\":0,\"include_default_book_entries\":0,\"show_cancelled_entries\":0,\"show_net_values_in_party_account\":0,\"from_date\":\"2022-10-16\",\"to_date\":\"2022-11-16\"}",
+ "group_by_type": "Count",
+ "idx": 0,
+ "is_public": 1,
+ "is_standard": 1,
+ "modified": "2022-11-16 10:31:18.648100",
+ "modified_by": "Administrator",
+ "module": "Condominium Ve",
+ "name": "Disponibilidad",
+ "number_of_groups": 0,
+ "owner": "Administrator",
+ "parent_document_type": "",
+ "report_name": "General Ledger",
+ "source": "",
+ "time_interval": "Yearly",
+ "timeseries": 0,
+ "timespan": "Last Year",
+ "type": "Bar",
+ "use_report_chart": 0,
+ "value_based_on": "",
+ "x_field": "cost_center",
+ "y_axis": [
+  {
+   "y_field": "credit"
+  }
+ ]
+}
