@@ -538,6 +538,8 @@ def get_invoice_condo(condo, date):
     if previous_name:
         previous_gcc = frappe.get_doc(
             'Condominium Common Expenses', previous_name)
+        
+    
 
     for reserve in doc_condo.reserve:
         entry = entry_funds(previous_date, date,
@@ -551,17 +553,21 @@ def get_invoice_condo(condo, date):
 
         if previous_gcc:
             previous_gcc.detail_funds
+            
+            print("\n\n\n\n")
+            print(previous_gcc.detail_funds[0].funds_current)
 
             for pre in previous_gcc.detail_funds:
+                
                 if pre.concept == reserve.description:
                     previous_funds_aux = pre.funds_current
-                    break
+                    
 
         detail_funds_use.append({
             'concept': reserve.description,
             'funds_receive': entry,
             'funds_expenditure': exp,
-            'funds_current': entry - exp,
+            'funds_current': entry + previous_funds_aux - exp,
             'previous_funds': previous_funds_aux
         })
 
