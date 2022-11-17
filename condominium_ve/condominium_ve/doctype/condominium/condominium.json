@@ -16,7 +16,9 @@
   "address",
   "account",
   "section_break_9",
-  "reserve"
+  "reserve",
+  "section_break_11",
+  "cost_center"
  ],
  "fields": [
   {
@@ -76,11 +78,21 @@
   {
    "fieldname": "section_break_9",
    "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "section_break_11",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "cost_center",
+   "fieldtype": "Link",
+   "label": "Centro de Costo para Gasto Comun de Condominio",
+   "options": "Cost Center"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2022-11-09 16:19:31.972537",
+ "modified": "2022-11-16 08:33:27.225964",
  "modified_by": "Administrator",
  "module": "Condominium Ve",
  "name": "Condominium",

@@ -125,7 +125,6 @@
   {
    "fieldname": "detail_funds",
    "fieldtype": "Table",
-   "hidden": 1,
    "label": "Fondos",
    "options": "Detail Funds"
   }
@@ -139,7 +138,7 @@
    "link_fieldname": "gc_condo"
   }
  ],
- "modified": "2022-11-14 14:26:44.133968",
+ "modified": "2022-11-16 15:34:20.474204",
  "modified_by": "Administrator",
  "module": "Condominium Ve",
  "name": "Condominium Common Expenses",

@@ -1,14 +1,22 @@
 {
  "cards_label": "Condominio",
- "category": "Domains",
- "charts": [],
- "creation": "2022-10-25 11:04:14.184535",
+ "category": "Modules",
+ "charts": [
+  {
+   "chart_name": "CxC Condominio"
+  },
+  {
+   "chart_name": "Disponibilidad"
+  }
+ ],
+ "creation": "2022-11-15 08:56:36.316018",
  "developer_mode_only": 0,
  "disable_user_customization": 0,
  "docstatus": 0,
  "doctype": "Workspace",
  "extends_another_page": 0,
  "hide_custom": 1,
+ "icon": "organization",
  "idx": 0,
  "is_default": 0,
  "is_standard": 1,
@@ -20,6 +28,7 @@
    "label": "Maestros",
    "link_type": "DocType",
    "onboard": 0,
+   "only_for": "Venezuela",
    "type": "Card Break"
   },
   {
@@ -49,6 +58,7 @@
    "link_to": "Customer",
    "link_type": "DocType",
    "onboard": 0,
+   "only_for": "Venezuela",
    "type": "Link"
   },
   {
@@ -58,6 +68,7 @@
    "link_to": "Supplier",
    "link_type": "DocType",
    "onboard": 0,
+   "only_for": "Venezuela",
    "type": "Link"
   },
   {
@@ -76,6 +87,7 @@
    "label": "Procesos",
    "link_type": "DocType",
    "onboard": 0,
+   "only_for": "Venezuela",
    "type": "Card Break"
   },
   {
@@ -91,9 +103,19 @@
   {
    "hidden": 0,
    "is_query_report": 0,
+   "label": "Currency Exchange",
+   "link_to": "Currency Exchange",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
    "label": "Reportes",
    "link_type": "DocType",
    "onboard": 0,
+   "only_for": "Venezuela",
    "type": "Card Break"
   },
   {
@@ -121,17 +143,6 @@
    "is_query_report": 1,
    "label": "CxC Statement of Account",
    "link_to": "CxC Statement of Account",
-   "link_type": "Report",
-   "onboard": 0,
-   "only_for": "",
-   "type": "Link"
-  },
-  {
-   "dependencies": "payment-entry",
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Cobros del mes",
-   "link_to": "Cobros del mes",
    "link_type": "Report",
    "onboard": 0,
    "only_for": "",
@@ -180,15 +191,25 @@
   {
    "hidden": 0,
    "is_query_report": 0,
-   "label": "Factura de Compra",
+   "label": "Factura de Compra ",
    "link_to": "Purchase Invoice",
    "link_type": "DocType",
    "onboard": 0,
    "only_for": "",
    "type": "Link"
+  },
+  {
+   "dependencies": "condominio",
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Condominio Panel de control",
+   "link_to": "dashboard-view",
+   "link_type": "Page",
+   "onboard": 0,
+   "type": "Link"
   }
  ],
- "modified": "2022-11-11 15:41:55.875912",
+ "modified": "2022-11-16 14:31:10.059027",
  "modified_by": "Administrator",
  "module": "Condominium Ve",
  "name": "Condominio",
