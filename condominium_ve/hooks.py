@@ -105,7 +105,13 @@ app_license = "MIT"
 
 # Scheduled Tasks
 # ---------------
-
+scheduler_events = {
+        "cron": {
+                "*/5 * * * *": [
+                        "condominium_ve.task.validate_payment",
+                ]
+	}
+}
 # scheduler_events = {
 # 	"all": [
 # 		"condominium_ve.tasks.all"

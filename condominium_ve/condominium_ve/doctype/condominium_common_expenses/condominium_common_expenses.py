@@ -146,7 +146,6 @@ class CondominiumCommonExpenses(Document):
             doc_invoice.apply_process_condo = 0
             doc_invoice.save(ignore_permissions=True)
 
-
 def get_emails(owner):
     emails = ""
 
