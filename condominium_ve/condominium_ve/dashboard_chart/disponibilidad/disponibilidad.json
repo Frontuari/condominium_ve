@@ -3,16 +3,17 @@
  "chart_name": "Disponibilidad",
  "chart_type": "Report",
  "creation": "2022-11-16 14:29:00.280968",
+ "custom_options": " {\"colors\":\n    [\"#449CF0\", \"#39E4A5\" , \"#ECAD4B\"]\n }",
  "docstatus": 0,
  "doctype": "Dashboard Chart",
  "document_type": "GL Entry",
  "dynamic_filters_json": "{}",
- "filters_json": "{\"company\":\"Asociacion Civil Condominio Club Residencial Casa de Campo\",\"group_by\":\"Group by Voucher (Consolidated)\",\"include_dimensions\":1,\"show_opening_entries\":0,\"include_default_book_entries\":0,\"show_cancelled_entries\":0,\"show_net_values_in_party_account\":0,\"is_report\":1,\"from_date\":\"2022-10-18\",\"to_date\":\"2022-11-18\"}",
+ "filters_json": "{\"company\":\"Asociacion Civil Condominio Club Residencial Casa de Campo\",\"group_by\":\"Group by Voucher (Consolidated)\",\"include_dimensions\":1,\"show_opening_entries\":0,\"include_default_book_entries\":0,\"show_cancelled_entries\":0,\"show_net_values_in_party_account\":0,\"is_report\":1,\"from_date\":\"2022-10-21\",\"to_date\":\"2022-11-21\"}",
  "group_by_type": "Count",
  "idx": 0,
  "is_public": 1,
  "is_standard": 1,
- "modified": "2022-11-18 10:22:50.626679",
+ "modified": "2022-11-21 08:30:56.206307",
  "modified_by": "Administrator",
  "module": "Condominium Ve",
  "name": "Disponibilidad",
@@ -24,12 +25,13 @@
  "time_interval": "Yearly",
  "timeseries": 0,
  "timespan": "Last Year",
- "type": "Pie",
+ "type": "Bar",
  "use_report_chart": 0,
  "value_based_on": "",
  "x_field": "cost_center",
  "y_axis": [
   {
+   "color": "",
    "y_field": "credit"
   }
  ]

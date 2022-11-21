@@ -1,6 +1,8 @@
 
+from custom_reports.utils.print_format import get_pdf
 import frappe
 from frappe.utils.response import build_response
+from custom_reports.report_design.doctype.report_bro.report_bro import get_pdf_backend
 
 
 @frappe.whitelist(allow_guest=True)
@@ -63,7 +65,7 @@ def get_gcc(condominium):
 
 def get_payments(array_ggc):
     result = []
-    
+
     data = frappe.db.sql(" SELECT name , posting_date , total  FROM  `tabCondominium Common Expenses` tcce where condominium = {} and docstatus=1 ".format(frappe.db.escape(condominium)))
 
     for d in data:
@@ -131,3 +133,21 @@ def get_balance(customer):
     """.format(frappe.db.escape(customer))
 
     return frappe.db.sql(sql)
+
+
+
+@frappe.whitelist(allow_guest=True)
+def pdf(doctype, name, format=None, doc=None, no_letterhead=0):
+	doc = doc or frappe.get_doc(doctype, name)
+
+
+	html = frappe.get_print(doctype, name, format, doc=doc, no_letterhead=no_letterhead)
+	frappe.local.response.filename = "{name}.pdf".format(
+		name=name.replace(" ", "-").replace("/", "-")
+	)
+	frappe.local.response.filecontent = get_pdf(html)
+	frappe.local.response.type = "pdf"
+
+@frappe.whitelist(allow_guest=True)
+def pdf_2(report_name=None, doctype=None, name=None, doc=None , params=None , as_download=False):
+    return get_pdf_backend(report_name=report_name, doctype=doctype, name=name, doc=doc , params=params , as_download=as_download)

@@ -11,6 +11,12 @@
   },
   {
    "card": "CxC Total"
+  },
+  {
+   "card": "Pagos Recibidos del Mes"
+  },
+  {
+   "card": "Pagos Realizados del Mes"
   }
  ],
  "charts": [
@@ -19,7 +25,7 @@
    "width": "Half"
   },
   {
-   "chart": "Disponibilidad - Condominio",
+   "chart": "Disponibilidad",
    "width": "Half"
   }
  ],
@@ -30,7 +36,7 @@
  "idx": 0,
  "is_default": 1,
  "is_standard": 1,
- "modified": "2022-11-16 14:29:48.872645",
+ "modified": "2022-11-21 14:49:04.549103",
  "modified_by": "Administrator",
  "module": "Condominium Ve",
  "name": "Condominio",
