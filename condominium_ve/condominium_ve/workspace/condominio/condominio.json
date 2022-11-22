@@ -230,54 +230,14 @@
    "dependencies": "payment-entry",
    "hidden": 0,
    "is_query_report": 0,
-   "label": "Pagos Recibidos Este Mes",
-   "link_to": "Pagos Recibidos Mensual",
-   "link_type": "Report",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "dependencies": "payment-entry",
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Pagos Realizados Hoy",
-   "link_to": "Pagos Realizados Hoy",
-   "link_type": "Report",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "dependencies": "payment-entry",
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Pagos Recibidos",
-   "link_to": "Pagos Recibidos",
-   "link_type": "Report",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "dependencies": "payment-entry",
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Pagos Recibidos Mensual",
-   "link_to": "Pagos Recibidos Mensual",
-   "link_type": "Report",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "dependencies": "payment-entry",
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Pagos Recibidos Hoy",
-   "link_to": "Pagos Recibidos Hoy",
+   "label": "Pagos Realizados",
+   "link_to": "Pagos Realizados",
    "link_type": "Report",
    "onboard": 0,
    "type": "Link"
   }
  ],
- "modified": "2022-11-21 14:35:16.752368",
+ "modified": "2022-11-22 10:03:19.472160",
  "modified_by": "Administrator",
  "module": "Condominium Ve",
  "name": "Condominio",
