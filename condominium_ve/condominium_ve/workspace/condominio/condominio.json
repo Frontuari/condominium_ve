@@ -9,9 +9,10 @@
    "chart_name": "Disponibilidad"
   }
  ],
+ "charts_label": "",
  "creation": "2022-11-15 08:56:36.316018",
  "developer_mode_only": 0,
- "disable_user_customization": 0,
+ "disable_user_customization": 1,
  "docstatus": 0,
  "doctype": "Workspace",
  "extends_another_page": 0,
@@ -34,7 +35,7 @@
   {
    "hidden": 0,
    "is_query_report": 0,
-   "label": "Condominio",
+   "label": "Condominio ",
    "link_to": "Condominium",
    "link_type": "DocType",
    "onboard": 1,
@@ -84,11 +85,30 @@
   {
    "hidden": 0,
    "is_query_report": 0,
+   "label": "Cost Center",
+   "link_to": "Cost Center",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
    "label": "Procesos",
    "link_type": "DocType",
    "onboard": 0,
    "only_for": "Venezuela",
    "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Recibo de Condominio",
+   "link_to": "Sales Invoice",
+   "link_type": "DocType",
+   "onboard": 0,
+   "only_for": "",
+   "type": "Link"
   },
   {
    "hidden": 0,
@@ -103,8 +123,27 @@
   {
    "hidden": 0,
    "is_query_report": 0,
+   "label": "Factura de Compra ",
+   "link_to": "Purchase Invoice",
+   "link_type": "DocType",
+   "onboard": 0,
+   "only_for": "",
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
    "label": "Currency Exchange",
    "link_to": "Currency Exchange",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Purchase Receipt",
+   "link_to": "Purchase Receipt",
    "link_type": "DocType",
    "onboard": 0,
    "type": "Link"
@@ -117,6 +156,34 @@
    "onboard": 0,
    "only_for": "Venezuela",
    "type": "Card Break"
+  },
+  {
+   "dependencies": "condominio",
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Condominio Panel de control",
+   "link_to": "dashboard-view",
+   "link_type": "Page",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Cuentas por Cobrar",
+   "link_to": "Accounts Receivable Extended",
+   "link_type": "Report",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Accounts Payable",
+   "link_to": "Accounts Payable",
+   "link_type": "Report",
+   "onboard": 0,
+   "type": "Link"
   },
   {
    "hidden": 0,
@@ -170,20 +237,22 @@
    "type": "Link"
   },
   {
+   "dependencies": "payment-entry",
    "hidden": 0,
    "is_query_report": 0,
-   "label": "Facturas",
-   "link_type": "DocType",
+   "label": "Pagos Realizados",
+   "link_to": "Pagos Realizados",
+   "link_type": "Report",
    "onboard": 0,
-   "only_for": "",
-   "type": "Card Break"
+   "type": "Link"
   },
   {
+   "dependencies": "payment-entry",
    "hidden": 0,
    "is_query_report": 0,
-   "label": "Recibo de Condominio",
-   "link_to": "Sales Invoice",
-   "link_type": "DocType",
+   "label": "Pagos Recibidos",
+   "link_to": "Pagos Recibidos",
+   "link_type": "Report",
    "onboard": 0,
    "only_for": "",
    "type": "Link"
@@ -191,30 +260,43 @@
   {
    "hidden": 0,
    "is_query_report": 0,
-   "label": "Factura de Compra ",
-   "link_to": "Purchase Invoice",
-   "link_type": "DocType",
+   "label": "Trial Balance",
+   "link_to": "Trial Balance",
+   "link_type": "Report",
    "onboard": 0,
-   "only_for": "",
    "type": "Link"
   },
   {
-   "dependencies": "condominio",
    "hidden": 0,
    "is_query_report": 0,
-   "label": "Condominio Panel de control",
-   "link_to": "dashboard-view",
-   "link_type": "Page",
+   "label": "General Ledger",
+   "link_to": "General Ledger",
+   "link_type": "Report",
    "onboard": 0,
    "type": "Link"
   }
  ],
- "modified": "2022-11-16 14:31:10.059027",
+ "modified": "2022-11-22 14:31:32.421231",
  "modified_by": "Administrator",
  "module": "Condominium Ve",
  "name": "Condominio",
  "owner": "Administrator",
  "pin_to_bottom": 0,
  "pin_to_top": 0,
- "shortcuts": []
+ "shortcuts": [
+  {
+   "doc_view": "",
+   "label": "Graficos",
+   "link_to": "Condominio",
+   "type": "Dashboard"
+  },
+  {
+   "color": "#449CF0",
+   "doc_view": "List",
+   "label": "Propietarios",
+   "link_to": "Customer",
+   "restrict_to_domain": "Condominium Ve",
+   "type": "DocType"
+  }
+ ]
 }

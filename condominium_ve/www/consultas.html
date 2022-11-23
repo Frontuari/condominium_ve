@@ -1,7 +1,7 @@
 {% extends "templates/web.html" %}
 
-{% set title = heading or "Contact Us" %}
-{% block header %}<h1>{{ heading or "Contact Us" }}</h1>{% endblock %}
+{% set title = heading or "Consulta de Propietarios" %}
+{% block header %}<h1>{{ heading or "Consulta de Propietarios" }}</h1>{% endblock %}
 
 {% block page_content %}
 <style>
@@ -27,112 +27,16 @@
 				<button id="consultar" class="btn btn-default">{{ _("Consultar") }}</button>
 			</div>
 
+		</div>
 
+		<div class="col-xs-12">
 
-			<div class="frappe-control form-group" data-fieldtype="Table" data-fieldname="condominium_receipt">
-				<label class="control-label">Recibos de Condominio</label>
+			<ul id="condo">
 
-				<p class="text-muted small grid-description" style="display: none;"></p>
-
-				<div class="grid-custom-buttons grid-field"></div>
-				<div class="form-grid">
-					<div class="grid-heading-row">
-						<div class="grid-row">
-							<div class="data-row row">
-								<div class="row-index sortable-handle col col-xs-1">
-									<input type="checkbox" class="grid-row-check pull-left" disabled="">
-
-									<span class="hidden-xs">No.</span>
-								</div>
-								<div class="col grid-static-col col-xs-1 " data-fieldname="posting_date"
-									data-fieldtype="Date" title="Posting Date">
-									<div class="field-area" style="display: none;"></div>
-									<div class="static-area ellipsis">Fecha</div>
-								</div>
-								<div class="col grid-static-col col-xs-2 " data-fieldname="voucher"
-									data-fieldtype="Link" title="Voucher">
-									<div class="field-area" style="display: none;"></div>
-									<div class="static-area ellipsis">Doc.</div>
-								</div>
-								<div class="col grid-static-col col-xs-2  text-right" data-fieldname="amount"
-									data-fieldtype="Currency" title="Amount">
-									<div class="field-area" style="display: none;"></div>
-									<div class="static-area ellipsis">Monto</div>
-								</div>
-								<div class="col grid-static-col col-xs-2  text-right" data-fieldname="balance"
-									data-fieldtype="Currency" title="Pending payment">
-									<div class="field-area" style="display: none;"></div>
-									<div class="static-area ellipsis">Deuda</div>
-								</div>
-								<div class="col grid-static-col col-xs-2  text-right" data-fieldname="total"
-									data-fieldtype="Currency" title="Total">
-									<div class="field-area" style="display: none;"></div>
-									<div class="static-area ellipsis">Total</div>
-								</div>
-								<div class="col grid-static-col col-xs-1 " data-fieldname="print"
-									data-fieldtype="Button" title="Print">
-									<div class="field-area" style="display: none;"></div>
-									<div class="static-area ellipsis">Print</div>
-								</div>
-								<div class="col grid-static-col col-xs-1"></div>
-							</div>
-						</div>
-					</div>
-					<div class="grid-body">
-						<div class="rows"></div>
-						<div class="grid-empty text-center">
-							<img src="/assets/frappe/images/ui-states/grid-empty-state.svg" alt="Grid Empty State"
-								class="grid-empty-illustration">
-							No Data
-						</div>
-					</div>
-				</div>
-				<div class="small form-clickable-section grid-footer">
-					<div class="flex justify-between">
-						<div class="grid-pagination"></div>
-						<div class="text-right">
-							<a href="#" class="grid-download btn btn-xs btn-secondary hidden">
-								Download
-							</a>
-						</div>
-					</div>
-				</div>
-			</div>
+			</ul>
 
 		</div>
-		{% if address_title %}
-		<div class="col-md-3 col-md-offset-1 address" itemscope itemtype="http://schema.org/PostalAddress">
-			<h4 style="margin-top: 0px;"><i class="fa fa-map-marker"></i> {{ address_title }}</h4>
-			{% if address_line1 %}
-			<span itemprop="streetAddress">{{ address_line1 }}</span><br>
-			{% endif %}
-			{% if address_line2 %}
-			<span itemprop="streetAddress">{{ address_line2 }}</span><br>
-			{% endif %}
-			{% if city %}
-			<span itemprop="addressLocality">{{ city }}</span><br>
-			{% endif %}
-			{% if state %}
-			<span itemprop="addressRegion">{{ state }}</span><br>
-			{% endif %}
-			{% if pincode %}
-			<span itemprop="postalCode">{{ pincode }}</span><br>
-			{% endif %}
-			{% if country %}
-			<span itemprop="addressCountry">{{ country }}</span><br><br>
-			{% endif %}
-			{% if phone %}
-			<i class='fa fa-phone'></i> <span itemprop="telephone">{{ phone }}</span><br>
-			{% endif %}
-			{% if email_id %}
-			<i class='fa fa-envelope'></i> <span itemprop="email">{{ email_id }}</span><br>
-			{% endif %}
-			{% if skype %}
-			<i class='fa fa-skype'></i> <span itemprop="email">{{ skype }}</span><br>
-			{% endif %}
 
-		</div>
-		{% endif %}
 	</div>
 </div>
 <script>

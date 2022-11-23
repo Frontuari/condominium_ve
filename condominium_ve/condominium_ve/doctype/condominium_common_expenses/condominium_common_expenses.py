@@ -146,7 +146,6 @@ class CondominiumCommonExpenses(Document):
             doc_invoice.apply_process_condo = 0
             doc_invoice.save(ignore_permissions=True)
 
-
 def get_emails(owner):
     emails = ""
 
@@ -223,8 +222,10 @@ def send_email_condo_queue(ggc):
         'msgprint', 'Inicio de proceso de envio de correos')
     print("Encolar proceso")
     data_emails = get_emails_condo(ggc)
-    
-    
+
+    doc_ggc = frappe.get_doc("Condominium Common Expenses" , ggc)
+
+
 
     file = get_pdf_backend(report_name='Prueba Gastos Comunes de Condominio copia 2',
                    doctype="Condominium Common Expenses", name=ggc , as_download=True)
@@ -243,7 +244,7 @@ def send_email_condo_queue(ggc):
     for d in data_emails:
         # send_email_condo(d['email'] , d['invoice'] , "Estimado Propietario, Su recibo de condomnio del mes")
         send_email_condo(emails='armando.develop@gmail.com',
-                         name=d['invoice'], description="Estimado Propietario, Su recibo de condomnio del mes", attachments=attachments)
+                         name=d['invoice'], description=doc_ggc.send_text or "Estimado Propietario, Su recibo de condomnio del mes", attachments=attachments)
         break
 
     print("Encolar proceso")
@@ -525,7 +526,7 @@ def get_invoice_condo(condo, date):
             data_cost_center.append(data_cost_center_copy[dd])
         else:
             data_cost_center_fund.append(data_cost_center_copy[dd])
-    
+
     for fund in doc_condo.reserve:
 
         funds.append({'concept': fund.description, 'amount': fund.amount,
@@ -552,16 +553,20 @@ def get_invoice_condo(condo, date):
         if previous_gcc:
             previous_gcc.detail_funds
 
+            print("\n\n\n\n")
+            print(previous_gcc.detail_funds[0].funds_current)
+
             for pre in previous_gcc.detail_funds:
+
                 if pre.concept == reserve.description:
                     previous_funds_aux = pre.funds_current
-                    break
+
 
         detail_funds_use.append({
             'concept': reserve.description,
             'funds_receive': entry,
             'funds_expenditure': exp,
-            'funds_current': entry - exp,
+            'funds_current': entry + previous_funds_aux - exp,
             'previous_funds': previous_funds_aux
         })
 

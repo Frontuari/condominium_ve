@@ -19,6 +19,8 @@
   "funds_expenditure",
   "funds_current",
   "section_break_4",
+  "send_text",
+  "section_break_13",
   "condominium_common_expenses_detail",
   "amended_from",
   "funds",
@@ -125,8 +127,19 @@
   {
    "fieldname": "detail_funds",
    "fieldtype": "Table",
+   "hidden": 1,
    "label": "Fondos",
    "options": "Detail Funds"
+  },
+  {
+   "fieldname": "send_text",
+   "fieldtype": "Text Editor",
+   "label": "Mensaje para el correo",
+   "reqd": 1
+  },
+  {
+   "fieldname": "section_break_13",
+   "fieldtype": "Section Break"
   }
  ],
  "index_web_pages_for_search": 1,
@@ -138,7 +151,7 @@
    "link_fieldname": "gc_condo"
   }
  ],
- "modified": "2022-11-16 15:34:20.474204",
+ "modified": "2022-11-21 08:53:13.343993",
  "modified_by": "Administrator",
  "module": "Condominium Ve",
  "name": "Condominium Common Expenses",

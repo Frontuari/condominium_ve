@@ -2,24 +2,25 @@
  "based_on": "",
  "chart_name": "Disponibilidad",
  "chart_type": "Report",
- "creation": "2022-11-16 09:22:54.813341",
+ "creation": "2022-11-16 14:29:00.280968",
+ "custom_options": " {\"colors\":\n    [\"#449CF0\", \"#39E4A5\" , \"#ECAD4B\"]\n }",
  "docstatus": 0,
  "doctype": "Dashboard Chart",
- "document_type": "",
+ "document_type": "GL Entry",
  "dynamic_filters_json": "{}",
- "filters_json": "{\"company\":\"Asociacion Civil Condominio Club Residencial Casa de Campo\",\"account\":[\"11201001 - CUENTAS POR COBRAR PROPIETARIOS - C\"],\"group_by\":\"Group by Voucher (Consolidated)\",\"cost_center\":[\"Cuota de Condominio - C\",\"Varios (Fondo de Inversion) - C\",\"Varios (Fondo de Mantenimiento) - C\"],\"include_dimensions\":1,\"show_opening_entries\":0,\"include_default_book_entries\":0,\"show_cancelled_entries\":0,\"show_net_values_in_party_account\":0,\"from_date\":\"2022-10-17\",\"to_date\":\"2022-11-17\"}",
+ "filters_json": "{\"company\":\"Asociacion Civil Condominio Club Residencial Casa de Campo\",\"group_by\":\"Group by Voucher (Consolidated)\",\"include_dimensions\":1,\"show_opening_entries\":0,\"include_default_book_entries\":0,\"show_cancelled_entries\":0,\"show_net_values_in_party_account\":0,\"is_report\":1,\"from_date\":\"2022-10-21\",\"to_date\":\"2022-11-21\"}",
  "group_by_type": "Count",
  "idx": 0,
  "is_public": 1,
  "is_standard": 1,
- "modified": "2022-11-17 15:17:29.431502",
+ "modified": "2022-11-21 08:30:56.206307",
  "modified_by": "Administrator",
  "module": "Condominium Ve",
  "name": "Disponibilidad",
  "number_of_groups": 0,
  "owner": "Administrator",
  "parent_document_type": "",
- "report_name": "General Ledger",
+ "report_name": "General Ledger Extend Dashboard",
  "source": "",
  "time_interval": "Yearly",
  "timeseries": 0,
@@ -30,6 +31,7 @@
  "x_field": "cost_center",
  "y_axis": [
   {
+   "color": "",
    "y_field": "credit"
   }
  ]

@@ -9,7 +9,7 @@ frappe.ready(function () {
 
 	$('#consultar').off("click").on("click", function () {
 		frappe.call({
-			method: "condominium_ve.www.consultas.query_code",
+			method: "condominium_ve.api.query_code",
 			args: {
 				code: $('[name="code"]').val(),
 			},
@@ -18,7 +18,14 @@ frappe.ready(function () {
 
 			freeze: true,
 			callback: (response) => {
-				console.log(response)
+				let data = response.data
+				$("#condo").html("")
+
+				data.cc_condo.forEach(e => {
+					$("#condo").append(`<li> <a target="_blank" href='${url_condo(e.name)}' >  Gasto Comun de Condominio No. ${e.name}, fecha: ${e.posting_date}, total: ${e.total} </a>  </li>`)
+				});
+
+
 			},
 			error: (r) => {
 				console.log(r)
@@ -27,45 +34,19 @@ frappe.ready(function () {
 
 	})
 
-	$('.btn-send').off("click").on("click", function () {
-		var email = $('[name="email"]').val();
-		var message = $('[name="message"]').val();
 
-		if (!(email && message)) {
-			frappe.msgprint('{{ _("Please enter both your email and message so that we can get back to you. Thanks!") }}');
-			return false;
-		}
-
-		if (!validate_email(email)) {
-			frappe.msgprint('{{ _("You seem to have written your name instead of your email. Please enter a valid email address so that we can get back.") }}');
-			$('[name="email"]').focus();
-			return false;
-		}
-
-		$("#contact-alert").toggle(false);
-		frappe.send_message({
-			subject: $('[name="subject"]').val(),
-			sender: email,
-			message: message,
-			callback: function (r) {
-				if (r.message === "okay") {
-					frappe.msgprint('{{ _("Thank you for your message") }}');
-				} else {
-					frappe.msgprint('{{ _("There were errors") }}');
-					console.log(r.exc);
-				}
-				$(':input').val('');
-			}
-		}, this);
-		return false;
-	});
 
 });
 
 var msgprint = function (txt) {
 	if (txt) $("#contact-alert").html(txt).toggle(true);
 }
+
+function url_condo(name){
+	return `/api/method/condominium_ve.api.pdf_2?report_name=Prueba%20Gastos%20Comunes%20de%20Condominio%20copia%202&doctype=Condominium Common Expenses&name=${name}`
+}
 /*
+
 
 frappe.ui.form.on("Consultas", {
 	refresh(frm) {
