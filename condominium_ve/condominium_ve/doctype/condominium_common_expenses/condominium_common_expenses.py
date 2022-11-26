@@ -1,12 +1,13 @@
 # Copyright (c) 2022, Armando Rojas and contributors
 # For license information, please see license.txt
+import json
 import frappe
 from frappe.model.document import Document
 from frappe.utils.response import build_response
 from datetime import datetime  # from python std library
 from frappe.utils import add_to_date
 from frappe.core.doctype.communication import email
-from custom_reports.report_design.doctype.report_bro.report_bro import get_pdf_backend, get_pdf_backend_api
+from custom_reports.report_design.doctype.report_bro.report_bro import get_pdf_backend_api, get_pdf_backend_api_report
 from custom_reports.utils.handler_extend import upload_file_report
 import requests
 
@@ -24,7 +25,8 @@ class CondominiumCommonExpenses(Document):
             'condominium': doc_condo.name,
         })
 
-        after_days = add_to_date(doc.posting_date, days=3, as_string=True)
+        # after_days = add_to_date(doc.posting_date, days=3, as_string=True)
+        after_days = doc.posting_date
 
         for house in housings:
             total = total_ggc * (float(house.aliquot) / 100)
@@ -34,7 +36,7 @@ class CondominiumCommonExpenses(Document):
             # emails = get_emails(owner)
 
             sales_invoice = frappe.get_doc(dict(
-                naming_series="RC-.YYYY.-MM-",
+                naming_series="RC-.YYYY..-.########",
                 doctype="Sales Invoice",
                 set_posting_time=1,
                 docstatus=0,
@@ -79,7 +81,7 @@ class CondominiumCommonExpenses(Document):
 
                 total_fund = float(fund.amount) * (float(house.aliquot) / 100)
                 sales_invoice_2 = frappe.get_doc(dict(
-                    naming_series="RFC-.YYYY.-MM-",
+                    naming_series="RFC-.YYYY..-.########",
                     doctype="Sales Invoice",
                     set_posting_time=1,
                     cost_center=cost_center_aux,
@@ -154,7 +156,7 @@ def get_emails(owner):
     emails = ""
 
     results = frappe.db.sql(
-        "select email_id  from `tabContact Email` tce where parent like '%{0}' ".format(owner.name))
+        "select email_id  from `tabContact Email` tce where parent like '%-{0}' ".format(owner.name))
 
     for r in results:
         emails = emails + r[0] + ","
@@ -163,25 +165,25 @@ def get_emails(owner):
 
 
 def get_emails_condo(gcc):
-    result = []
     sql = """
         SELECT
-        tc.email_id , tsi.name, tsi.customer_name
+        tce.email_id as email, tsi.name as invoice, tsi.customer , tsi.housing
         from
             `tabSales Invoice` tsi
         join tabCustomer tc ON  tsi.customer = tc.name
+        join `tabContact Email` tce ON tce.parent like concat('%-' , tc.name )
         where
             tsi.docstatus in (0 , 1)
-            and gc_condo = 'GCC-2022-11-00020'
+            and gc_condo = '{0}'
             and select_print_heading = 'Recibo de Condominio'
             and tc.email_id is not null
-    """
-    data = frappe.db.sql(sql)
 
-    for d in data:
-        result.append({'email': d[0], 'invoice': d[1], 'customer_name': d[2]})
+            order by tsi.housing ASC
+    """.format(gcc)
 
-    return result
+    data = frappe.db.sql(sql, as_dict=True)
+
+    return data
 
 
 def send_email(emails, name, description=""):
@@ -208,7 +210,7 @@ def send_email_condo(emails, name, description="", attachments=[]):
                       content="<div class='ql-editor read-mode'> {0} <p><br></p></div>".format(
                           description),
                       # doctype="Sales Invoice",
-                      #name=name,
+                      # name=name,
                       send_email="1",
                       print_html="",
                       send_me_a_copy=0,
@@ -227,13 +229,13 @@ def send_email_condo_queue(ggc):
 
     doc_ggc = frappe.get_doc("Condominium Common Expenses", ggc)
 
-    file = get_pdf_backend_api(report_name='Prueba Gastos Comunes de Condominio copia 2',
+    file = get_pdf_backend_api(report_name='Relacion de Gastos',
                                doctype="Condominium Common Expenses", name=ggc, as_download=True)
 
     ret = frappe.get_doc({
         "doctype": "File",
         "folder": "Home",
-        "file_name": "reporte.pdf",
+        "file_name": "relacion_de_gastos.pdf",
         "is_private": 1,
         "content": file.content,
     })
@@ -241,15 +243,42 @@ def send_email_condo_queue(ggc):
 
     attachments = [ret.name]
 
-    send_email_condo(emails='armando.develop@gmail.com', name="ACC-SINV-2022-10353",
-                     description=doc_ggc.send_text or "Estimado Propietario, Su recibo de condomnio del mes", attachments=attachments)
+    file = get_pdf_backend_api(report_name='Reporte de Gastos Comunes',
+                               doctype="Condominium Common Expenses", name=ggc, as_download=True)
+    ret = frappe.get_doc({
+        "doctype": "File",
+        "folder": "Home",
+        "file_name": "reporte_de_gastos_comunes.pdf",
+        "is_private": 1,
+        "content": file.content,
+    })
+    ret.save(ignore_permissions=True)
+    attachments.append(ret.name)
 
     for d in data_emails:
-        pass
-        # send_email_condo(d['email'] , d['invoice'] , "Estimado Propietario, Su recibo de condomnio del mes")
-        # send_email_condo(emails='armando.develop@gmail.com',
-        #                 name=d['invoice'], description=doc_ggc.send_text or "Estimado Propietario, Su recibo de condomnio del mes", attachments=attachments)
-        # break
+        new_attachments = attachments
+        file = get_pdf_backend_api_report(
+            report_name='Recibo de Condominio Copia', params=json.dumps({
+                # 'company': doc_ggc.company,
+                'condominium': ggc,
+                "customer": d['customer'],
+                "from_date": "2000-01-01",
+                "housing":  d['housing'],
+                "to_date":  "2099-12-31"
+            }))
+        ret = frappe.get_doc({
+            "doctype": "File",
+            "folder": "Home",
+            "file_name": "recibo_de_condominio.pdf",
+            "is_private": 1,
+            "content": file.content,
+        })
+        ret.save(ignore_permissions=True)
+        new_attachments.append(ret.name)
+
+        send_email_condo(emails='armando.develop@gmail.com', name=d['invoice'],
+                         description=doc_ggc.send_text or "Estimado Propietario, Su recibo de condomnio del mes", attachments=new_attachments)
+        break
 
     print("finalizar proceso")
     frappe.publish_realtime('msgprint', 'Finalizacion de envio de Correos')
@@ -480,8 +509,6 @@ def get_invoice_condo(condo, date):
             if not invoice.description:
                 invoice.description = invoice.remarks
 
-            # invoice.cost_center = invoice.description
-
             is_for_fund = parent_cost_center_doc.is_reserve
 
         if not (invoice.description + invoice.supplier) in data_cost_center.keys():
@@ -557,10 +584,6 @@ def get_invoice_condo(condo, date):
 
         if previous_gcc:
             previous_gcc.detail_funds
-
-            print("\n\n\n\n")
-            print(previous_gcc.detail_funds[0].funds_current)
-
             for pre in previous_gcc.detail_funds:
 
                 if pre.concept == reserve.description:
