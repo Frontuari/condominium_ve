@@ -106,11 +106,12 @@ app_license = "MIT"
 # Scheduled Tasks
 # ---------------
 scheduler_events = {
-        "cron": {
-                "*/5 * * * *": [
-                        "condominium_ve.task.validate_payment",
-                ]
-	}
+    "cron": {
+        "*/5 * * * *": [
+            "condominium_ve.task.validate_payment",
+            "condominium_ve.task.validate_sales_invoices",
+        ]
+    }
 }
 # scheduler_events = {
 # 	"all": [
@@ -158,24 +159,24 @@ scheduler_events = {
 # --------------------
 
 user_data_fields = [
-	{
-		"doctype": "{doctype_1}",
-		"filter_by": "{filter_by}",
-		"redact_fields": ["{field_1}", "{field_2}"],
-		"partial": 1,
-	},
-	{
-		"doctype": "{doctype_2}",
-		"filter_by": "{filter_by}",
-		"partial": 1,
-	},
-	{
-		"doctype": "{doctype_3}",
-		"strict": False,
-	},
-	{
-		"doctype": "{doctype_4}"
-	}
+    {
+        "doctype": "{doctype_1}",
+        "filter_by": "{filter_by}",
+        "redact_fields": ["{field_1}", "{field_2}"],
+        "partial": 1,
+    },
+    {
+        "doctype": "{doctype_2}",
+        "filter_by": "{filter_by}",
+        "partial": 1,
+    },
+    {
+        "doctype": "{doctype_3}",
+        "strict": False,
+    },
+    {
+        "doctype": "{doctype_4}"
+    }
 ]
 
 # Authentication and authorization
@@ -194,5 +195,5 @@ user_data_fields = [
 # translated_search_doctypes = []
 
 domains = {
-        "Condominium Ve": "condominium_ve.domains.condominium_ve",
+    "Condominium Ve": "condominium_ve.domains.condominium_ve",
 }

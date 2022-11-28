@@ -1,0 +1,109 @@
+{
+ "add_total_row": 0,
+ "columns": [
+  {
+   "fieldname": "posting_date",
+   "fieldtype": "Date",
+   "label": "Fecha",
+   "width": 0
+  },
+  {
+   "fieldname": "company",
+   "fieldtype": "Data",
+   "label": "Compa\u00f1ia",
+   "width": 0
+  },
+  {
+   "fieldname": "territory",
+   "fieldtype": "Data",
+   "label": "Sector",
+   "width": 0
+  },
+  {
+   "fieldname": "housing",
+   "fieldtype": "Data",
+   "label": "Vivienda",
+   "width": 0
+  },
+  {
+   "fieldname": "party_name",
+   "fieldtype": "Data",
+   "label": "Propietario",
+   "width": 0
+  },
+  {
+   "fieldname": "document",
+   "fieldtype": "Data",
+   "label": "No. Doc",
+   "width": 0
+  },
+  {
+   "fieldname": "paid_amount",
+   "fieldtype": "Currency",
+   "label": "Cant. Pagada",
+   "width": 0
+  },
+  {
+   "fieldname": "reference_name",
+   "fieldtype": "Data",
+   "label": "Factura Relacionada",
+   "width": 0
+  },
+  {
+   "fieldname": "description",
+   "fieldtype": "Data",
+   "label": "Descripci\u00f3n",
+   "width": 0
+  },
+  {
+   "fieldname": "total_amount",
+   "fieldtype": "Currency",
+   "label": "Total de la Factura",
+   "width": 0
+  },
+  {
+   "fieldname": "outstanding_amount",
+   "fieldtype": "Currency",
+   "label": "Monto Pendiente",
+   "width": 0
+  },
+  {
+   "fieldname": "allocated_amount",
+   "fieldtype": "Currency",
+   "label": "Monto Asignado",
+   "width": 0
+  }
+ ],
+ "creation": "2022-11-21 09:37:29.620939",
+ "disable_prepared_report": 0,
+ "disabled": 0,
+ "docstatus": 0,
+ "doctype": "Report",
+ "filters": [],
+ "idx": 0,
+ "is_standard": "Yes",
+ "javascript": "frappe.query_reports[\"Entrada de Pagos Detallados\"] = {\r\n\t\"filters\": [\r\n\t\t{\r\n\t\t\tfieldname: \"from_date\",\r\n\t\t\tlabel: __(\"From Date\"),\r\n\t\t\tfieldtype: \"Date\",\r\n\t\t\tdefault: frappe.defaults.get_user_default(\"year_start_date\"),\r\n\t\t\treqd: 1\r\n\t\t},\r\n\t\t{\r\n\t\t\tfieldname:\"to_date\",\r\n\t\t\tlabel: __(\"To Date\"),\r\n\t\t\tfieldtype: \"Date\",\r\n\t\t\tdefault: frappe.defaults.get_user_default(\"year_end_date\"),\r\n\t\t\treqd: 1\r\n\t\t},\r\n\t\t{\r\n\t\t\tfieldname: \"company\",\r\n\t\t\tlabel: __(\"Company\"),\r\n\t\t\tfieldtype: \"Link\",\r\n\t\t\toptions: \"Company\",\r\n\t\t\tdefault: frappe.defaults.get_user_default(\"Company\"),\r\n\t\t\treqd: 1\r\n\t\t},\r\n\t\t{\r\n\t\t\tfieldname: \"customer\",\r\n\t\t\tlabel: __(\"Customer\"), \r\n\t\t\tfieldtype: \"Link\",\r\n\t\t\toptions: \"Customer\",\r\n\t\t\tdefault: ' '\r\n\t\t},\r\n\t\t\t\t{\r\n\t\t\tfieldname: \"territory\",\r\n\t\t\tlabel: __(\"Territory\"), \r\n\t\t\tfieldtype: \"Link\",\r\n\t\t\toptions: \"Territory\",\r\n\t\t\tdefault: ' '\r\n\t\t},\r\n\t]\r\n}",
+ "letter_head": "",
+ "modified": "2022-11-25 08:44:40.251808",
+ "modified_by": "Administrator",
+ "module": "Condominium Ve",
+ "name": "Entrada de Pagos Detallados",
+ "owner": "Administrator",
+ "prepared_report": 0,
+ "query": "Select \r\npay.posting_date  ,\r\npay.company,\r\ntc.territory,\r\nth.name as housing,\r\npay.party_name,\r\npay.name as document, \r\npay.paid_amount,\r\ntper.reference_name,\r\ntsii.description,\r\ntper.total_amount,\r\ntper.outstanding_amount,\r\ntper.allocated_amount,\r\npay.payment_type\r\n\r\nfrom `tabPayment Entry` as pay\r\nleft join tabCustomer tc on pay.party_name= tc.name\r\nleft join `tabPayment Entry Reference` tper on pay.name= tper.parent\r\nleft join tabHousing th on pay.party_name = th.owner_customer \r\nleft join `tabSales Invoice Item` tsii on tper.reference_name = tsii.parent\r\nwhere pay.payment_type='Receive' and pay.docstatus=1 \r\nand (pay.party_name =  %(customer)s or %(customer)s='')\r\nand (pay.posting_date between %(from_date)s and %(to_date)s)\r\nand (tc.territory =  %(territory)s or %(territory)s='')\r\n\r\norder by 1,6,8",
+ "ref_doctype": "Payment Entry",
+ "report_name": "Entrada de Pagos Detallados",
+ "report_script": "if not filters.get('customer'):\n    filters['customer'] = ''\n    \nif not filters.get('territory'):\n    filters['territory'] = ''\n    ",
+ "report_type": "Query Report",
+ "roles": [
+  {
+   "role": "Accounts User"
+  },
+  {
+   "role": "Accounts Manager"
+  },
+  {
+   "role": "Guest"
+  }
+ ]
+}

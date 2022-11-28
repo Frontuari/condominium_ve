@@ -229,54 +229,14 @@
    "dependencies": "housing",
    "hidden": 0,
    "is_query_report": 0,
-   "label": "Listado de Propietarios",
-   "link_to": "Listado de Propietarios",
-   "link_type": "Report",
-   "onboard": 0,
-   "only_for": "",
-   "type": "Link"
-  },
-  {
-   "dependencies": "payment-entry",
-   "hidden": 0,
-   "is_query_report": 0,
    "label": "Pagos Realizados",
    "link_to": "Pagos Realizados",
    "link_type": "Report",
    "onboard": 0,
    "type": "Link"
-  },
-  {
-   "dependencies": "payment-entry",
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Pagos Recibidos",
-   "link_to": "Pagos Recibidos",
-   "link_type": "Report",
-   "onboard": 0,
-   "only_for": "",
-   "type": "Link"
-  },
-  {
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Trial Balance",
-   "link_to": "Trial Balance",
-   "link_type": "Report",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "General Ledger",
-   "link_to": "General Ledger",
-   "link_type": "Report",
-   "onboard": 0,
-   "type": "Link"
   }
  ],
- "modified": "2022-11-22 14:31:32.421231",
+ "modified": "2022-11-22 10:03:19.472160",
  "modified_by": "Administrator",
  "module": "Condominium Ve",
  "name": "Condominio",
