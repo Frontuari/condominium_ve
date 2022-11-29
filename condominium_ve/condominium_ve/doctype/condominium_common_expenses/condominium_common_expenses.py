@@ -13,7 +13,14 @@ import requests
 
 
 class CondominiumCommonExpenses(Document):
-    def on_submit(self):
+
+    def on_submit(self): 
+        # self.generate_process()
+        frappe.enqueue(
+        'condominium_ve.condominium_ve.doctype.condominium_common_expenses.condominium_common_expenses.generate_process_sales_invoice', obj=self)
+
+
+    def generate_process(self):
         doc = self.get_doc_before_save()
 
         total_ggc = self.get_total_ggc(doc.condominium_common_expenses_detail)
@@ -69,8 +76,9 @@ class CondominiumCommonExpenses(Document):
                 housing=house.housing,
                 select_print_heading="Recibo de Condominio"
             )).insert()
-            sales_invoice.queue_action('submit')
-            # sales_invoice.submit()
+            #sales_invoice.queue_action('submit')
+            sales_invoice.submit()
+            print("Factura no. " + sales_invoice.name)
 
             for fund in doc.funds:
 
@@ -114,8 +122,8 @@ class CondominiumCommonExpenses(Document):
                     housing=house.housing,
                     select_print_heading="Recibo de Fondo de Condominio"
                 )).insert()
-                sales_invoice_2.queue_action('submit')
-                # sales_invoice_2.submit()
+                #sales_invoice_2.queue_action('submit')
+                sales_invoice_2.submit()
 
             # if len(emails) > 0:
             #    send_email(emails, sales_invoice.name, description='Cuota de Condominio {0} {1} '.format(
@@ -150,6 +158,8 @@ class CondominiumCommonExpenses(Document):
                 'Purchase Invoice', invoice.invoice)
             doc_invoice.apply_process_condo = 0
             doc_invoice.save(ignore_permissions=True)
+
+
 
 
 def get_emails(owner):
@@ -220,7 +230,17 @@ def send_email_condo(emails, name, description="", attachments=[]):
                       read_receipt=0,
                       print_letterhead=1)
 
-
+def generate_process_sales_invoice(obj):
+    frappe.publish_realtime(
+        'msgprint', 'Inicio de proceso de generar recibos de condominio')
+    print("Inicio del proceso")
+    
+    obj.generate_process()
+    
+    print("Fin del proceso")
+    frappe.publish_realtime('msgprint', 'Finalizacion de proceso de generar recibos de condominio')
+    
+    
 def send_email_condo_queue(ggc):
     frappe.publish_realtime(
         'msgprint', 'Inicio de proceso de envio de correos')
@@ -465,15 +485,15 @@ def get_invoice_condo(condo, date):
     funds_expenditure_total = 0.0
     funds_current_total = 0.0
 
-    purchase_invoice_list = frappe.db.get_list("Purchase Invoice",  filters={
-
-        "is_for_condominium": 1,
-        "apply_process_condo": 0,
-        "docstatus": 1,
-        "is_return": 0,
-        "condominium": condo,
-        "status": {"in": ["Overdue", "Unpaid", "Partly Paid", "Paid"]}
-    }, order_by='cost_center ASC')
+    purchase_invoice_list = frappe.db.get_list("Purchase Invoice",  filters= [
+        ["is_for_condominium" , "=" , 1],
+        ["apply_process_condo" , "=" , 0],
+        ["docstatus" , "=" , 1],
+        ["is_return" , "=" , 0],
+        ["condominium" , "=" , condo],
+        ["status" , "in" , ["Overdue", "Unpaid", "Partly Paid", "Paid"] ],
+        ["posting_date" , '<=' , date]
+    ], order_by='cost_center ASC')
 
     doc_condo = frappe.get_doc('Condominium', condo)
 
