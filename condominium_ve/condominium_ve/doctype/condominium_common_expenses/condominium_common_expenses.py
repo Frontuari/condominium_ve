@@ -144,7 +144,7 @@ class CondominiumCommonExpenses(Document):
     
     
     def on_cancel(self):
-        self.cancel_process()
+        # self.cancel_process()
         frappe.enqueue(
         'condominium_ve.condominium_ve.doctype.condominium_common_expenses.condominium_common_expenses.cancel_process_sales_invoice', obj=self)
         
