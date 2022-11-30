@@ -9,7 +9,7 @@ from frappe.utils import add_to_date
 from frappe.core.doctype.communication import email
 from custom_reports.report_design.doctype.report_bro.report_bro import get_pdf_backend_api, get_pdf_backend_api_report
 from custom_reports.utils.handler_extend import upload_file_report
-import requests
+from custom_ve.custom_ve.doctype.environment_variables.environment_variables import get_env
 
 
 class CondominiumCommonExpenses(Document):
@@ -278,6 +278,7 @@ def send_email_condo_queue(ggc):
     ret.save(ignore_permissions=True)
 
     attachments = [ret.name]
+    attachments_simp = [ret.name]
 
     file = get_pdf_backend_api(report_name='Reporte de Gastos Comunes',
                                doctype="Condominium Common Expenses", name=ggc, as_download=True)
@@ -290,6 +291,8 @@ def send_email_condo_queue(ggc):
     })
     ret.save(ignore_permissions=True)
     attachments.append(ret.name)
+    attachments_simp.append(ret.name)
+
 
     for d in data_emails:
         new_attachments = attachments
@@ -311,10 +314,21 @@ def send_email_condo_queue(ggc):
         })
         ret.save(ignore_permissions=True)
         new_attachments.append(ret.name)
-
-        send_email_condo(emails='armando.develop@gmail.com', name=d['invoice'],
+        
+        if get_env('MOD_DEV') == 'False':
+            send_email_condo(emails=d['email'], name=d['invoice'],
                          description=doc_ggc.send_text or "Estimado Propietario, Su recibo de condomnio del mes", attachments=new_attachments)
-        break
+        else:
+
+            send_email_condo(emails='armando.develop@gmail.com', name=d['invoice'],
+                         description=doc_ggc.send_text or "Estimado Propietario, Su recibo de condomnio del mes", attachments=new_attachments)
+            break
+        
+        
+    email_condo = get_env('EMAIL_CONDO')
+    if len(email_condo) > 0:
+        send_email_condo(emails= email_condo, name=d['invoice'],
+                            description=doc_ggc.send_text or "Estimado Propietario, Su recibo de condomnio del mes", attachments=attachments_simp)
 
     print("finalizar proceso")
     frappe.publish_realtime('msgprint', 'Finalizacion de envio de Correos')
