@@ -3,7 +3,7 @@
 
 from __future__ import unicode_literals
 
-from pyrsistent import thaw
+# from pyrsistent import thaw
 
 import frappe
 from frappe import _, throw

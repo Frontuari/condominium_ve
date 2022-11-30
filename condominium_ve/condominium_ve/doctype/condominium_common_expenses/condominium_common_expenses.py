@@ -141,8 +141,15 @@ class CondominiumCommonExpenses(Document):
             total = total + ggc.amount
 
         return total
-
+    
+    
     def on_cancel(self):
+        self.cancel_process()
+        frappe.enqueue(
+        'condominium_ve.condominium_ve.doctype.condominium_common_expenses.condominium_common_expenses.cancel_process_sales_invoice', obj=self)
+        
+
+    def cancel_process(self):
         doc = self.get_doc_before_save()
 
         sales_invoices = frappe.db.get_list("Sales Invoice", fields=['*'], filters={
@@ -239,6 +246,15 @@ def generate_process_sales_invoice(obj):
     
     print("Fin del proceso")
     frappe.publish_realtime('msgprint', 'Finalizacion de proceso de generar recibos de condominio')
+    
+    
+def cancel_process_sales_invoice(obj):
+    frappe.publish_realtime(
+        'msgprint', 'Inicio de proceso de cancelar recibos de condominio')
+    print("Inicio del proceso")
+    obj.cancel_process()
+    print("Fin del proceso")
+    frappe.publish_realtime('msgprint', 'Finalizacion de proceso de cancelar recibos de condominio')
     
     
 def send_email_condo_queue(ggc):
