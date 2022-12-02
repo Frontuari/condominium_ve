@@ -13,12 +13,7 @@ def validate_payment():
 
 def validate_sales_invoices():
 
-    dd = frappe.get_list("Sales Invoice",  filters={
-                         "docstatus": 0,  [ 'gc_condo' , '<>', ''] )
-    
-    
-    
-
+    dd = frappe.get_list("Sales Invoice",  filters=[  [ 'gc_condo' , '!=', '']  , ['docstatus' , '=' , '0']] )
     # for d in docs:
     for d in dd:
         try:

@@ -488,7 +488,7 @@ def entry_funds(from_date, to_date, company, cost_center_parent):
 
 
 def expedition_funds(from_date, to_date, company, cost_center_parent):
-    data = frappe.db.sql("""
+    sql = """
         SELECT
             COALESCE(sum(tpi.grand_total )  , 0.0	) as payment
         from
@@ -496,7 +496,10 @@ def expedition_funds(from_date, to_date, company, cost_center_parent):
         join `tabCost Center` tcc ON tcc.name  = tpi.cost_center
         left join `tabPayment Entry Reference` tper on tper.reference_name  = tpi.name
         left join  `tabPayment Entry` tpe on tpe.name = tper.parent and tpe.docstatus = 1
-        where  tpi.posting_date >= '{0}' and tpi.posting_date <= '{1}' and (tcc.parent_cost_center = '{2}' or  tcc.name = '{2}'   ) and tpi.company = '{3}' and tpi.docstatus = 1 """.format(from_date, to_date,   cost_center_parent, company))
+        where  tpi.posting_date >= '{0}' and tpi.posting_date <= '{1}' and (tcc.parent_cost_center = '{2}' or  tcc.name = '{2}'   ) and tpi.company = '{3}' and tpi.docstatus = 1 """.format(from_date, to_date,   cost_center_parent, company)
+    data = frappe.db.sql(sql)
+    
+    print(sql)
     return data[0][0]
 
 
@@ -624,9 +627,9 @@ def get_invoice_condo(condo, date):
 
     for reserve in doc_condo.reserve:
         entry = entry_funds(previous_date, date,
-                            doc_condo.company, reserve.cost_center)
+                            doc_condo.company, reserve.parent_cost_center)
         exp = expedition_funds(previous_date, date,
-                               doc_condo.company, reserve.cost_center)
+                               doc_condo.company, reserve.parent_cost_center)
 
         funds_receive_total = funds_receive_total + entry
         funds_expenditure_total = funds_expenditure_total + exp

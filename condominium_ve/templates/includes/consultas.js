@@ -61,7 +61,7 @@ function url_condo(name) {
 }
 
 function url_payment(name) {
-  return `/api/method/frappe.utils.print_format.download_pdf?doctype=Payment%20Entry&name=${name}&format=Recibo%20de%20Cobranza&no_letterhead=0&letterhead=Casa%20de%20Campo&settings=%7B%7D&_lang=es-VE`;
+  return `/printview?doctype=Payment%20Entry&name=${name}&format=Recibo%20de%20Cobranza&no_letterhead=0&letterhead=Casa%20de%20Campo&settings=%7B%7D&_lang=es-VE`;
 }
 /*
 

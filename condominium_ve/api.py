@@ -108,12 +108,12 @@ def get_balance(customer):
             Select
             ROUND(si.grand_total,2) as total
             from `tabSales Invoice` as si
-            where si.customer =  {0}
+            where si.customer =  {0} and  docstatus = 1
             union all
             Select
-                (pay.total_allocated_amount *-1) as total
+                (pay.base_paid_amount *-1) as total
             from `tabPayment Entry` as pay
-            where pay.party_name =  {0}
+            where pay.party_name =  {0}  and pay.docstatus = 1
             )t
     """.format(frappe.db.escape(customer))
 
