@@ -18,15 +18,17 @@
   "total_per_unit",
   "funds_expenditure",
   "funds_current",
-  "section_break_4",
-  "send_text",
   "section_break_13",
   "condominium_common_expenses_detail",
   "amended_from",
   "funds",
+  "section_break_15",
+  "detail_funds",
   "expense",
+  "section_break_18",
   "condominium_common_expenses_invoices",
-  "detail_funds"
+  "section_break_4",
+  "send_text"
  ],
  "fields": [
   {
@@ -95,7 +97,7 @@
   {
    "fieldname": "funds",
    "fieldtype": "Table",
-   "label": "Fondos",
+   "label": "Cuota por fondos",
    "options": "Condominium Funds"
   },
   {
@@ -127,18 +129,25 @@
   {
    "fieldname": "detail_funds",
    "fieldtype": "Table",
-   "hidden": 1,
-   "label": "Fondos",
+   "label": "Gasto de Fondos",
    "options": "Detail Funds"
   },
   {
+   "allow_on_submit": 1,
    "fieldname": "send_text",
    "fieldtype": "Text Editor",
-   "label": "Mensaje para el correo",
-   "reqd": 1
+   "label": "Mensaje para el correo"
   },
   {
    "fieldname": "section_break_13",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "section_break_15",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "section_break_18",
    "fieldtype": "Section Break"
   }
  ],
@@ -151,7 +160,7 @@
    "link_fieldname": "gc_condo"
   }
  ],
- "modified": "2022-11-21 08:53:13.343993",
+ "modified": "2022-12-02 09:50:27.195990",
  "modified_by": "Administrator",
  "module": "Condominium Ve",
  "name": "Condominium Common Expenses",

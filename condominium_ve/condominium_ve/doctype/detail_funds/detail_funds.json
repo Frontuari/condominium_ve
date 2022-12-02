@@ -17,41 +17,41 @@
    "fieldname": "concept",
    "fieldtype": "Data",
    "in_list_view": 1,
-   "label": "concept",
+   "label": "Concepto",
    "reqd": 1
   },
   {
    "fieldname": "funds_receive",
    "fieldtype": "Currency",
    "in_list_view": 1,
-   "label": "funds_receive",
+   "label": "Ingreso de fondo",
    "reqd": 1
   },
   {
    "fieldname": "funds_expenditure",
    "fieldtype": "Currency",
    "in_list_view": 1,
-   "label": "funds_expenditure",
+   "label": "Egreso de fondo",
    "reqd": 1
   },
   {
    "fieldname": "funds_current",
    "fieldtype": "Currency",
    "in_list_view": 1,
-   "label": "funds_current",
+   "label": "Fondo actual",
    "reqd": 1
   },
   {
    "fieldname": "previous_funds",
    "fieldtype": "Currency",
-   "label": "previous_funds",
+   "label": "Fondo anterior",
    "reqd": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2022-11-14 14:13:09.930366",
+ "modified": "2022-12-02 09:52:01.548097",
  "modified_by": "Administrator",
  "module": "Condominium Ve",
  "name": "Detail Funds",
