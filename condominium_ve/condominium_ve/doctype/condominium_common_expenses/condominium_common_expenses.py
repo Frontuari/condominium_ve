@@ -179,11 +179,12 @@ def get_emails(owner):
 def get_emails_condo(gcc):
     sql = """
         SELECT
-        tce.email_id as email, tsi.name as invoice, tsi.customer , tsi.housing , tsi.code
+        tce.email_id as email, tsi.name as invoice, tsi.customer , tsi.housing , th.code
         from
             `tabSales Invoice` tsi
         join tabCustomer tc ON  tsi.customer = tc.name
         join `tabContact Email` tce ON tce.parent like concat('%-' , tc.name )
+        join `tabHousing` th ON th.owner_customer = tc.name
         where
             tsi.docstatus in (0 , 1)
             and gc_condo = '{0}'
@@ -294,6 +295,7 @@ def send_email_condo_queue(ggc):
     description_email_text = doc_ggc.send_text if doc_ggc.send_text else "Estimado Propietario, Su recibo de condomnio del mes"
 
     for d in data_emails:
+        print("# registrar correo en la cola")
         new_attachments = attachments
         file = get_pdf_backend_api_report(
             report_name='Recibo de Condominio Copia', params=json.dumps({
