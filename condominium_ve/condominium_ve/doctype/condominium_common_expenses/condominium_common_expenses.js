@@ -147,4 +147,101 @@ frappe.ui.form.on("Condominium Common Expenses", {
       });
     }
   },
+
+
+  caculate_funds(frm){
+
+    let data = frm.doc 
+    
+    let total = parseFloat(data.funds_received )-  parseFloat(data.funds_expenditure )+ parseFloat(data.previous_funds)
+
+    frm.set_value("funds_current", total);
+    frm.refresh_field("detail_funds");
+  },
+
+  caculate_funds_detail(frm){
+
+    let data = frm.doc 
+
+    data.funds_received  = 0
+    data.funds_expenditure  = 0
+    data.previous_funds  = 0
+    data.funds_current  = 0
+
+
+    console.log(data)
+
+    data.detail_funds.forEach(ddf =>{
+
+      data.funds_received  += parseFloat(ddf.funds_receive)
+      data.funds_expenditure  += parseFloat(ddf.funds_expenditure)
+      data.previous_funds  += parseFloat(ddf.previous_funds)
+      data.funds_current  += parseFloat(ddf.funds_current)
+
+    })
+
+    let total = parseFloat(data.funds_received )-  parseFloat(data.funds_expenditure )+ parseFloat(data.previous_funds)
+
+    frm.set_value("funds_current", total);
+
+    frm.refresh_field("funds_received");
+    frm.refresh_field("funds_expenditure");
+    frm.refresh_field("previous_funds");
+    frm.refresh_field("funds_current");
+  },
+
+
+  funds_received(frm){
+    frm.events.caculate_funds(frm)
+  },
+
+  funds_expenditure(frm){
+    frm.events.caculate_funds(frm)
+  },
+
+  previous_funds(frm){
+    frm.events.caculate_funds(frm)
+  },
+
+  calculate_funds_detail(frm ,  cdt, cdn){
+    let data = frappe.get_doc(cdt, cdn);
+
+    
+    let total = parseFloat(data.funds_receive )-  parseFloat(data.funds_expenditure )+ parseFloat(data.previous_funds)
+
+    data.funds_current = total
+    frm.refresh_field("detail_funds");
+    
+    frm.events.caculate_funds_detail(frm)
+  },
+});
+
+
+
+
+
+frappe.ui.form.on("Detail Funds", {
+
+  funds_receive(frm, cdt, cdn) {
+   
+    
+    frm.events.calculate_funds_detail(frm , cdt,cdn)
+
+  },
+
+  funds_expenditure(frm, cdt, cdn) {
+   
+    
+    frm.events.calculate_funds_detail(frm , cdt,cdn)
+
+  },
+
+  previous_funds(frm, cdt, cdn) {
+   
+    
+    frm.events.calculate_funds_detail(frm , cdt,cdn)
+
+  },
+ 
+  
 });
