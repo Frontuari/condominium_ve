@@ -331,8 +331,7 @@ def send_email_condo_queue(ggc):
             send_email_condo(emails=d['email'], name=d['invoice'],
                              description=description_email_text + extra_message, attachments=new_attachments)
         else:
-            print(new_attachments)
-            send_email_condo(emails='armando.develop@gmail.com', name=d['invoice'],
+            send_email_condo(emails=get_env('EMAIL_DEV'), name=d['invoice'],
                              description=description_email_text + extra_message, attachments=new_attachments)
             break
 
