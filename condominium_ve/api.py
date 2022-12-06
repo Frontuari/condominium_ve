@@ -25,6 +25,7 @@ def query_code(code=""):
         cce_list = get_gcc(customer['condominium'])
         balance = get_balance(customer['customer'])
         payments = get_payments(customer['customer'])
+        invoices = get_sales_invoice(customer['customer'])
 
     else:
         frappe.throw("Propietario no encontrado ")
@@ -33,7 +34,8 @@ def query_code(code=""):
         "balance": balance,
         "cc_condo": cce_list,
         "payments": payments,
-        "customer": customer
+        "customer": customer,
+        "invoices" : invoices
     }})
 
     return build_response("json")
@@ -58,6 +60,18 @@ def get_payments(customer):
     return data
 
 
+def get_sales_invoice(customer):
+    
+    
+    sql = "SELECT name , customer_name  , grand_total , outstanding_amount , posting_date  from `tabSales Invoice` tsi  where customer = {0} and docstatus=1 order by posting_date asc ".format(
+        frappe.db.escape(customer))
+    
+    print(sql)
+    data = frappe.db.sql(sql, as_dict=1)
+
+    return data
+
+
 @frappe.whitelist(allow_guest=True)
 def query_code_housing(code=""):
 
@@ -74,12 +88,15 @@ def query_code_housing(code=""):
         customer = frappe.db.sql(
             'SELECT tc.name from tabCustomer tc join tabHousing th ON th.owner_customer = tc.name  where th.code ={}'.format(frappe.db.escape(code)))[0]
         saldo = get_balance(customer[0])[0][0]
+        invoices = get_sales_invoice(customer[0])
+        
     else:
         frappe.throw("Propietario no encontrado ")
 
     frappe.local.response.update({"data": {
         "customer": customer,
-        "saldo": saldo
+        "saldo": saldo,
+        "invoices" : invoices
     }})
 
     return build_response("json")

@@ -300,7 +300,7 @@ def send_email_condo_queue(ggc):
         file = get_pdf_backend_api_report(
             report_name='Recibo de Condominio Copia', params=json.dumps({
                 # 'company': doc_ggc.company,
-                'condominium': ggc,
+                'condominium_name': ggc,
                 "customer": d['customer'],
                 "from_date": "2000-01-01",
                 "housing":  d['housing'],
@@ -315,15 +315,23 @@ def send_email_condo_queue(ggc):
         })
         ret.save(ignore_permissions=True)
         new_attachments.append(ret.name)
-
-        extra_message = "<br>  <p> Su codigo para consulta y realizar pagos es: {0}</p>".format(
-            d['code']) if d['code'] else ''
+        
+        
+        
+       
+        
+        extra_message = ''
+        if d['code']:
+            url_code = get_env('URL_AUTOGESTION') + d['code']
+            extra_message = "<br><br><br>  <p> Su codigo para consulta y realizar pagos es: {0}</p>  <br>  <a href='{1}' > Click aqui para ir a la autogestion </a>    ".format(
+                d['code'] , url_code)
+        
 
         if get_env('MOD_DEV') == 'False':
             send_email_condo(emails=d['email'], name=d['invoice'],
                              description=description_email_text + extra_message, attachments=new_attachments)
         else:
-
+            print(new_attachments)
             send_email_condo(emails='armando.develop@gmail.com', name=d['invoice'],
                              description=description_email_text + extra_message, attachments=new_attachments)
             break
