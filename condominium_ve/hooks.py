@@ -107,7 +107,7 @@ app_license = "MIT"
 # ---------------
 scheduler_events = {
     "cron": {
-        "*/15 * * * *": [
+        "*/15 * * * * *": [
             "condominium_ve.task.validate_payment"
         ]
     }
