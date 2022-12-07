@@ -63,7 +63,7 @@ def get_payments(customer):
 def get_sales_invoice(customer):
     
     
-    sql = "SELECT name , customer_name  , grand_total , outstanding_amount , posting_date  from `tabSales Invoice` tsi  where customer = {0} and docstatus=1 order by posting_date asc ".format(
+    sql = "SELECT name , customer_name  , grand_total , outstanding_amount , posting_date  from `tabSales Invoice` tsi  where customer = {0} and docstatus=1 and outstanding_amount <> 0 order by posting_date asc ".format(
         frappe.db.escape(customer))
     
     print(sql)

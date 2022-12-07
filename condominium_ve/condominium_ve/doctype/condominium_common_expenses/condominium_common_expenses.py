@@ -293,7 +293,7 @@ def send_email_condo_queue(ggc):
     attachments_simp.append(ret.name)
 
     description_email_text = doc_ggc.send_text if doc_ggc.send_text else "Estimado Propietario, Su recibo de condomnio del mes"
-
+    invoice_aux = ""
     for d in data_emails:
         print("# registrar correo en la cola")
         new_attachments = attachments
@@ -317,7 +317,7 @@ def send_email_condo_queue(ggc):
         new_attachments.append(ret.name)
         
         
-        
+        invoice_aux = d['invoice']
        
         
         extra_message = ''
@@ -337,7 +337,7 @@ def send_email_condo_queue(ggc):
 
     email_condo = get_env('EMAIL_CONDO')
     if len(email_condo) > 0:
-        send_email_condo(emails=email_condo, name=d['invoice'],
+        send_email_condo(emails=email_condo, name=invoice_aux,
                          description=description_email_text, attachments=attachments_simp)
 
     print("finalizar proceso")
