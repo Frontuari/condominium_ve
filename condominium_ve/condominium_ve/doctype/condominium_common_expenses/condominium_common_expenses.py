@@ -189,7 +189,7 @@ def get_emails_condo(gcc):
             tsi.docstatus in (0 , 1)
             and gc_condo = '{0}'
             and select_print_heading = 'Recibo de Condominio'
-            and tc.email_id is not null
+            and tce.email_id is not null
 
             order by tsi.housing ASC
     """.format(gcc)
