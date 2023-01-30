@@ -41,6 +41,10 @@ class CondominiumCommonExpenses(Document):
 
             # emails = get_emails(owner)
 
+            the_remarks = ' '
+            if doc.is_remarks == 1:
+                the_remarks = doc.remarks
+
             sales_invoice = frappe.get_doc(dict(
                 naming_series="RC-.YYYY..-.########",
                 doctype="Sales Invoice",
@@ -73,7 +77,8 @@ class CondominiumCommonExpenses(Document):
                 ],
                 gc_condo=doc.name,
                 housing=house.housing,
-                select_print_heading="Recibo de Condominio"
+                select_print_heading="Recibo de Condominio",
+                remarks=the_remarks
             )).insert()
             # sales_invoice.queue_action('submit')
             sales_invoice.submit()
@@ -315,17 +320,14 @@ def send_email_condo_queue(ggc):
         })
         ret.save(ignore_permissions=True)
         new_attachments.append(ret.name)
-        
-        
+
         invoice_aux = d['invoice']
-       
-        
+
         extra_message = ''
         if d['code']:
             url_code = get_env('URL_AUTOGESTION') + d['code']
             extra_message = "<br><br><br>  <p> Su codigo para consulta y realizar pagos es: {0}</p>  <br>  <a href='{1}' > Click aqui para ir a la autogestion </a>    ".format(
-                d['code'] , url_code)
-        
+                d['code'], url_code)
 
         if get_env('MOD_DEV') == 'False':
             send_email_condo(emails=d['email'], name=d['invoice'],
@@ -613,6 +615,8 @@ def get_invoice_condo(condo, date):
     fund_total_reserve = []
 
     for fund in doc_condo.reserve:
+        if fund.active == 0:
+            continue
         keys_reserve.append(fund.cost_center_name)
 
     for dd in data_cost_center_copy.keys():
@@ -624,8 +628,11 @@ def get_invoice_condo(condo, date):
 
     for fund in doc_condo.reserve:
 
+        if fund.active == 0:
+            continue
+
         funds.append({'concept': fund.description, 'amount': fund.amount,
-                     'amount_per_unit': fund.amount / doc_condo.n_houses_active,  'account': fund.account})
+                      'amount_per_unit': fund.amount / doc_condo.n_houses_active,  'account': fund.account})
         total = total + fund.amount
         total_per_unit = total_per_unit + fund.amount / doc_condo.n_houses_active
 
@@ -636,6 +643,10 @@ def get_invoice_condo(condo, date):
             'Condominium Common Expenses', previous_name)
 
     for reserve in doc_condo.reserve:
+
+        if reserve.active == 0:
+            continue
+
         entry = entry_funds(previous_date, date,
                             doc_condo.company, reserve.parent_cost_center)
         exp = expedition_funds(previous_date, date,

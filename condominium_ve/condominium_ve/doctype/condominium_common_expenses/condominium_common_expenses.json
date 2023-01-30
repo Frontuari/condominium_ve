@@ -28,7 +28,10 @@
   "section_break_18",
   "condominium_common_expenses_invoices",
   "section_break_4",
-  "send_text"
+  "send_text",
+  "section_break_22",
+  "is_remarks",
+  "remarks"
  ],
  "fields": [
   {
@@ -149,6 +152,23 @@
   {
    "fieldname": "section_break_18",
    "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "section_break_22",
+   "fieldtype": "Section Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "is_remarks",
+   "fieldtype": "Check",
+   "label": "Comentario Personalizado"
+  },
+  {
+   "depends_on": "eval: doc.is_remarks == 1",
+   "fieldname": "remarks",
+   "fieldtype": "Data",
+   "label": "Comentario",
+   "mandatory_depends_on": "eval:doc.is_remarks == 1"
   }
  ],
  "index_web_pages_for_search": 1,
@@ -160,7 +180,7 @@
    "link_fieldname": "gc_condo"
   }
  ],
- "modified": "2022-12-02 09:50:27.195990",
+ "modified": "2023-01-30 10:50:02.646922",
  "modified_by": "Administrator",
  "module": "Condominium Ve",
  "name": "Condominium Common Expenses",
