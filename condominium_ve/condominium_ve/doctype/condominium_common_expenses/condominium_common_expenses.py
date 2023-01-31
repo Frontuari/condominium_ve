@@ -17,10 +17,18 @@ class CondominiumCommonExpenses(Document):
 
     def on_submit(self):
         # self.generate_process()
-        frappe.enqueue(
-            'condominium_ve.condominium_ve.doctype.condominium_common_expenses.condominium_common_expenses.generate_process_sales_invoice', obj=self)
 
-    def generate_process(self):
+        sectors = frappe.db.sql(
+            "SELECT DISTINCT  sector  from tabHousing ", as_dict=True)
+
+        for sector in sectors:
+            frappe.enqueue(
+                'condominium_ve.condominium_ve.doctype.condominium_common_expenses.condominium_common_expenses.generate_process_sales_invoice', obj=self, sector=sector['sector'])
+
+        frappe.enqueue(
+            'condominium_ve.condominium_ve.doctype.condominium_common_expenses.condominium_common_expenses.generate_upgrade_purchase_invoice', obj=self)
+
+    def generate_process(self, sector):
         doc = self.get_doc_before_save()
 
         total_ggc = self.get_total_ggc(doc.condominium_common_expenses_detail)
@@ -30,6 +38,7 @@ class CondominiumCommonExpenses(Document):
         housings = frappe.db.get_list("Housing", fields=['*'], filters={
             'active': 1,
             'condominium': doc_condo.name,
+            'sector': sector
         })
 
         # after_days = add_to_date(doc.posting_date, days=3, as_string=True)
@@ -154,10 +163,9 @@ class CondominiumCommonExpenses(Document):
                 # sales_invoice_2.queue_action('submit')
                 sales_invoice_2.submit()
 
-            # if len(emails) > 0:
-            #    send_email(emails, sales_invoice.name, description='Cuota de Condominio {0} {1} '.format(
-            #        get_month(doc.posting_date.month), doc.posting_date.year))
 
+    def upgrade_purchase_invoice(self):
+        doc = self
         for invoice in doc.condominium_common_expenses_invoices:
             doc_invoice = frappe.get_doc(
                 'Purchase Invoice', invoice.invoice)
@@ -168,7 +176,7 @@ class CondominiumCommonExpenses(Document):
         array_invoice_special = []
         for d in invoice_ids:
             doc_invoice = frappe.get_doc('Purchase Invoice', d.invoice)
-           
+
             for item in doc_invoice.items:
                 if item.is_single_sector == 1:
                     iva = 0.0
@@ -218,7 +226,8 @@ class CondominiumCommonExpenses(Document):
 
         for d in sales_invoices:
             sales_invoice = frappe.get_doc('Sales Invoice', d.name)
-            sales_invoice.queue_action('cancel')
+            # sales_invoice.queue_action('cancel')
+            sales_invoice.cancel()
 
         for invoice in doc.condominium_common_expenses_invoices:
             doc_invoice = frappe.get_doc(
@@ -297,16 +306,29 @@ def send_email_condo(emails, name, description="", attachments=[]):
                       print_letterhead=1)
 
 
-def generate_process_sales_invoice(obj):
+def generate_process_sales_invoice(obj , sector):
     frappe.publish_realtime(
-        'msgprint', 'Inicio de proceso de generar recibos de condominio')
+        'msgprint', 'Inicio de proceso de generar recibos de condominio para el sector {0}'.format(sector))
     print("Inicio del proceso")
 
-    obj.generate_process()
+    obj.generate_process(sector)
 
     print("Fin del proceso")
     frappe.publish_realtime(
-        'msgprint', 'Finalizacion de proceso de generar recibos de condominio')
+        'msgprint', 'Finalizacion de proceso de generar recibos de condominio el para sector {0}'.format(sector))
+    
+    
+    
+def generate_upgrade_purchase_invoice(obj):
+  
+    frappe.publish_realtime(
+        'msgprint', 'Inicio de proceso de actualizar proceso esttus de facturas de compras ')
+   
+    obj.upgrade_purchase_invoice()
+    
+    frappe.publish_realtime(
+        'msgprint', 'Fin de proceso de actualizar proceso esttus de facturas de compras ')
+
 
 
 def cancel_process_sales_invoice(obj):
@@ -587,9 +609,8 @@ def get_invoice_condo(condo, date):
     funds_receive_total = 0.0
     funds_expenditure_total = 0.0
     funds_current_total = 0.0
-    
-    
-    previus_day = add_days(date , -30);
+
+    previus_day = add_days(date, -30)
 
     purchase_invoice_list = frappe.db.get_list("Purchase Invoice",  filters=[
         ["is_for_condominium", "=", 1],
