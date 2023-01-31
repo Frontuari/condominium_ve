@@ -31,7 +31,9 @@
   "send_text",
   "section_break_22",
   "is_remarks",
-  "remarks"
+  "remarks",
+  "section_break_25",
+  "excluded_sectors"
  ],
  "fields": [
   {
@@ -169,6 +171,16 @@
    "fieldtype": "Data",
    "label": "Comentario",
    "mandatory_depends_on": "eval:doc.is_remarks == 1"
+  },
+  {
+   "fieldname": "section_break_25",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "excluded_sectors",
+   "fieldtype": "Table",
+   "label": "Sectores Excluidos",
+   "options": "Condo Exclude Sector"
   }
  ],
  "index_web_pages_for_search": 1,
@@ -180,7 +192,7 @@
    "link_fieldname": "gc_condo"
   }
  ],
- "modified": "2023-01-30 10:50:02.646922",
+ "modified": "2023-01-31 08:42:43.866722",
  "modified_by": "Administrator",
  "module": "Condominium Ve",
  "name": "Condominium Common Expenses",

@@ -10,6 +10,7 @@ from frappe.core.doctype.communication import email
 from custom_reports.report_design.doctype.report_bro.report_bro import get_pdf_backend_api, get_pdf_backend_api_report
 from custom_reports.utils.handler_extend import upload_file_report
 from custom_ve.custom_ve.doctype.environment_variables.environment_variables import get_env
+from frappe.utils import add_days
 
 
 class CondominiumCommonExpenses(Document):
@@ -34,8 +35,32 @@ class CondominiumCommonExpenses(Document):
         # after_days = add_to_date(doc.posting_date, days=3, as_string=True)
         after_days = doc.posting_date
 
+        array_exludes_sector = []
+
+        for es in doc.excluded_sectors:
+            array_exludes_sector.append(es.territory)
+
+        purchase_invoices_special = self.get_purchase_invoice_special(
+            doc.condominium_common_expenses_invoices)
+
         for house in housings:
-            total = total_ggc * (float(house.aliquot) / 100)
+
+            total_ggc_aux = total_ggc
+            aliquot_house = (float(house.aliquot) / 100)
+            total_special = 0.0
+
+            if house.sector in array_exludes_sector:
+                continue
+
+            for p_invoice_special in purchase_invoices_special:
+                total_ggc_aux = total_ggc_aux - \
+                    p_invoice_special['amount_total']
+
+                if house.sector in p_invoice_special['sector']:
+                    total_special = p_invoice_special['amount_total_individual']
+
+            total = total_ggc_aux * aliquot_house
+            total = total + total_special
 
             # owner = frappe.get_doc('Customer', house.owner_customer)
 
@@ -138,6 +163,39 @@ class CondominiumCommonExpenses(Document):
                 'Purchase Invoice', invoice.invoice)
             doc_invoice.apply_process_condo = 1
             doc_invoice.save(ignore_permissions=True)
+
+    def get_purchase_invoice_special(self, invoice_ids=[]):
+        array_invoice_special = []
+        for d in invoice_ids:
+            doc_invoice = frappe.get_doc('Purchase Invoice', d.invoice)
+           
+            for item in doc_invoice.items:
+                if item.is_single_sector == 1:
+                    iva = 0.0
+                    if item.item_tax_template:
+                        if "16" in item.item_tax_template:
+                            iva = 0.16
+
+                    n_house = self.get_number_house_sector(item.sector)
+
+                    array_invoice_special.append({
+                        'invoice':  doc_invoice.name,
+                        'total': doc_invoice.grand_total,
+                        'sector': item.sector,
+                        'amount': item.amount,
+                        'amount_total': (item.amount + (item.amount * iva)),
+                        'amount_total_individual': (item.amount + (item.amount * iva)) / n_house
+
+                    })
+        return array_invoice_special
+
+    def get_number_house_sector(self, sector):
+
+        sql = "SELECT count(sector) from tabHousing  where sector = '{0}' ".format(
+            sector)
+
+        resp = frappe.db.sql(sql)
+        return resp[0][0]
 
     def get_total_ggc(self, ggc_table):
         total = 0.0
@@ -529,6 +587,9 @@ def get_invoice_condo(condo, date):
     funds_receive_total = 0.0
     funds_expenditure_total = 0.0
     funds_current_total = 0.0
+    
+    
+    previus_day = add_days(date , -30);
 
     purchase_invoice_list = frappe.db.get_list("Purchase Invoice",  filters=[
         ["is_for_condominium", "=", 1],
@@ -537,6 +598,7 @@ def get_invoice_condo(condo, date):
         ["is_return", "=", 0],
         ["condominium", "=", condo],
         ["status", "in", ["Overdue", "Unpaid", "Partly Paid", "Paid"]],
+        ["posting_date", '>=', previus_day],
         ["posting_date", '<=', date]
     ], order_by='cost_center ASC')
 
