@@ -163,7 +163,6 @@ class CondominiumCommonExpenses(Document):
                 # sales_invoice_2.queue_action('submit')
                 sales_invoice_2.submit()
 
-
     def upgrade_purchase_invoice(self):
         doc = self
         for invoice in doc.condominium_common_expenses_invoices:
@@ -248,7 +247,7 @@ def get_emails(owner):
     return emails
 
 
-def get_emails_condo(gcc):
+def get_emails_condo(gcc, sector):
     sql = """
         SELECT
         tce.email_id as email, tsi.name as invoice, tsi.customer , tsi.housing , th.code
@@ -262,9 +261,10 @@ def get_emails_condo(gcc):
             and gc_condo = '{0}'
             and select_print_heading = 'Recibo de Condominio'
             and tce.email_id is not null
+            and  th.sector = '{1}'
 
             order by tsi.housing ASC
-    """.format(gcc)
+    """.format(gcc, sector)
 
     data = frappe.db.sql(sql, as_dict=True)
 
@@ -306,7 +306,7 @@ def send_email_condo(emails, name, description="", attachments=[]):
                       print_letterhead=1)
 
 
-def generate_process_sales_invoice(obj , sector):
+def generate_process_sales_invoice(obj, sector):
     frappe.publish_realtime(
         'msgprint', 'Inicio de proceso de generar recibos de condominio para el sector {0}'.format(sector))
     print("Inicio del proceso")
@@ -316,19 +316,17 @@ def generate_process_sales_invoice(obj , sector):
     print("Fin del proceso")
     frappe.publish_realtime(
         'msgprint', 'Finalizacion de proceso de generar recibos de condominio el para sector {0}'.format(sector))
-    
-    
-    
+
+
 def generate_upgrade_purchase_invoice(obj):
-  
+
     frappe.publish_realtime(
         'msgprint', 'Inicio de proceso de actualizar proceso esttus de facturas de compras ')
-   
+
     obj.upgrade_purchase_invoice()
-    
+
     frappe.publish_realtime(
         'msgprint', 'Fin de proceso de actualizar proceso esttus de facturas de compras ')
-
 
 
 def cancel_process_sales_invoice(obj):
@@ -341,11 +339,11 @@ def cancel_process_sales_invoice(obj):
         'msgprint', 'Finalizacion de proceso de cancelar recibos de condominio')
 
 
-def send_email_condo_queue(ggc):
+def send_email_condo_queue(ggc  , sector):
     frappe.publish_realtime(
-        'msgprint', 'Inicio de proceso de envio de correos')
+        'msgprint', 'Inicio de proceso de envio de correos para el sector {0}'.format(sector))
     print("Encolar proceso")
-    data_emails = get_emails_condo(ggc)
+    data_emails = get_emails_condo(ggc , sector)
 
     doc_ggc = frappe.get_doc("Condominium Common Expenses", ggc)
 
@@ -422,14 +420,18 @@ def send_email_condo_queue(ggc):
         send_email_condo(emails=email_condo, name=invoice_aux,
                          description=description_email_text, attachments=attachments_simp)
 
-    print("finalizar proceso")
-    frappe.publish_realtime('msgprint', 'Finalizacion de envio de Correos')
+    frappe.publish_realtime('msgprint', 'Finalizacion de envio de correos para el sector {0}   '.format(sector))
 
 
 @frappe.whitelist()
 def send_email_test(ggc):
-    frappe.enqueue(
-        'condominium_ve.condominium_ve.doctype.condominium_common_expenses.condominium_common_expenses.send_email_condo_queue', ggc=ggc)
+    
+    sectors = frappe.db.sql(
+            "SELECT DISTINCT  sector  from tabHousing ", as_dict=True)
+
+    for s in sectors:  
+        frappe.enqueue(
+            'condominium_ve.condominium_ve.doctype.condominium_common_expenses.condominium_common_expenses.send_email_condo_queue', ggc=ggc , sector=s['sector'])
 
 
 def get_month(number):
@@ -610,7 +612,7 @@ def get_invoice_condo(condo, date):
     funds_expenditure_total = 0.0
     funds_current_total = 0.0
 
-    previus_day = add_days(date, -30)
+    previus_day = add_days(date, -28)
 
     purchase_invoice_list = frappe.db.get_list("Purchase Invoice",  filters=[
         ["is_for_condominium", "=", 1],
