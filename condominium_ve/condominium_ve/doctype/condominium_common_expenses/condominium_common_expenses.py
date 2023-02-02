@@ -221,6 +221,7 @@ class CondominiumCommonExpenses(Document):
 
         sales_invoices = frappe.db.get_list("Sales Invoice", fields=['*'], filters={
             'gc_condo': doc.name,
+            'docstatus' : 1
         })
 
         for d in sales_invoices:
