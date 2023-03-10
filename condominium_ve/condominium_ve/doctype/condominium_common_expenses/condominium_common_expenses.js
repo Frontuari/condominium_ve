@@ -18,9 +18,24 @@ frappe.ui.form.on("Condominium Common Expenses", {
 
             freeze: true,
             callback: (response) => {
+              let fecha_doc = new Date(frm.doc.posting_date+' 23:59:00')
+
               let data = response.data;
 
-              console.log(data);
+              // retirar el monto del fondo del monto total
+              for (var k = 0; k < data.creation_funds_date.length; k++) {
+                  if (fecha_doc < new Date(data.creation_funds_date[k].creation) ){
+                    
+                    for (var j = 0; j < data.funds.length; j++) {
+                      if (data.funds[j].concept == data.creation_funds_date[k].description ){
+                        data.total -= data.funds[j].amount;
+                      }
+                    }
+
+                  }
+              }
+
+              data.total_per_unit = data.total / data.active_units
 
               frm.set_value("condominium_common_expenses_invoices", []);
               frm.set_value("condominium_common_expenses_detail", []);
@@ -59,38 +74,67 @@ frappe.ui.form.on("Condominium Common Expenses", {
                   parent_concept: e.parent_cost_center,
                 });
               });
+              
+              
 
               data.expense_funds.forEach((e) => {
-                frm.add_child("expense", {
-                  concept: e.concept,
-                  supplier: e.supplier,
-                  per_unit: e.per_unit,
-                  amount: e.amount,
-                  tax: e.tax,
-                  net: e.net,
-                  parent_concept: e.parent_cost_center,
-                });
+                let fecha_fondo_valida = false;
+                for (var i = 0; i < data.creation_funds_date.length; i++) {
+                  if (fecha_doc >= new Date(data.creation_funds_date[i].creation) ){
+                    fecha_fondo_valida = true
+                  }
+                }
+                if (fecha_fondo_valida){
+                  frm.add_child("expense", {
+                    concept: e.concept,
+                    supplier: e.supplier,
+                    per_unit: e.per_unit,
+                    amount: e.amount,
+                    tax: e.tax,
+                    net: e.net,
+                    parent_concept: e.parent_cost_center,
+                  });
+                }
               });
 
+
+              
+              
               data.funds.forEach((e) => {
+                let fecha_fondo_valida = false;
+                for (var i = 0; i < data.creation_funds_date.length; i++) {
+                  if (fecha_doc >= new Date(data.creation_funds_date[i].creation) ){
+                    fecha_fondo_valida = true
+                  }
+                }
+                if (fecha_fondo_valida){
                 frm.add_child("funds", {
-                  amount: e.amount,
-                  amount_per_unit: e.amount_per_unit,
-                  account: e.account,
-                  concept: e.concept,
-                });
+                    amount: e.amount,
+                    amount_per_unit: e.amount_per_unit,
+                    account: e.account,
+                    concept: e.concept,
+                  });
+                }
               });
 
 
 
               data.detail_funds_use.forEach((e) => {
-                frm.add_child("detail_funds", {
-                  concept: e.concept,
-                  funds_current: e.funds_current,
-                  funds_receive: e.funds_receive,
-                  previous_funds: e.previous_funds,
-                  funds_expenditure: e.funds_expenditure
-                });
+                let fecha_fondo_valida = false;
+                for (var i = 0; i < data.creation_funds_date.length; i++) {
+                  if (fecha_doc >= new Date(data.creation_funds_date[i].creation) ){
+                    fecha_fondo_valida = true
+                  }
+                }
+                if (fecha_fondo_valida){
+                  frm.add_child("detail_funds", {
+                    concept: e.concept,
+                    funds_current: e.funds_current,
+                    funds_receive: e.funds_receive,
+                    previous_funds: e.previous_funds,
+                    funds_expenditure: e.funds_expenditure
+                  });
+                }
               });
 
 
