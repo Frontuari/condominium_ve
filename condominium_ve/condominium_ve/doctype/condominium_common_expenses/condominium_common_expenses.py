@@ -17,7 +17,7 @@ class CondominiumCommonExpenses(Document):
 
     def on_submit(self):
         # self.generate_process()
-
+       
         sectors = frappe.db.sql(
             "SELECT DISTINCT  sector  from tabHousing ", as_dict=True)
 
@@ -533,37 +533,37 @@ def get_previous_date(condo, date):
 
 def entry_funds_detail(from_date, to_date, company, cost_center_parent):
     return frappe.db.sql("""
-SELECT
-	tpi.name ,
-	tpe.posting_date ,
-	tpi.grand_total ,
-	tpi.grand_total  - tpi.outstanding_amount 	 as payment,
-	tpi.cost_center ,
-	tcc.parent_cost_center
-from
-	`tabSales Invoice`  tpi
-join `tabCost Center` tcc ON tcc.name  = tpi.cost_center
-join `tabPayment Entry Reference` tper on tper.reference_name  = tpi.name
-join  `tabPayment Entry` tpe on tpe.name = tper.parent and tpe.docstatus = 1
- where  tpe.posting_date >= '{0}' and tpe.posting_date <= '{1}' and (tcc.parent_cost_center = '{2}' or  tcc.name = '{2}'   ) and tpi.company = '{3}' and tpi.docstatus = 1   """.format(from_date, to_date, cost_center_parent, company))
+        SELECT
+        	tpi.name ,
+        	tpe.posting_date ,
+        	tpi.grand_total ,
+        	tpi.grand_total  - tpi.outstanding_amount 	 as payment,
+        	tpi.cost_center ,
+        	tcc.parent_cost_center
+        from
+        	`tabSales Invoice`  tpi
+        join `tabCost Center` tcc ON tcc.name  = tpi.cost_center
+        join `tabPayment Entry Reference` tper on tper.reference_name  = tpi.name
+        join  `tabPayment Entry` tpe on tpe.name = tper.parent and tpe.docstatus = 1
+         where  tpe.posting_date >= '{0}' and tpe.posting_date <= '{1}' and (tcc.parent_cost_center = '{2}' or  tcc.name = '{2}'   ) and tpi.company = '{3}' and tpi.docstatus = 1   """.format(from_date, to_date, cost_center_parent, company))
 
 
 def expedition_funds_detail(from_date, to_date, company, cost_center_parent):
     return frappe.db.sql("""
-SELECT
-	tpi.name ,
-	tpi.posting_date ,
-	tpi.grand_total ,
-	tpi.grand_total  - tpi.outstanding_amount 	 as payment,
-	tpi.cost_center ,
-	tcc.parent_cost_center
-from
-	`tabSales Invoice`  tpi
- join `tabCost Center` tcc ON tcc.name  = tpi.cost_center
-left join `tabPayment Entry Reference` tper on tper.reference_name  = tpi.name
-left join  `tabPayment Entry` tpe on tpe.name = tper.parent and tpe.docstatus = 1
+        SELECT
+        	tpi.name ,
+        	tpi.posting_date ,
+        	tpi.grand_total ,
+        	tpi.grand_total  - tpi.outstanding_amount 	 as payment,
+        	tpi.cost_center ,
+        	tcc.parent_cost_center
+        from
+        	`tabSales Invoice`  tpi
+         join `tabCost Center` tcc ON tcc.name  = tpi.cost_center
+        left join `tabPayment Entry Reference` tper on tper.reference_name  = tpi.name
+        left join  `tabPayment Entry` tpe on tpe.name = tper.parent and tpe.docstatus = 1
 
- where  tpe.posting_date >= '{0}' and tpe.posting_date <= '{1}' and (tcc.parent_cost_center = '{2}' or  tcc.name = '{2}'   ) and tpi.company = '{3}'  and tpi.docstatus = 1 """.format(from_date, to_date,  cost_center_parent, company))
+         where  tpe.posting_date >= '{0}' and tpe.posting_date <= '{1}' and (tcc.parent_cost_center = '{2}' or  tcc.name = '{2}'   ) and tpi.company = '{3}'  and tpi.docstatus = 1 """.format(from_date, to_date,  cost_center_parent, company))
 
 
 def entry_funds(from_date, to_date, company, cost_center_parent):
@@ -719,6 +719,7 @@ def get_invoice_condo(condo, date):
 
         funds.append({'concept': fund.description, 'amount': fund.amount,
                       'amount_per_unit': fund.amount / doc_condo.n_houses_active,  'account': fund.account})
+        
         total = total + fund.amount
         total_per_unit = total_per_unit + fund.amount / doc_condo.n_houses_active
 
@@ -760,6 +761,9 @@ def get_invoice_condo(condo, date):
     funds_current_total = funds_receive_total + \
         previous_funds - funds_expenditure_total
 
+    # fecha de creacion de fondos
+    creacion_fondos = frappe.db.get_all('Condominium Reserve Fund', fields=['creation', 'description'])
+
     frappe.local.response.update({"data": {
         'invoices': data_invoice,
         'detail': data_cost_center,
@@ -773,7 +777,8 @@ def get_invoice_condo(condo, date):
         'funds_receive_total': funds_receive_total,
         'funds_expenditure_total': funds_expenditure_total,
         'funds_current_total': funds_current_total,
-        'detail_funds_use': detail_funds_use
+        'detail_funds_use': detail_funds_use,
+        'creation_funds_date': creacion_fondos
     }})
 
     return build_response("json")
