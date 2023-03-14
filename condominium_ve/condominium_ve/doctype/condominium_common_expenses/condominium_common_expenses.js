@@ -23,6 +23,7 @@ frappe.ui.form.on("Condominium Common Expenses", {
               let data = response.data;
 
               // retirar el monto del fondo del monto total
+              /*
               for (var k = 0; k < data.creation_funds_date.length; k++) {
                   if (fecha_doc < new Date(data.creation_funds_date[k].creation) ){
                     
@@ -36,7 +37,7 @@ frappe.ui.form.on("Condominium Common Expenses", {
               }
 
               data.total_per_unit = data.total / data.active_units
-
+              */
               frm.set_value("condominium_common_expenses_invoices", []);
               frm.set_value("condominium_common_expenses_detail", []);
               frm.set_value("detail_funds", []);
@@ -78,12 +79,14 @@ frappe.ui.form.on("Condominium Common Expenses", {
               
 
               data.expense_funds.forEach((e) => {
-                let fecha_fondo_valida = false;
-                for (var i = 0; i < data.creation_funds_date.length; i++) {
+                
+                let fecha_fondo_valida = true;
+                /*for (var i = 0; i < data.creation_funds_date.length; i++) {
                   if (fecha_doc >= new Date(data.creation_funds_date[i].creation) ){
                     fecha_fondo_valida = true
                   }
                 }
+                */
                 if (fecha_fondo_valida){
                   frm.add_child("expense", {
                     concept: e.concept,
@@ -101,12 +104,14 @@ frappe.ui.form.on("Condominium Common Expenses", {
               
               
               data.funds.forEach((e) => {
-                let fecha_fondo_valida = false;
+                let fecha_fondo_valida = true;
+                /*
                 for (var i = 0; i < data.creation_funds_date.length; i++) {
                   if (fecha_doc >= new Date(data.creation_funds_date[i].creation) ){
                     fecha_fondo_valida = true
                   }
                 }
+                */
                 if (fecha_fondo_valida){
                 frm.add_child("funds", {
                     amount: e.amount,
@@ -120,12 +125,14 @@ frappe.ui.form.on("Condominium Common Expenses", {
 
 
               data.detail_funds_use.forEach((e) => {
-                let fecha_fondo_valida = false;
+                let fecha_fondo_valida = true;
+                /*
                 for (var i = 0; i < data.creation_funds_date.length; i++) {
                   if (fecha_doc >= new Date(data.creation_funds_date[i].creation) ){
                     fecha_fondo_valida = true
                   }
-                }
+                }*/
+
                 if (fecha_fondo_valida){
                   frm.add_child("detail_funds", {
                     concept: e.concept,
@@ -192,7 +199,24 @@ frappe.ui.form.on("Condominium Common Expenses", {
     }
   },
 
+  before_save: function(frm){
+    let total = 0;
 
+    for (var i = 0; i < frm.doc.condominium_common_expenses_detail.length; i++) {
+      total += frm.doc.condominium_common_expenses_detail[i].amount;
+    }
+
+    if (frm.doc.funds){
+      for (var i = 0; i < frm.doc.funds.length; i++) {
+        total += frm.doc.funds[i].amount;
+      }
+    }
+
+    frm.doc.total = total;
+    frm.doc.total_per_unit = total / frm.doc.active_units;
+
+
+  },
   caculate_funds(frm){
 
     let data = frm.doc 
