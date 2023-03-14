@@ -28,7 +28,8 @@ def get_columns():
 		{
 			'fieldname': 'customer',
 			'label': _('Cliente'),
-			'fieldtype': 'Data',
+			'fieldtype': 'Link',
+			'options': 'Customer',
 			'width':150
 		},
 
@@ -37,58 +38,168 @@ def get_columns():
 			'label': _('Comprobante'),
 			'fieldtype': 'Link',
 			'options':'Sales Invoice',
-			'width':200
+			'width':150
 		},
 		{
 			'fieldname': 'grand_total',
 			'label': _('Cantidad Facturada'),
-			'fieldtype': 'Currency',
+			'fieldtype': 'Data',
 			'width':150
 		},
 		{
 			'fieldname': 'cantidad_pagada',
 			'label': _('Cantidad Pagada'),
-			'fieldtype': 'Currency',
+			'fieldtype': 'Data',
 			'width':150
 		},
 		{
 			'fieldname': 'outstanding_amount',
 			'label': _('Cantidad Pendiente'),
-			'fieldtype': 'Currency',
+			'fieldtype': 'Data',
+			'width':150
+		},
+		{
+			'fieldname': 'territory',
+			'label': _('Sector'),
+			'fieldtype': 'Data',
 			'width':150
 		}
 	]
 
 def get_data(filters):
 	agrupar_por_cliente = False
-	if filters['group_by_party']:
-		agrupar_por_cliente = True
-		del filters['group_by_party']
-		
+	try:
+		if filters['group_by_party']:
+			agrupar_por_cliente = True
+			del filters['group_by_party']
+	except:
+		pass
+
 	del filters['report_date'], filters['ageing_based_on'], filters['range1'], filters['range2'], filters['range3'], filters['range4']
 
-	invoices = frappe.db.get_all('Sales Invoice', filters=filters, fields=['posting_date', 'due_date', 'customer', 'name', 'grand_total', 'outstanding_amount'])
+	invoices = frappe.db.get_all('Sales Invoice', filters=filters, fields=['posting_date', 'due_date', 'customer', 'name', 'grand_total', 'outstanding_amount', 'territory'])
 	
 	
 	ventas = []
-	for invoice in invoices[::-1]:
-		cantidad_pagada = invoice.grand_total - invoice.outstanding_amount
+
+	if not agrupar_por_cliente:
+		total_facturado = 0
+		total_pagado = 0
+		total_pendiente = 0
+
+		for invoice in invoices[::-1]:
+			cantidad_pagada = invoice.grand_total - invoice.outstanding_amount
+			
+			total_facturado += invoice.grand_total
+			total_pagado += cantidad_pagada
+			total_pendiente += invoice.outstanding_amount
+
+			ventas.append({
+					"posting_date": invoice.posting_date,
+					"due_date": invoice.due_date,
+					"customer": invoice.customer,
+					"name": invoice.name,
+					"grand_total": frappe.format(invoice.grand_total, {'fieldtype': 'Currency'}),
+					"cantidad_pagada":frappe.format(cantidad_pagada, {'fieldtype': 'Currency'}),
+					"outstanding_amount": frappe.format(invoice.outstanding_amount, {'fieldtype': 'Currency'}),
+					"territory": invoice.territory
+				})
+
 		ventas.append({
-				"posting_date": invoice.posting_date,
-				"due_date": invoice.due_date,
-				"customer": invoice.customer,
-				"name": invoice.name,
-				"grand_total": invoice.grand_total,
-				"cantidad_pagada":cantidad_pagada,
-				"outstanding_amount": invoice.outstanding_amount
-			})
-	
+					"posting_date": "",
+					"due_date": "",
+					"customer": "",
+					"name": '<b>'+_('Total')+'</b>',
+					"grand_total": '<b>'+frappe.format(total_facturado, {'fieldtype': 'Currency'})+'</b>',
+					"cantidad_pagada": '<b>'+frappe.format(total_pagado, {'fieldtype': 'Currency'})+'</b>',
+					"outstanding_amount": '<b>'+frappe.format(total_pendiente, {'fieldtype': 'Currency'})+'</b>',
+					"territory": ""
+				})
+	else:
+		total_facturado = 0
+		total_pagado = 0
+		total_pendiente = 0
+
+		invoice_clientes = {}
+		total_clientes = {}
+		for invoice in invoices[::-1]:
+			cantidad_pagada = invoice.grand_total - invoice.outstanding_amount
+			
+			total_facturado += invoice.grand_total
+			total_pagado += cantidad_pagada
+			total_pendiente += invoice.outstanding_amount
+
+			if not invoice.customer in invoice_clientes:
+				invoice_clientes[invoice.customer] = []
+				total_clientes[invoice.customer] = {'grand_total': 0, 'cantidad_pagada': 0, 'outstanding_amount': 0}
+
+			invoice_clientes[invoice.customer].append({
+					"posting_date": invoice.posting_date,
+					"due_date": invoice.due_date,
+					"customer": invoice.customer,
+					"name": invoice.name,
+					"grand_total": frappe.format(invoice.grand_total, {'fieldtype': 'Currency'}),
+					"cantidad_pagada":frappe.format(cantidad_pagada, {'fieldtype': 'Currency'}),
+					"outstanding_amount": frappe.format(invoice.outstanding_amount, {'fieldtype': 'Currency'}),
+					"territory": invoice.territory
+				})
+
+			total_clientes[invoice.customer]['grand_total'] += invoice.grand_total
+			total_clientes[invoice.customer]['cantidad_pagada'] += cantidad_pagada
+			total_clientes[invoice.customer]['outstanding_amount'] += invoice.outstanding_amount
+
+		# saco el total por cliente y lo agrego a la lista de ventas
+		for cliente in invoice_clientes:
+			"""
+			total_cliente_facturado = 0
+			total_cliente_pagado = 0
+			total_cliente_pendiente = 0
+			for invoice in invoice_clientes[cliente]:
+				total_cliente_facturado += invoice['grand_total']
+				total_cliente_pagado += invoice['cantidad_pagada']
+				total_cliente_pendiente += invoice['outstanding_amount']
+
+				ventas.append(invoice)
+			"""
+			for invoice in invoice_clientes[cliente]:
+				ventas.append(invoice)
+
+			ventas.append({
+					"posting_date": "",
+					"due_date": "",
+					"customer": "",
+					"name": '<b>'+_('Total')+'</b>',
+					"grand_total": '<b>'+frappe.format(total_clientes[cliente]['grand_total'], {'fieldtype': 'Currency'})+'</b>',
+					"cantidad_pagada": '<b>'+frappe.format(total_clientes[cliente]['cantidad_pagada'], {'fieldtype': 'Currency'})+'</b>',
+					"outstanding_amount": '<b>'+frappe.format(total_clientes[cliente]['outstanding_amount'], {'fieldtype': 'Currency'})+'</b>',
+					"territory": ""
+				})
+
+
+		ventas.append({
+					"posting_date": "",
+					"due_date": "",
+					"customer": "",
+					"name": '<b>'+_('Total General')+'</b>',
+					"grand_total": '<b>'+frappe.format(total_facturado, {'fieldtype': 'Currency'})+'</b>',
+					"cantidad_pagada": '<b>'+frappe.format(total_pagado, {'fieldtype': 'Currency'})+'</b>',
+					"outstanding_amount": '<b>'+frappe.format(total_pendiente, {'fieldtype': 'Currency'})+'</b>',
+					"territory": ""
+				})
+
 	return ventas	
 
 
 @frappe.whitelist()
 def send_email(filters):
-	data = get_data(json.loads(filters))
+	filtros = filters
+	try:
+		if filtros['group_by_party']:
+			del filtros['group_by_party']
+	except:
+		pass
+
+	data = get_data(json.loads(filtros))
 	
 	data_clientes = {}
 	for d in data:
@@ -103,9 +214,9 @@ def send_email(filters):
 	frappe.publish_realtime(
         'msgprint', 'Inicio de proceso de envio de correos')
 	for customer in data_clientes:
-		send_email_queue(customer, data_clientes[customer])
-		#frappe.enqueue(
-        #    'condominium_ve.condominium_ve.report.cxc_cobranza.cxc_cobranza.send_email_queue', customer=customer, data_clientes=data_clientes[customer])
+		#send_email_queue(customer, data_clientes[customer])
+		frappe.enqueue(
+            'condominium_ve.condominium_ve.report.cxc_cobranza.cxc_cobranza.send_email_queue', customer=customer, data_clientes=data_clientes[customer])
 
 def send_email_queue(customer, data_clientes):
 	total = {'grand_total':0, 'cantidad_pagada':0, 'outstanding_amount':0}

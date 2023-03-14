@@ -5,6 +5,7 @@ frappe.query_reports["CxC Cobranza"] = {
 	"name_field": "name",
 	"parent_field": "name",
 	"initial_depth": 1,			//The level to which the initial rendering will expand to
+	
 	onload: function(report) {
 		// dropdown for links to other financial statements
 		//erpnext.financial_statements.filters = get_filters()
@@ -47,6 +48,8 @@ frappe.query_reports["CxC Cobranza"] = {
       });
 		
 	}
+	
+
 	/*"filters": [
 		{
 			fieldname: "name_filter",
