@@ -24,6 +24,7 @@ frappe.query_reports["CxC Cobranza"] = {
 		report.page.add_inner_button(__('Enviar Correos'), () => {
 			//console.log(report.get_values());
 		  let filtros = report.get_values();
+		  console.log(filtros);
 		  filtros['docstatus'] = 1;
 
           frappe.call({
@@ -50,51 +51,50 @@ frappe.query_reports["CxC Cobranza"] = {
 	}
 	
 
-	/*"filters": [
+	"filters": [
 		{
-			fieldname: "name_filter",
-			label: "Name Filter",
+			fieldname: "company",
+			label: "Empresa",
 			fieldtype: "Link",
-			options: "User",
 			reqd: 1,
-			default: (frappe.user.has_role("Administrator") || frappe.user.has_role("System Manager")) ? "" : frappe.user.name,
-			hidden: !(frappe.user.has_role("Administrator") || frappe.user.has_role("System Manager")),
-			on_change: function(query_report){
-				query_report.set_filter_value('subject_filter', []);
-				query_report.refresh();
-			},
+			options: ['Company']
+			//default: (frappe.user.has_role("Administrator") || frappe.user.has_role("System Manager")) ? "" : frappe.user.name,
+			
 		},
 		{
-			fieldname: "subject_filter",
-			label: "Subject Filter",
-			fieldtype: "MultiSelectList",
-			get_data: function(txt) {
-				if (frappe.query_report.get_filter_value('name_filter')) {
-					var name = frappe.query_report.get_filter_value("name_filter");
-					return frappe.db.get_list("Activity Log", {fields: ['subject AS value', 'subject AS label', 'subject AS description'], filters: {"user": name}, distinct: 1, order_by: "subject"});
-					//return frappe.db.get_link_options("Activity Log", txt, {"user":name});
-				}
-				else {
-					return [];
-				};
-			},
-			on_change: function(query_report) {
-				query_report.refresh();
-			},
-		},
-		{
-			fieldname: "date_from_filter",
-			label: "Date From Filter",
+			fieldname: "report_date",
+			label: "Fecha de contabilizacion",
 			fieldtype: "Date",
-			default: frappe.datetime.add_months(frappe.datetime.get_today(), -1)
+			reqd: 1
+			//default: (frappe.user.has_role("Administrator") || frappe.user.has_role("System Manager")) ? "" : frappe.user.name,
+			
 		},
 		{
-			fieldname: "date_to_filter",
-			label: "Date To Filter",
-			fieldtype: "Date",
-			default: frappe.datetime.get_today()
+			fieldname: "customer",
+			label: "Cliente",
+			fieldtype: "Link",
+			options: ['customer']
+			//default: (frappe.user.has_role("Administrator") || frappe.user.has_role("System Manager")) ? "" : frappe.user.name,
+			
+		},
+		{
+			fieldname: "territory",
+			label: "Sector",
+			fieldtype: "Link",
+			options: ['Territory']
+			//default: (frappe.user.has_role("Administrator") || frappe.user.has_role("System Manager")) ? "" : frappe.user.name,
+			
+		},
+		{
+			fieldname: "group_by_party",
+			label: "Agrupar por Cliente",
+			fieldtype: "Check"
+			//default: (frappe.user.has_role("Administrator") || frappe.user.has_role("System Manager")) ? "" : frappe.user.name,
+			
 		}
-	],*/
+
+		
+	]
 };
 
 function EnviarCorreos(filtros){
