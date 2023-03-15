@@ -5,6 +5,7 @@ import frappe
 from frappe.utils.pdf import get_pdf
 from frappe import _
 from frappe.core.doctype.communication import email
+from custom_ve.custom_ve.doctype.environment_variables.environment_variables import get_env
 import json
 import os
 
@@ -192,15 +193,19 @@ def get_data(filters):
 
 @frappe.whitelist()
 def send_email(filters):
-	filtros = filters
+	filters = json.loads(filters)
 	try:
-		if filtros['group_by_party']:
-			del filtros['group_by_party']
+		if filters['group_by_party']:
+			agrupar_por_cliente = True
+			del filters['group_by_party']
 	except:
 		pass
 
-	data = get_data(json.loads(filtros))
+	del filters['report_date'], filters['ageing_based_on'], filters['range1'], filters['range2'], filters['range3'], filters['range4']
+
+	data = frappe.db.get_all('Sales Invoice', filters=filters, fields=['posting_date', 'due_date', 'customer', 'name', 'grand_total', 'outstanding_amount', 'territory'])
 	
+	# agrupo la data por cliente
 	data_clientes = {}
 	for d in data:
 		customer = d['customer']
@@ -215,21 +220,41 @@ def send_email(filters):
         'msgprint', 'Inicio de proceso de envio de correos')
 	for customer in data_clientes:
 		#send_email_queue(customer, data_clientes[customer])
+		
 		frappe.enqueue(
-            'condominium_ve.condominium_ve.report.cxc_cobranza.cxc_cobranza.send_email_queue', customer=customer, data_clientes=data_clientes[customer])
+        	'condominium_ve.condominium_ve.report.cxc_cobranza.cxc_cobranza.send_email_queue', customer=customer, data_clientes=data_clientes[customer])
 
+# formatea el correo
 def send_email_queue(customer, data_clientes):
 	total = {'grand_total':0, 'cantidad_pagada':0, 'outstanding_amount':0}
 	for i in range(len(data_clientes)):
+		data_clientes[i]['cantidad_pagada'] = data_clientes[i]['grand_total'] - data_clientes[i]['outstanding_amount']
+
 		total['grand_total'] += data_clientes[i]['grand_total']
-		total['cantidad_pagada'] += data_clientes[i]['cantidad_pagada']
+		total['cantidad_pagada'] += data_clientes[i]['grand_total'] - data_clientes[i]['outstanding_amount']
 		total['outstanding_amount'] += data_clientes[i]['outstanding_amount']
 
-	pdf = generate_pdf(data=data_clientes, customer=customer, total=total)
-		
-	email = frappe.db.get_all('Sales Invoice', filters={'customer':customer}, fields=['contact_email'])
-	email_to = email[0]['contact_email']
+	# informacion para formatear el correo
+	propietario = frappe.db.get_all('Sales Invoice', filters={'customer':customer}, fields=['contact_email', 'territory', 'company', 'customer_name'])
+	customer_name = propietario[0]['customer_name']
+	email_to = propietario[0]['contact_email']
+	sector = propietario[0]['territory']
+	condominio = propietario[0]['company']
 
+	pdf = generate_pdf(data=data_clientes, customer=customer_name, total=total, condominio=condominio, sector=sector)
+		
+	formato_email = frappe.db.get_all('formato email condominio', filters={'name':'cxc cobranza'}, fields=['subject', 'body'])
+	
+	# formatear variables del email
+	subject = formato_email[0]['subject'].replace('{{propietario}}', customer_name)
+	subject = subject.replace('{{sector}}', sector)
+	subject = subject.replace('{{condominio}}', condominio)
+
+	body = formato_email[0]['body'].replace('{{propietario}}', customer_name)
+	body = body.replace('{{sector}}', sector)
+	body = body.replace('{{condominio}}', condominio)
+
+	# obtengo el archivo adjunto
 	new_attachments = []
 	ret = frappe.get_doc({
         "doctype": "File",
@@ -241,15 +266,19 @@ def send_email_queue(customer, data_clientes):
 	ret.save(ignore_permissions=True)
 	new_attachments.append(create_attachment(ret.name))#{"file_url":frappe.get_site_path(ret.file_url)})
 
-	style = '*{font-family:Sans-Serif;}'
-	description = f'<style>{style}</style><p>Propietario <strong>{customer}</strong>,</p> <p>Adjuntamos al siguiente correo su estado de cuenta</p>'
-	send_email_condo([email_to], customer, description, new_attachments)
+	style = '<style>*{font-family:Sans-Serif;}</style>'
 
-
-def generate_pdf(data, customer, total):
+	if get_env('MOD_DEV') == 'False':
+		send_email_condo(emails=[email_to], subject=subject, body=style+body, attachments=new_attachments)
+	else:
+		print('email dev ', get_env('EMAIL_DEV'))
+		send_email_condo(emails=[get_env('EMAIL_DEV')], subject=subject, body=style+body, attachments=new_attachments)
+# genera pdf en base a un html
+def generate_pdf(data, customer, total, condominio="", sector=""):
 	cart = data
 
-	html = '<h4>Estimado Propietario, '+customer+', Su estado de cuenta.</h4>'
+	html = '<h4>'+condominio.upper()+'</h4>'	
+	html += '<p>Sector: '+sector.upper()+'</p><p>Propietario: '+customer.upper()+'</p><h3 style="text-align:center;"> Estado de Cuenta</h3>'
 
     # Add items to PDF HTML
 	html += '<style>*{font-family:Sans-Serif;} th, td{border: 1px solid black;}</style>\
@@ -289,17 +318,17 @@ def generate_pdf(data, customer, total):
 	html += '</tbody>\
 			</table>'
 
-    # Attaching PDF to response
 	return get_pdf(html)
 	
-
-def send_email_condo(emails, name, description="", attachments=[]):
+# envia emails
+def send_email_condo(emails, subject, body="", attachments=[]):
 	return frappe.sendmail(
 		recipients=emails,
-		subject="Estado de cuenta condominio: " + name,
-		message="<div class='ql-editor read-mode'> {0} <p><br></p></div>".format(description),
+		subject=subject,
+		message="<div class='ql-editor read-mode'> {0} <p><br></p></div>".format(body),
 		attachments=attachments)
 
+# obtiene un archivo en bytes para poder ser insertado como adjunto a un correo
 def create_attachment(filename):
 	root_directory = frappe.db.get_value('Environment Variables', 'ROOT_DIRECTORY', 'value')
 	file = frappe.get_doc("File",filename)

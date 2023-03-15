@@ -180,7 +180,8 @@ frappe.ui.form.on("Condominium Common Expenses", {
             method:
               "condominium_ve.condominium_ve.doctype.condominium_common_expenses.condominium_common_expenses.send_email_test",
             args: {
-              ggc: frm.doc.name
+              ggc: frm.doc.name,
+              excluded_sectors: frm.doc.excluded_sectors
             },
 
             btn: $(".primary-action"),
@@ -200,21 +201,60 @@ frappe.ui.form.on("Condominium Common Expenses", {
   },
 
   before_save: function(frm){
-    let total = 0;
+    let active_units = frm.doc.active_units;
+    // calculo de costos en caso de sectores excluidos
+    if (frm.doc.excluded_sectors.length > 0){
+      
+      frappe.call({
+        method:
+          "condominium_ve.condominium_ve.doctype.condominium_common_expenses.condominium_common_expenses.get_active_house_sectors",
+        args: {
+          excluded_sectors: frm.doc.excluded_sectors
+        },
 
-    for (var i = 0; i < frm.doc.condominium_common_expenses_detail.length; i++) {
-      total += frm.doc.condominium_common_expenses_detail[i].amount;
-    }
+        //btn: $(".primary-action"),
 
-    if (frm.doc.funds){
-      for (var i = 0; i < frm.doc.funds.length; i++) {
-        total += frm.doc.funds[i].amount;
+        freeze: true,
+        callback: (response) => {
+          frm.doc.active_units = response.data;
+          active_units = response.data;
+
+          let total = 0;
+          for (var i = 0; i < frm.doc.condominium_common_expenses_detail.length; i++) {
+            total += frm.doc.condominium_common_expenses_detail[i].amount;
+            frm.doc.condominium_common_expenses_detail[i].per_unit = frm.doc.condominium_common_expenses_detail[i].amount / active_units;
+          }
+
+          if (frm.doc.funds){
+            for (var i = 0; i < frm.doc.funds.length; i++) {
+              total += frm.doc.funds[i].amount;
+            }
+          }
+
+          frm.doc.total = total;
+          frm.doc.total_per_unit = total / active_units;
+
+
+        }
+      });
+      
+    }else{
+
+      let total = 0;
+      for (var i = 0; i < frm.doc.condominium_common_expenses_detail.length; i++) {
+        total += frm.doc.condominium_common_expenses_detail[i].amount;
+        frm.doc.condominium_common_expenses_detail[i].per_unit = frm.doc.condominium_common_expenses_detail[i].amount / active_units;
       }
-    }
 
-    frm.doc.total = total;
-    frm.doc.total_per_unit = total / frm.doc.active_units;
+      if (frm.doc.funds){
+        for (var i = 0; i < frm.doc.funds.length; i++) {
+          total += frm.doc.funds[i].amount;
+        }
+      }
 
+      frm.doc.total = total;
+      frm.doc.total_per_unit = total / active_units;
+      }
 
   },
   caculate_funds(frm){

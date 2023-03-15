@@ -1,0 +1,13 @@
+[
+ {
+  "body": "<p><strong>{{condominio}}</strong></p>\n<p> Sector <strong>{{sector}}</strong></p>\n<br>\n<p>Sr(a) <strong>{{propietario}}</strong>, Adjuntamos al siguiente correo su estado de cuenta</p>",
+  "docstatus": 0,
+  "doctype": "formato email condominio",
+  "modified": "2023-03-15 09:01:37.356121",
+  "name": "cxc cobranza",
+  "parent": null,
+  "parentfield": null,
+  "parenttype": null,
+  "subject": "Estado de cuenta: {{condominio}}"
+ }
+]

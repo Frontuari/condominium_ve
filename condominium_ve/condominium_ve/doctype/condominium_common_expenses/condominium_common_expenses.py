@@ -16,10 +16,18 @@ from frappe.utils import add_days
 class CondominiumCommonExpenses(Document):
 
     def on_submit(self):
+        doc = self.get_doc_before_save()
         # self.generate_process()
        
-        sectors = frappe.db.sql(
-            "SELECT DISTINCT  sector  from tabHousing ", as_dict=True)
+        #excluded_sectors = frappe.db.sql(
+        #    "SELECT DISTINCT  territory  from tabCondo Exclude Sector where parent='"+Document.name+"'", as_dict=True)
+        
+        excluded_sectors = []
+        
+        for es in doc.excluded_sectors:
+            excluded_sectors.append({'territory':es.territory})
+
+        sectors = get_sectors(excluded_sectors)
 
         for sector in sectors:
             frappe.enqueue(
@@ -425,10 +433,12 @@ def send_email_condo_queue(ggc  , sector):
 
 
 @frappe.whitelist()
-def send_email_test(ggc):
-    
-    sectors = frappe.db.sql(
-            "SELECT DISTINCT  sector  from tabHousing ", as_dict=True)
+def send_email_test(ggc, excluded_sectors=[]):
+    sectors = get_sectors(excluded_sectors)
+
+    #sectors = frappe.db.sql(
+    #        "SELECT DISTINCT  sector  from tabHousing ", as_dict=True)
+
 
     for s in sectors:  
         frappe.enqueue(
@@ -597,6 +607,36 @@ def expedition_funds(from_date, to_date, company, cost_center_parent):
     print(sql)
     return data[0][0]
 
+
+def get_sectors(excluded_sectors=[]):
+    sectors = frappe.db.sql(
+            "SELECT DISTINCT  sector  from tabHousing ", as_dict=True)
+    
+    if excluded_sectors != []:
+        if isinstance(excluded_sectors, str):
+            excluded_sectors = json.loads(excluded_sectors)
+        for excluded_sector in excluded_sectors:
+            territory = excluded_sector['territory']
+            
+            for i in range(len(sectors)):
+                if sectors[i]['sector'] == territory:
+                    sectors.pop(i)
+                    break
+
+    return sectors
+
+@frappe.whitelist()
+def get_active_house_sectors(excluded_sectors=[]):
+    sectores = get_sectors(excluded_sectors)
+
+    total_active_units = 0
+    for sector in sectores:
+        houses = frappe.db.get_all('Housing', filters={'sector':sector['sector'], 'active': 1})
+        total_active_units += len(houses)
+        
+    frappe.local.response.update({"data": total_active_units})
+    
+    return build_response("json")    
 
 @frappe.whitelist()
 def get_invoice_condo(condo, date):

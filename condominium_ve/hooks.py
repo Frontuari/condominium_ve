@@ -9,6 +9,7 @@ app_color = "grey"
 app_email = "armando.develop@gmail.com"
 app_license = "MIT"
 
+fixtures = ['formato email condominio']
 # Includes in <head>
 # ------------------
 
