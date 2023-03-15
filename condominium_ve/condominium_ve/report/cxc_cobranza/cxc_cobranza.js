@@ -48,7 +48,7 @@ frappe.query_reports["CxC Cobranza"] = {
 
       });
 		
-	}
+	},
 	
 
 	"filters": [
