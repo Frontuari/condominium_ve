@@ -57,7 +57,7 @@ frappe.query_reports["CxC Cobranza"] = {
 			label: "Empresa",
 			fieldtype: "Link",
 			reqd: 1,
-			options: ['Company']
+			options: 'Company'
 			//default: (frappe.user.has_role("Administrator") || frappe.user.has_role("System Manager")) ? "" : frappe.user.name,
 			
 		},
@@ -73,7 +73,7 @@ frappe.query_reports["CxC Cobranza"] = {
 			fieldname: "customer",
 			label: "Cliente",
 			fieldtype: "Link",
-			options: ['customer']
+			options: 'Customer'
 			//default: (frappe.user.has_role("Administrator") || frappe.user.has_role("System Manager")) ? "" : frappe.user.name,
 			
 		},
@@ -81,7 +81,7 @@ frappe.query_reports["CxC Cobranza"] = {
 			fieldname: "territory",
 			label: "Sector",
 			fieldtype: "Link",
-			options: ['Territory']
+			options: 'Territory'
 			//default: (frappe.user.has_role("Administrator") || frappe.user.has_role("System Manager")) ? "" : frappe.user.name,
 			
 		},
