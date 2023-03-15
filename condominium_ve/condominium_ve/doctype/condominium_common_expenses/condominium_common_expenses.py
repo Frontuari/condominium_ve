@@ -30,6 +30,7 @@ class CondominiumCommonExpenses(Document):
         sectors = get_sectors(excluded_sectors)
 
         for sector in sectors:
+            #generate_process_sales_invoice(obj=self, sector=sector['sector'])
             frappe.enqueue(
                 'condominium_ve.condominium_ve.doctype.condominium_common_expenses.condominium_common_expenses.generate_process_sales_invoice', obj=self, sector=sector['sector'])
 
@@ -39,7 +40,12 @@ class CondominiumCommonExpenses(Document):
     def generate_process(self, sector):
         doc = self.get_doc_before_save()
 
-        total_ggc = self.get_total_ggc(doc.condominium_common_expenses_detail)
+        total_details = self.get_total_ggc(doc.condominium_common_expenses_detail)
+        total_ggc = total_details['total']
+        total_ggc_per_unit = total_details['total_per_unit']
+
+        #frappe.publish_realtime('msgprint', total_ggc)
+        
 
         doc_condo = frappe.get_doc('Condominium', doc.condominium)
 
@@ -63,7 +69,7 @@ class CondominiumCommonExpenses(Document):
         for house in housings:
 
             total_ggc_aux = total_ggc
-            aliquot_house = (float(house.aliquot) / 100)
+            #aliquot_house = (float(house.aliquot) / 100)
             total_special = 0.0
 
             if house.sector in array_exludes_sector:
@@ -76,7 +82,7 @@ class CondominiumCommonExpenses(Document):
                 if house.sector in p_invoice_special['sector']:
                     total_special = p_invoice_special['amount_total_individual']
 
-            total = total_ggc_aux * aliquot_house
+            total = total_ggc_aux / int(doc.active_units)
             total = total + total_special
 
             # owner = frappe.get_doc('Customer', house.owner_customer)
@@ -214,10 +220,11 @@ class CondominiumCommonExpenses(Document):
 
     def get_total_ggc(self, ggc_table):
         total = 0.0
+        total_per_unit = 0.0
         for ggc in ggc_table:
             total = total + ggc.amount
-
-        return total
+            total_per_unit += ggc.per_unit
+        return {'total':total, 'total_per_unit':total_per_unit}
 
     def on_cancel(self):
         # self.cancel_process()
@@ -318,11 +325,9 @@ def send_email_condo(emails, name, description="", attachments=[]):
 def generate_process_sales_invoice(obj, sector):
     frappe.publish_realtime(
         'msgprint', 'Inicio de proceso de generar recibos de condominio para el sector {0}'.format(sector))
-    print("Inicio del proceso")
-
+    
     obj.generate_process(sector)
 
-    print("Fin del proceso")
     frappe.publish_realtime(
         'msgprint', 'Finalizacion de proceso de generar recibos de condominio el para sector {0}'.format(sector))
 

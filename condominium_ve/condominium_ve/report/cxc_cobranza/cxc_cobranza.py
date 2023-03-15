@@ -5,9 +5,11 @@ import frappe
 from frappe.utils.pdf import get_pdf
 from frappe import _
 from frappe.core.doctype.communication import email
+from frappe.utils import date_diff
 from custom_ve.custom_ve.doctype.environment_variables.environment_variables import get_env
 import json
 import os
+import datetime
 
 def execute(filters=None):
 	return get_columns(), get_data(filters)
@@ -22,9 +24,9 @@ def get_columns():
 		},
 		{
 			'fieldname': 'due_date',
-			'label': _('Fecha de Vencimiento'),
-			'fieldtype': 'Date',
-			'width':150
+			'label': _('Dias Vencido'),
+			'fieldtype': 'Data',
+			'width':100
 		},
 		{
 			'fieldname': 'customer',
@@ -76,7 +78,7 @@ def get_data(filters):
 	except:
 		pass
 
-	del filters['report_date'], filters['ageing_based_on'], filters['range1'], filters['range2'], filters['range3'], filters['range4']
+	filters = delFilters(filters,['group_by_party','report_date','ageing_based_on','range1','range2','range3','range4'])
 
 	invoices = frappe.db.get_all('Sales Invoice', filters=filters, fields=['posting_date', 'due_date', 'customer', 'name', 'grand_total', 'outstanding_amount', 'territory'])
 	
@@ -94,10 +96,11 @@ def get_data(filters):
 			total_facturado += invoice.grand_total
 			total_pagado += cantidad_pagada
 			total_pendiente += invoice.outstanding_amount
-
+			
+			dias_vencido = datetime.date.today() - invoice.due_date
 			ventas.append({
 					"posting_date": invoice.posting_date,
-					"due_date": invoice.due_date,
+					"due_date": dias_vencido.days,
 					"customer": invoice.customer,
 					"name": invoice.name,
 					"grand_total": frappe.format(invoice.grand_total, {'fieldtype': 'Currency'}),
@@ -132,11 +135,12 @@ def get_data(filters):
 
 			if not invoice.customer in invoice_clientes:
 				invoice_clientes[invoice.customer] = []
-				total_clientes[invoice.customer] = {'grand_total': 0, 'cantidad_pagada': 0, 'outstanding_amount': 0}
+				total_clientes[invoice.customer] = {'grand_total': "", 'cantidad_pagada': "", 'outstanding_amount': 0}
 
+			dias_vencido = datetime.date.today() - invoice.due_date
 			invoice_clientes[invoice.customer].append({
 					"posting_date": invoice.posting_date,
-					"due_date": invoice.due_date,
+					"due_date": dias_vencido,
 					"customer": invoice.customer,
 					"name": invoice.name,
 					"grand_total": frappe.format(invoice.grand_total, {'fieldtype': 'Currency'}),
@@ -145,23 +149,12 @@ def get_data(filters):
 					"territory": invoice.territory
 				})
 
-			total_clientes[invoice.customer]['grand_total'] += invoice.grand_total
-			total_clientes[invoice.customer]['cantidad_pagada'] += cantidad_pagada
+			#total_clientes[invoice.customer]['grand_total'] += invoice.grand_total
+			#total_clientes[invoice.customer]['cantidad_pagada'] += cantidad_pagada
 			total_clientes[invoice.customer]['outstanding_amount'] += invoice.outstanding_amount
 
 		# saco el total por cliente y lo agrego a la lista de ventas
 		for cliente in invoice_clientes:
-			"""
-			total_cliente_facturado = 0
-			total_cliente_pagado = 0
-			total_cliente_pendiente = 0
-			for invoice in invoice_clientes[cliente]:
-				total_cliente_facturado += invoice['grand_total']
-				total_cliente_pagado += invoice['cantidad_pagada']
-				total_cliente_pendiente += invoice['outstanding_amount']
-
-				ventas.append(invoice)
-			"""
 			for invoice in invoice_clientes[cliente]:
 				ventas.append(invoice)
 
@@ -190,18 +183,20 @@ def get_data(filters):
 
 	return ventas	
 
+def delFilters(filters, toDel):
+	for filter_del in toDel:
+		try:
+			del filters[filter_del]
+		except:
+			pass
 
+	return filters
+	
 @frappe.whitelist()
 def send_email(filters):
-	filters = json.loads(filters)
-	try:
-		if filters['group_by_party']:
-			agrupar_por_cliente = True
-			del filters['group_by_party']
-	except:
-		pass
+	filters = delFilters(json.loads(filters), ['group_by_party','report_date','ageing_based_on','range1','range2','range3','range4'])
+	
 
-	del filters['report_date'], filters['ageing_based_on'], filters['range1'], filters['range2'], filters['range3'], filters['range4']
 
 	data = frappe.db.get_all('Sales Invoice', filters=filters, fields=['posting_date', 'due_date', 'customer', 'name', 'grand_total', 'outstanding_amount', 'territory'])
 	
@@ -219,10 +214,10 @@ def send_email(filters):
 	frappe.publish_realtime(
         'msgprint', 'Inicio de proceso de envio de correos')
 	for customer in data_clientes:
-		#send_email_queue(customer, data_clientes[customer])
+		send_email_queue(customer, data_clientes[customer])
 		
-		frappe.enqueue(
-        	'condominium_ve.condominium_ve.report.cxc_cobranza.cxc_cobranza.send_email_queue', customer=customer, data_clientes=data_clientes[customer])
+		#frappe.enqueue(
+        #	'condominium_ve.condominium_ve.report.cxc_cobranza.cxc_cobranza.send_email_queue', customer=customer, data_clientes=data_clientes[customer])
 
 # formatea el correo
 def send_email_queue(customer, data_clientes):
@@ -276,18 +271,21 @@ def send_email_queue(customer, data_clientes):
 # genera pdf en base a un html
 def generate_pdf(data, customer, total, condominio="", sector=""):
 	cart = data
-
-	html = '<h4>'+condominio.upper()+'</h4>'	
-	html += '<p>Sector: '+sector.upper()+'</p><p>Propietario: '+customer.upper()+'</p><h3 style="text-align:center;"> Estado de Cuenta</h3>'
+	hora_actual = datetime.datetime.now().strftime("%I:%M %p")
+	html = '<style>th,td{padding:4px 1px;}.info-cabecera{float: left; width:50%;}*{font-family:Sans-Serif;} th, td{border: 1px solid black;}</style>'
+	html += '<p style="text-align:right;">'+datetime.date.today().strftime('%d-%m-%Y')+'<br>'+hora_actual+'</p>'
+	html += '<p style="text-align:left;"><strong>'+condominio.upper()+'</strong><br>Sector: '+sector.upper()+'</p>'
+	
+	html += '<br><h4 style="text-align:center">Cuentas por Cobrar</h3>'
+	html += '<p>'+customer.upper()+'</p>'
 
     # Add items to PDF HTML
-	html += '<style>*{font-family:Sans-Serif;} th, td{border: 1px solid black;}</style>\
-			<table style="border: 1px solid black; border-collapse: collapse; width: 100%;"> \
+	html += '<table style="border: 1px solid black; border-collapse: collapse; width: 100%;"> \
   			<thead style="background-color: #CCC; text-align: center; box-shadow: 0px 2px 2px #888888;">\
     			<tr>\
-			      <th scope="col">'+_('Fecha de Contabilizacion')+'</th>\
-			      <th scope="col">'+_('Fecha de Vencimiento')+'</th>\
-			      <th scope="col">'+_('Comprobante')+'</th>\
+    			<th scope="col">'+_('Comprobante')+'</th>\
+			      <th scope="col" width="50px">'+_('Fecha')+'</th>\
+			      <th scope="col">'+_('Dias de Vencimiento')+'</th>\
 			      <th scope="col">'+_('Cantidad Facturada')+'</th>\
 			      <th scope="col">'+_('Cantidad Pagada')+'</th>\
 			      <th scope="col">'+_('Cantidad Pendiente')+'</th>\
@@ -298,10 +296,11 @@ def generate_pdf(data, customer, total, condominio="", sector=""):
   
 
 	for row in cart:
+		dias_vencido = datetime.date.today() - row['due_date']
 		html += '<tr>\
-			      <td class="text-center">'+row['posting_date'].strftime('%d-%m-%Y')+'</td>\
-			      <td class="text-center">'+row['due_date'].strftime('%d-%m-%Y')+'</td>\
 			      <td class="text-center">'+row['name']+'</td>\
+			      <td class="text-center">'+row['posting_date'].strftime('%d-%m-%Y')+'</td>\
+			      <td class="text-center">'+str(dias_vencido.days)+'</td>\
 			      <td class="text-center">'+frappe.format(row['grand_total'], {'fieldtype': 'Currency'})+'</td>\
 			      <td class="text-center">'+frappe.format(row['cantidad_pagada'], {'fieldtype': 'Currency'})+'</td>\
 			      <td class="text-center">'+frappe.format(row['outstanding_amount'], {'fieldtype': 'Currency'})+'</td>\
@@ -311,8 +310,8 @@ def generate_pdf(data, customer, total, condominio="", sector=""):
 			      <td></td>\
 			      <td></td>\
 			      <td class="text-center"><b>'+_('TOTAL')+'</b></td>\
-			      <td class="text-center"><b>'+frappe.format(total['grand_total'], {'fieldtype': 'Currency'})+'</b></td>\
-			      <td class="text-center"><b>'+frappe.format(total['cantidad_pagada'], {'fieldtype': 'Currency'})+'</b></td>\
+			      <td class="text-center"></td>\
+			      <td class="text-center"></td>\
 			      <td class="text-center"><b>'+frappe.format(total['outstanding_amount'], {'fieldtype': 'Currency'})+'</b></td>\
 			    </tr>'
 	html += '</tbody>\

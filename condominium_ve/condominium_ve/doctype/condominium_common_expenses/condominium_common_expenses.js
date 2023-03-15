@@ -203,7 +203,8 @@ frappe.ui.form.on("Condominium Common Expenses", {
   before_save: function(frm){
     let active_units = frm.doc.active_units;
     // calculo de costos en caso de sectores excluidos
-    if (frm.doc.excluded_sectors.length > 0){
+    
+    if (frm.doc.excluded_sectors && frm.doc.excluded_sectors.length > 0){
       
       frappe.call({
         method:
