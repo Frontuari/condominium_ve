@@ -248,6 +248,10 @@ def img2base64(path):
 	try:
 		type_logo = os.path.basename(path).split('.')
 		type_logo = type_logo[1]
+		if get_env('MOD_DEV') == 'True':
+			frappe.publish_realtime('msgprint', 'Test: img2base64 function')
+			frappe.publish_realtime('msgprint', 'Test: '+type_logo)
+			frappe.publish_realtime('msgprint', 'Test: '+path)
 		with open(path, 'rb') as f:
 			encoded_logo = base64.b64encode(f.read())
 
