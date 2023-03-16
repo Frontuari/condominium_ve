@@ -268,6 +268,9 @@ def send_email_queue(customer, data_clientes, empresa):
 		total['cantidad_pagada'] += data_clientes[i]['grand_total'] - data_clientes[i]['outstanding_amount']
 		total['outstanding_amount'] += data_clientes[i]['outstanding_amount']
 
+	if get_env('MOD_DEV') == 'True':
+		frappe.publish_realtime('msgprint', 'Test: total row obtenido')
+
 	# informacion para formatear el correo
 	propietario = frappe.db.get_all('Sales Invoice', filters={'customer':customer}, fields=['contact_email', 'territory', 'company', 'customer_name'])
 	customer_name = propietario[0]['customer_name']
@@ -275,6 +278,9 @@ def send_email_queue(customer, data_clientes, empresa):
 	sector = propietario[0]['territory']
 	condominio = propietario[0]['company']
 	
+	if get_env('MOD_DEV') == 'True':
+		frappe.publish_realtime('msgprint', 'Test: informacion de formateo de correo')
+
 	# obtengo el embebido en base64
 	empresa_doc = frappe.get_doc('Company', empresa)
 	path_logo = empresa_doc.company_logo
