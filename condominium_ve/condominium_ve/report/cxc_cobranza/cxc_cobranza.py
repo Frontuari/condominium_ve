@@ -306,7 +306,8 @@ def send_email_queue(customer, data_clientes, empresa):
 	if get_env('MOD_DEV') == 'False':
 		send_email_condo(emails=[email_to], subject=subject, body=style+body, attachments=new_attachments)
 	else:
-		frappe.publish_realtime('msgprint', f'enviando correo a {get_env('EMAIL_DEV')}')
+		e = get_env('EMAIL_DEV')
+		frappe.publish_realtime('msgprint', f'enviando correo a {e}')
 		#print('email dev ', get_env('EMAIL_DEV'))
 		response = send_email_condo(emails=[get_env('EMAIL_DEV')], subject=subject, body=style+body, attachments=new_attachments)
 		
@@ -399,11 +400,11 @@ def create_attachment(filename='', path=None):
 class ReceivablePayableReport(object):
 	def __init__(self, filters=None):
 		self.filters = frappe._dict(filters or {})
-		print('filters 0', filters)
-		print('report_date ', filters.report_date)
-		print(type(filters.report_date))
+		#print('filters 0', filters)
+		#print('report_date ', filters.report_date)
+		#print(type(filters.report_date))
 		self.filters.report_date = getdate(self.filters.report_date or nowdate())
-		print('report_date 2', filters.report_date)
+		#print('report_date 2', filters.report_date)
 		self.age_as_on = (
 			getdate(nowdate())
 			if self.filters.report_date > getdate(nowdate())
