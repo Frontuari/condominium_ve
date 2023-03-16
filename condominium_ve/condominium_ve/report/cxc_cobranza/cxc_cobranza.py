@@ -18,6 +18,7 @@ from erpnext.accounts.doctype.accounting_dimension.accounting_dimension import (
 import json
 import os
 import datetime
+import base64
 
 def execute(filters=None):
 	args = {
@@ -226,17 +227,33 @@ def send_email(filters):
 
 		del d['customer']
 		data_clientes[customer].append(d)
+
 	
 	frappe.publish_realtime(
         'msgprint', 'Inicio de proceso de envio de correos')
 	for customer in data_clientes:
-		send_email_queue(customer, data_clientes[customer])
+		#send_email_queue(customer, data_clientes[customer], filters['company'])
 		
-		#frappe.enqueue(
-        #	'condominium_ve.condominium_ve.report.cxc_cobranza.cxc_cobranza.send_email_queue', customer=customer, data_clientes=data_clientes[customer])
+		frappe.enqueue(
+        	'condominium_ve.condominium_ve.report.cxc_cobranza.cxc_cobranza.send_email_queue', customer=customer, data_clientes=data_clientes[customer],
+        	empresa=filters['company'])
+
+def get_absolute_path():
+	return frappe.utils.get_bench_path()+ '/sites/'+ frappe.get_site_path()[2:]
+
+def img2base64(path):
+	try:
+		type_logo = os.path.basename(path).split('.')
+		type_logo = type_logo[1]
+		with open(path, 'rb') as f:
+			encoded_logo = base64.b64encode(f.read())
+
+		return 'data:image/'+type_logo+';base64,'+encoded_logo.decode("utf-8")
+	except:
+		return ''
 
 # formatea el correo
-def send_email_queue(customer, data_clientes):
+def send_email_queue(customer, data_clientes, empresa):
 	total = {'grand_total':0, 'cantidad_pagada':0, 'outstanding_amount':0}
 	for i in range(len(data_clientes)):
 		data_clientes[i]['cantidad_pagada'] = data_clientes[i]['grand_total'] - data_clientes[i]['outstanding_amount']
@@ -252,7 +269,14 @@ def send_email_queue(customer, data_clientes):
 	sector = propietario[0]['territory']
 	condominio = propietario[0]['company']
 
-	pdf = generate_pdf(data=data_clientes, customer=customer_name, total=total, condominio=condominio, sector=sector)
+	# obtengo el embebido en base64
+	empresa_doc = frappe.get_doc('Company', empresa)
+	path_logo = empresa_doc.company_logo
+	if path_logo != '':
+		path_logo = get_absolute_path()+empresa_doc.company_logo
+	embeed_logo = img2base64(path_logo)
+
+	pdf = generate_pdf(data=data_clientes, customer=customer_name, total=total, condominio=condominio, sector=sector, logo=embeed_logo)
 		
 	formato_email = frappe.db.get_all('formato email condominio', filters={'name':'cxc cobranza'}, fields=['subject', 'body'])
 	
@@ -282,13 +306,21 @@ def send_email_queue(customer, data_clientes):
 	if get_env('MOD_DEV') == 'False':
 		send_email_condo(emails=[email_to], subject=subject, body=style+body, attachments=new_attachments)
 	else:
-		print('email dev ', get_env('EMAIL_DEV'))
+		#print('email dev ', get_env('EMAIL_DEV'))
 		send_email_condo(emails=[get_env('EMAIL_DEV')], subject=subject, body=style+body, attachments=new_attachments)
+
 # genera pdf en base a un html
-def generate_pdf(data, customer, total, condominio="", sector=""):
+def generate_pdf(data, customer, total, condominio="", sector="", logo=""):
+	#frappe.publish_realtime(
+    #    'msgprint', logo)
+	#with open(logo, 'r') as f:
+	#	pass
+
 	cart = data
 	hora_actual = datetime.datetime.now().strftime("%I:%M %p")
 	html = '<style>th,td{padding:4px 1px;}.info-cabecera{float: left; width:50%;}*{font-family:Sans-Serif;} th, td{border: 1px solid black;}</style>'
+	if logo != '':
+		html += '<div style="text-align:left;"><img src="'+logo+'" style="max-width:300px;"></div>'
 	html += '<p style="text-align:right;">'+datetime.date.today().strftime('%d-%m-%Y')+'<br>'+hora_actual+'</p>'
 	html += '<p style="text-align:left;"><strong>'+condominio.upper()+'</strong><br>Sector: '+sector.upper()+'</p>'
 	
@@ -344,16 +376,20 @@ def send_email_condo(emails, subject, body="", attachments=[]):
 		attachments=attachments)
 
 # obtiene un archivo en bytes para poder ser insertado como adjunto a un correo
-def create_attachment(filename):
-	root_directory = frappe.db.get_value('Environment Variables', 'ROOT_DIRECTORY', 'value')
-	file = frappe.get_doc("File",filename)
-	path = root_directory+'/'+frappe.get_site_path(file.file_url)  
+def create_attachment(filename='', path=None):
+	if not path:
+		root_directory = frappe.db.get_value('Environment Variables', 'ROOT_DIRECTORY', 'value')
+		file = frappe.get_doc("File",filename)
+		path = root_directory+'/'+frappe.get_site_path(file.file_url)  
+		fname = file.file_name
+	else:
+		fname = os.path.basename(path)
 
 	with open(path, "rb") as fileobj:
 		filedata = fileobj.read() 
 
 	out = {
-		"fname": file.file_name,
+		"fname": fname,
 		"fcontent": filedata
 	}
 	return out 
