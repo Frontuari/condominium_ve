@@ -217,17 +217,17 @@ frappe.query_reports["CxC Cobranza"] = {
 	},*/
 
 	onload: function(report) {
-		//console.log(report.get_values());
+		console.log(report.get_values());
 		//report.filters.report_date = frappe.datetime.get_today()
 		//console.log(frappe.datetime.get_today());
-		
+
 		//console.log(report.get_values());
 		report.page.add_inner_button(__('Enviar Correos'), () => {
 			//console.log(report.get_values());
 		  let filtros = report.get_values();
 		  
 		  filtros['docstatus'] = 1;
-		  
+
           frappe.call({
             method:
               "condominium_ve.condominium_ve.report.cxc_cobranza.cxc_cobranza.send_email",
