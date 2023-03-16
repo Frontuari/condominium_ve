@@ -257,6 +257,9 @@ def img2base64(path):
 
 # formatea el correo
 def send_email_queue(customer, data_clientes, empresa):
+	if get_env('MOD_DEV') == 'True':
+		frappe.publish_realtime('msgprint', 'Test: send_email_queue')
+
 	total = {'grand_total':0, 'cantidad_pagada':0, 'outstanding_amount':0}
 	for i in range(len(data_clientes)):
 		data_clientes[i]['cantidad_pagada'] = data_clientes[i]['grand_total'] - data_clientes[i]['outstanding_amount']
@@ -280,7 +283,10 @@ def send_email_queue(customer, data_clientes, empresa):
 	embeed_logo = img2base64(path_logo)
 	
 	pdf = generate_pdf(data=data_clientes, customer=customer_name, total=total, condominio=condominio, sector=sector, logo=embeed_logo)
-		
+	
+	if get_env('MOD_DEV') == 'True':
+		frappe.publish_realtime('msgprint', 'Test: pdf generado')
+
 	formato_email = frappe.db.get_all('formato email condominio', filters={'name':'cxc cobranza'}, fields=['subject', 'body'])
 	
 	# formatear variables del email
@@ -305,8 +311,10 @@ def send_email_queue(customer, data_clientes, empresa):
 	#frappe.publish_realtime('msgprint', f'nombre archivo {ret.name}')
 	new_attachments.append(create_attachment(filename=ret.name))#{"file_url":frappe.get_site_path(ret.file_url)})
 
-	style = '<style>*{font-family:Sans-Serif;}</style>'
+	if get_env('MOD_DEV') == 'True':
+		frappe.publish_realtime('msgprint', 'Test: attachment creado')
 
+	style = '<style>*{font-family:Sans-Serif;}</style>'
 	if get_env('MOD_DEV') == 'False':
 		send_email_condo_make(emails=[email_to], subject=subject, body=style+body, attachments=new_attachments)
 	else:
