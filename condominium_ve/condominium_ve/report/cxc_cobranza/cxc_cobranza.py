@@ -268,14 +268,14 @@ def send_email_queue(customer, data_clientes, empresa):
 	email_to = propietario[0]['contact_email']
 	sector = propietario[0]['territory']
 	condominio = propietario[0]['company']
-	"""
+	
 	# obtengo el embebido en base64
 	empresa_doc = frappe.get_doc('Company', empresa)
 	path_logo = empresa_doc.company_logo
 	if path_logo != '':
 		path_logo = get_absolute_path()+empresa_doc.company_logo
-	embeed_logo = ''#img2base64(path_logo)
-	"""
+	embeed_logo = img2base64(path_logo)
+	
 	pdf = generate_pdf(data=data_clientes, customer=customer_name, total=total, condominio=condominio, sector=sector, logo='')
 		
 	formato_email = frappe.db.get_all('formato email condominio', filters={'name':'cxc cobranza'}, fields=['subject', 'body'])
@@ -306,8 +306,10 @@ def send_email_queue(customer, data_clientes, empresa):
 	if get_env('MOD_DEV') == 'False':
 		send_email_condo(emails=[email_to], subject=subject, body=style+body, attachments=new_attachments)
 	else:
+		frappe.publish_realtime('msgprint', f'enviando correo a {[get_env('EMAIL_DEV')]}')
 		#print('email dev ', get_env('EMAIL_DEV'))
 		response = send_email_condo(emails=[get_env('EMAIL_DEV')], subject=subject, body=style+body, attachments=new_attachments)
+		
 		frappe.publish_realtime('msgprint', f'respuesta {response}')
 # genera pdf en base a un html
 def generate_pdf(data, customer, total, condominio="", sector="", logo=""):
