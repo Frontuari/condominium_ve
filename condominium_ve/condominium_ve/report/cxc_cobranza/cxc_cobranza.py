@@ -307,8 +307,8 @@ def send_email_queue(customer, data_clientes, empresa):
 		send_email_condo(emails=[email_to], subject=subject, body=style+body, attachments=new_attachments)
 	else:
 		#print('email dev ', get_env('EMAIL_DEV'))
-		send_email_condo(emails=[get_env('EMAIL_DEV')], subject=subject, body=style+body, attachments=new_attachments)
-
+		response = send_email_condo(emails=[get_env('EMAIL_DEV')], subject=subject, body=style+body, attachments=new_attachments)
+		frappe.publish_realtime('msgprint', f'respuesta {response}')
 # genera pdf en base a un html
 def generate_pdf(data, customer, total, condominio="", sector="", logo=""):
 	#frappe.publish_realtime(
