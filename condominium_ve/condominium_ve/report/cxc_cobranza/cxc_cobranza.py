@@ -307,7 +307,7 @@ def send_email_queue(customer, data_clientes, empresa):
 			if get_env('MOD_DEV') == 'True':
 				frappe.publish_realtime('msgprint', 'Test: path_logo no es vacio')
 			
-			path_logo = get_absolute_path()+empresa_doc.company_logo
+			path_logo = get_absolute_path()+'/public'+empresa_doc.company_logo
 		
 		if get_env('MOD_DEV') == 'True':
 			frappe.publish_realtime('msgprint', 'Test: img2base64')
