@@ -206,7 +206,7 @@ frappe.query_reports["CxC Cobranza"] = {
 			"hidden": 1
 		}
 	],
-	/*
+	
 	"formatter": function(value, row, column, data, default_formatter) {
 		value = default_formatter(value, row, column, data);
 		if (data && data.bold) {
@@ -214,7 +214,7 @@ frappe.query_reports["CxC Cobranza"] = {
 
 		}
 		return value;
-	},*/
+	},
 
 	onload: function(report) {
 		console.log(report.get_values());
