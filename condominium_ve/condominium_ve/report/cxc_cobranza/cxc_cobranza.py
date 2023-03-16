@@ -232,15 +232,15 @@ def send_email(filters):
 	frappe.publish_realtime(
         'msgprint', 'Inicio de proceso de envio de correos')
 	for customer in data_clientes:
-		send_email_queue(customer, data_clientes[customer], filters['company'])
-		"""
+		#send_email_queue(customer, data_clientes[customer], filters['company'])
+		
 		frappe.enqueue(
         	'condominium_ve.condominium_ve.report.cxc_cobranza.cxc_cobranza.send_email_queue', 
-        	is_async=True,
-        	queue="default",
+        	#is_async=True,
+        	#queue="default",
         	customer=customer, data_clientes=data_clientes[customer],
         	empresa=filters['company'])
-		"""
+		
 def get_absolute_path():
 	return frappe.utils.get_bench_path()+ '/sites/'+ frappe.get_site_path()[2:]
 
@@ -308,12 +308,12 @@ def send_email_queue(customer, data_clientes, empresa):
 	style = '<style>*{font-family:Sans-Serif;}</style>'
 
 	if get_env('MOD_DEV') == 'False':
-		send_email_condo(emails=[email_to], subject=subject, body=style+body, attachments=new_attachments)
+		send_email_condo_make(emails=[email_to], subject=subject, body=style+body, attachments=new_attachments)
 	else:
 		e = get_env('EMAIL_DEV')
 		frappe.publish_realtime('msgprint', f'enviando correo a {e}')
 		#print('email dev ', get_env('EMAIL_DEV'))
-		response = send_email_condo(emails=[get_env('EMAIL_DEV')], subject=subject, body=style+body, attachments=new_attachments)
+		response = send_email_condo_make(emails=[get_env('EMAIL_DEV')], subject=subject, body=style+body, attachments=new_attachments)
 		
 		frappe.publish_realtime('msgprint', f'respuesta {response}')
 # genera pdf en base a un html
@@ -381,6 +381,20 @@ def send_email_condo(emails, subject, body="", attachments=[]):
 		subject=subject,
 		message="<div class='ql-editor read-mode'> {0} <p><br></p></div>".format(body),
 		attachments=attachments)
+
+def send_email_condo_make(emails, subject, body="", attachments=[]):
+    return email.make(recipients=emails,
+                      subject=subject,
+                      content="<div class='ql-editor read-mode'> {0} <p><br></p></div>".format(body),
+                      # doctype="Sales Invoice",
+                      # name=name,
+                      send_email="1",
+                      print_html="",
+                      send_me_a_copy=0,
+                      # print_format="Standard",
+                      attachments=attachments,
+                      _lang="es-VE",
+                      read_receipt=0)
 
 # obtiene un archivo en bytes para poder ser insertado como adjunto a un correo
 def create_attachment(filename='', path=None):
