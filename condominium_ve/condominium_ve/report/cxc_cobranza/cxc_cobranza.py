@@ -268,15 +268,15 @@ def send_email_queue(customer, data_clientes, empresa):
 	email_to = propietario[0]['contact_email']
 	sector = propietario[0]['territory']
 	condominio = propietario[0]['company']
-
+	"""
 	# obtengo el embebido en base64
 	empresa_doc = frappe.get_doc('Company', empresa)
 	path_logo = empresa_doc.company_logo
 	if path_logo != '':
 		path_logo = get_absolute_path()+empresa_doc.company_logo
 	embeed_logo = ''#img2base64(path_logo)
-
-	pdf = generate_pdf(data=data_clientes, customer=customer_name, total=total, condominio=condominio, sector=sector, logo=embeed_logo)
+	"""
+	pdf = generate_pdf(data=data_clientes, customer=customer_name, total=total, condominio=condominio, sector=sector, logo='')
 		
 	formato_email = frappe.db.get_all('formato email condominio', filters={'name':'cxc cobranza'}, fields=['subject', 'body'])
 	
