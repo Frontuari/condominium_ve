@@ -257,6 +257,7 @@ def img2base64(path):
 
 # formatea el correo
 def send_email_queue(customer, data_clientes, empresa):
+	
 	if get_env('MOD_DEV') == 'True':
 		frappe.publish_realtime('msgprint', 'Test: send_email_queue')
 
@@ -281,13 +282,15 @@ def send_email_queue(customer, data_clientes, empresa):
 	if get_env('MOD_DEV') == 'True':
 		frappe.publish_realtime('msgprint', 'Test: informacion de formateo de correo')
 
-	# obtengo el embebido en base64
-	empresa_doc = frappe.get_doc('Company', empresa)
-	path_logo = empresa_doc.company_logo
-	if path_logo != '':
-		path_logo = get_absolute_path()+empresa_doc.company_logo
-	embeed_logo = img2base64(path_logo)
-
+	try:
+		# obtengo el embebido en base64
+		empresa_doc = frappe.get_doc('Company', empresa)
+		path_logo = empresa_doc.company_logo
+		if path_logo != '':
+			path_logo = get_absolute_path()+empresa_doc.company_logo
+		embeed_logo = img2base64(path_logo)
+	except Exception as e:
+		frappe.publish_realtime('msgprint', 'error al convertir imagen a base64:\n'+str(e))
 	if get_env('MOD_DEV') == 'True':
 		frappe.publish_realtime('msgprint', 'Test: logo convertido a base64')
 
