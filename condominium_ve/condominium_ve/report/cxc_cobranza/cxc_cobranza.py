@@ -284,21 +284,32 @@ def send_email_queue(customer, data_clientes, empresa):
 
 	try:
 		# obtengo el embebido en base64
-		frappe.publish_realtime('msgprint', 'Test: obteniendo company')
+		if get_env('MOD_DEV') == 'True':
+			frappe.publish_realtime('msgprint', 'Test: obteniendo company')
 
 		empresa_doc = frappe.get_doc('Company', empresa)
 
-		frappe.publish_realtime('msgprint', 'Test: path logo')
-		path_logo = empresa_doc.company_logo
+		if get_env('MOD_DEV') == 'True':
+			frappe.publish_realtime('msgprint', 'Test: path logo')
 
-		frappe.publish_realtime('msgprint', 'Test: if path logo')
+		path_logo = empresa_doc.company_logo
+		
+		if get_env('MOD_DEV') == 'True':
+			frappe.publish_realtime('msgprint', 'Test: path_logo '+path_logo)
+			frappe.publish_realtime('msgprint', 'Test: if path logo')
+			
 		if path_logo != '':
-			frappe.publish_realtime('msgprint', 'Test: path_logo no es vacio')
+			if get_env('MOD_DEV') == 'True':
+				frappe.publish_realtime('msgprint', 'Test: path_logo no es vacio')
+			
 			path_logo = get_absolute_path()+empresa_doc.company_logo
-		frappe.publish_realtime('msgprint', 'Test: img2base64')
+		
+		if get_env('MOD_DEV') == 'True':
+			frappe.publish_realtime('msgprint', 'Test: img2base64')
+		
 		embeed_logo = img2base64(path_logo)
 	except Exception as e:
-		frappe.publish_realtime('msgprint', f'error al convertir imagen a base64:\n{e}')
+		frappe.publish_realtime('msgprint', f'error al convertir imagen a base64:\n{str(e)}')
 
 	if get_env('MOD_DEV') == 'True':
 		frappe.publish_realtime('msgprint', 'Test: logo convertido a base64')
