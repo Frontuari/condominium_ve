@@ -297,7 +297,7 @@ def send_email_queue(customer, data_clientes, empresa):
 		if get_env('MOD_DEV') == 'True':
 			frappe.publish_realtime('msgprint', 'Test: path_logo '+path_logo)
 			frappe.publish_realtime('msgprint', 'Test: if path logo')
-			
+
 		if path_logo != '':
 			if get_env('MOD_DEV') == 'True':
 				frappe.publish_realtime('msgprint', 'Test: path_logo no es vacio')
@@ -308,6 +308,9 @@ def send_email_queue(customer, data_clientes, empresa):
 			frappe.publish_realtime('msgprint', 'Test: img2base64')
 		
 		embeed_logo = img2base64(path_logo)
+
+		if get_env('MOD_DEV') == 'True':
+			frappe.publish_realtime('msgprint', 'Test: embeed_logo '+embeed_logo)
 	except Exception as e:
 		frappe.publish_realtime('msgprint', f'error al convertir imagen a base64:\n{str(e)}')
 
