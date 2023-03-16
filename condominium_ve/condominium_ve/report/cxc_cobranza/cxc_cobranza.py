@@ -274,7 +274,7 @@ def send_email_queue(customer, data_clientes, empresa):
 	path_logo = empresa_doc.company_logo
 	if path_logo != '':
 		path_logo = get_absolute_path()+empresa_doc.company_logo
-	embeed_logo = img2base64(path_logo)
+	embeed_logo = ''#img2base64(path_logo)
 
 	pdf = generate_pdf(data=data_clientes, customer=customer_name, total=total, condominio=condominio, sector=sector, logo=embeed_logo)
 		
