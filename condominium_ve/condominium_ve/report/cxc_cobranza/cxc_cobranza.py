@@ -281,7 +281,10 @@ def send_email_queue(customer, data_clientes, empresa):
 	if path_logo != '':
 		path_logo = get_absolute_path()+empresa_doc.company_logo
 	embeed_logo = img2base64(path_logo)
-	
+
+	if get_env('MOD_DEV') == 'True':
+		frappe.publish_realtime('msgprint', 'Test: logo convertido a base64')
+
 	pdf = generate_pdf(data=data_clientes, customer=customer_name, total=total, condominio=condominio, sector=sector, logo=embeed_logo)
 	
 	if get_env('MOD_DEV') == 'True':
