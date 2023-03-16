@@ -293,6 +293,7 @@ def send_email_queue(customer, data_clientes, empresa):
 
 		frappe.publish_realtime('msgprint', 'Test: if path logo')
 		if path_logo != '':
+			frappe.publish_realtime('msgprint', 'Test: path_logo no es vacio')
 			path_logo = get_absolute_path()+empresa_doc.company_logo
 		frappe.publish_realtime('msgprint', 'Test: img2base64')
 		embeed_logo = img2base64(path_logo)
