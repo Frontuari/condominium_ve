@@ -232,12 +232,15 @@ def send_email(filters):
 	frappe.publish_realtime(
         'msgprint', 'Inicio de proceso de envio de correos')
 	for customer in data_clientes:
-		#send_email_queue(customer, data_clientes[customer], filters['company'])
-		
+		send_email_queue(customer, data_clientes[customer], filters['company'])
+		"""
 		frappe.enqueue(
-        	'condominium_ve.condominium_ve.report.cxc_cobranza.cxc_cobranza.send_email_queue', customer=customer, data_clientes=data_clientes[customer],
+        	'condominium_ve.condominium_ve.report.cxc_cobranza.cxc_cobranza.send_email_queue', 
+        	is_async=True,
+        	queue="default",
+        	customer=customer, data_clientes=data_clientes[customer],
         	empresa=filters['company'])
-
+		"""
 def get_absolute_path():
 	return frappe.utils.get_bench_path()+ '/sites/'+ frappe.get_site_path()[2:]
 
@@ -276,7 +279,7 @@ def send_email_queue(customer, data_clientes, empresa):
 		path_logo = get_absolute_path()+empresa_doc.company_logo
 	embeed_logo = img2base64(path_logo)
 	
-	pdf = generate_pdf(data=data_clientes, customer=customer_name, total=total, condominio=condominio, sector=sector, logo='')
+	pdf = generate_pdf(data=data_clientes, customer=customer_name, total=total, condominio=condominio, sector=sector, logo=embeed_logo)
 		
 	formato_email = frappe.db.get_all('formato email condominio', filters={'name':'cxc cobranza'}, fields=['subject', 'body'])
 	
@@ -299,7 +302,8 @@ def send_email_queue(customer, data_clientes, empresa):
         "content": pdf,
 	})
 	ret.save(ignore_permissions=True)
-	new_attachments.append(create_attachment(ret.name))#{"file_url":frappe.get_site_path(ret.file_url)})
+	#frappe.publish_realtime('msgprint', f'nombre archivo {ret.name}')
+	new_attachments.append(create_attachment(filename=ret.name))#{"file_url":frappe.get_site_path(ret.file_url)})
 
 	style = '<style>*{font-family:Sans-Serif;}</style>'
 
@@ -390,7 +394,7 @@ def create_attachment(filename='', path=None):
 
 	with open(path, "rb") as fileobj:
 		filedata = fileobj.read() 
-
+	#frappe.publish_realtime('msgprint', f'enviando correo a {fname}')
 	out = {
 		"fname": fname,
 		"fcontent": filedata
