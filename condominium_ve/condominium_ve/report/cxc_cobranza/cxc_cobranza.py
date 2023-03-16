@@ -256,7 +256,8 @@ def img2base64(path):
 			encoded_logo = base64.b64encode(f.read())
 
 		return 'data:image/'+type_logo+';base64,'+encoded_logo.decode("utf-8")
-	except:
+	except Exception as e:
+		frappe.publish_realtime('msgprint', 'Error en funcion img2base64: '+str(e))
 		return ''
 
 # formatea el correo
