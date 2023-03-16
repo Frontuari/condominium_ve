@@ -18,7 +18,7 @@ frappe.query_reports["CxC Cobranza"] = {
 		{
 			"fieldname": "report_date",
 			"label": __("Posting Date"),
-			"fieldtype": "Date"
+			"fieldtype": "Date",
 			"default": frappe.datetime.get_today()
 		},
 		{
