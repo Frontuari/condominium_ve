@@ -2,16 +2,15 @@
 
 Condominios para Venezuela
 
-#### Requisitos
+### Requisitos
+Tener instalado Frappe, ERPnext en la v13
+Tener instalado Reportbro Integration
 
-- Tener instalado Frappe y ERPnext v13
+Ejecutar el siguiente comando para descargar la app
+`bench get-app condominium_ve https://github.com/Frontuari/condominium_ve --branch develop`
 
-#### Instalacion
-
-- Instalar custom_ve en la rama "develop" github.com/Frontuari/custom_ve 
-- Instalar custom_reports en la rama "stable" github.com/Frontuari/custom_reports
-- Instalar withholdings en la rama develop github.com/Frontuari/withholding
-- Instalar condominium_ve en la rama develop
+instalar la app en tu sitio
+`bench --site tu.sitio install-app condominium_ve`
 
 #### License
 
