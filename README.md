@@ -4,6 +4,7 @@ Condominios para Venezuela
 
 ### Requisitos
 Tener instalado Frappe, ERPnext en la v13
+tener instalado Custom Ve
 Tener instalado Reportbro Integration
 
 Ejecutar el siguiente comando para descargar la app
