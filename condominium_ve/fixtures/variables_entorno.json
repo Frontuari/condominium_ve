@@ -1,0 +1,5 @@
+{   "doctype":"Environment Variables",
+    "name": "URL_AUTOGESTION",
+    "key": "URL_AUTOGESTION",
+    "value": "https://pruebas-condominio.openerp.com.ve/autogestion?new=1&code="
+}
