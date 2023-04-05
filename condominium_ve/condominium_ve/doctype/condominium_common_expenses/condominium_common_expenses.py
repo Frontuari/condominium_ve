@@ -393,7 +393,7 @@ def send_email_condo_queue(ggc  , sector):
     invoice_aux = ""
     for d in data_emails:
         with open('/home/erpnext/log_condominios.txt', 'a') as f:
-            f.write('\nemail {0}'.formata(d['email']))
+            f.write('\nemail {0}'.format(d['email']))
 
         print("# registrar correo en la cola")
         new_attachments = attachments
@@ -451,11 +451,11 @@ def send_email_test(ggc):
             "SELECT DISTINCT  sector  from tabHousing ", as_dict=True)
 
     with open('/home/erpnext/log_condominios.txt', 'a') as f:
-        f.write('\nsectores {0}'.formata(sectors))
+        f.write('\nsectores {0}'.format(sectors))
 
     for s in sectors:
         with open('/home/erpnext/log_condominios.txt', 'a') as f:
-            f.write('\nsector {0}'.formata(s['sector'])) 
+            f.write('\nsector {0}'.format(s['sector'])) 
         frappe.enqueue(
             'condominium_ve.condominium_ve.doctype.condominium_common_expenses.condominium_common_expenses.send_email_condo_queue', ggc=ggc , sector=s['sector'])
 
