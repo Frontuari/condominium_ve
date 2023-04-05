@@ -439,10 +439,10 @@ def send_email_condo_queue(ggc  , sector):
 
 @frappe.whitelist()
 def send_email_test(ggc, excluded_sectors=[]):
-    sectors = get_sectors(excluded_sectors)
+    #sectors = get_sectors(excluded_sectors)
 
-    #sectors = frappe.db.sql(
-    #        "SELECT DISTINCT  sector  from tabHousing ", as_dict=True)
+    sectors = frappe.db.sql(
+            "SELECT DISTINCT  sector  from tabHousing ", as_dict=True)
 
     
     for s in sectors:  
