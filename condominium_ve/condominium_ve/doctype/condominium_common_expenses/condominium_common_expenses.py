@@ -459,7 +459,7 @@ def send_email_test(ggc):
     for s in sectors:
         with open('/home/erpnext/log_condominios.txt', 'a') as f:
             f.write('\nsector {0}'.format(s['sector'])) 
-        send_email_condo_queue( ggc=ggc , sector=s['sector'])
+        #send_email_condo_queue( ggc=ggc , sector=s['sector'])
         frappe.enqueue(
             'condominium_ve.condominium_ve.doctype.condominium_common_expenses.condominium_common_expenses.send_email_condo_queue',
             timeout=None,
