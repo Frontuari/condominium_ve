@@ -441,7 +441,7 @@ def send_email_condo_queue(ggc  , sector):
     email_condo = get_env('EMAIL_CONDO')
     if len(email_condo) > 0:
         send_email_condo(emails=email_condo, name=invoice_aux,
-                         description=description_email_text, attachments=attachments_simp)
+                         description=description_email_text) #attachments=attachments_simp
 
     frappe.publish_realtime('msgprint', 'Finalizacion de envio de correos para el sector {0}   '.format(sector))
 
