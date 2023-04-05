@@ -396,7 +396,7 @@ def send_email_condo_queue(ggc  , sector):
             f.write('\n{0}: email {1}'.format(sector, d['email']))
 
         print("# registrar correo en la cola")
-        new_attachments = attachments
+        #new_attachments = attachments
         """
         file = get_pdf_backend_api_report(
             report_name='Recibo de Condominio Copia', params=json.dumps({
