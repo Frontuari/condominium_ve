@@ -462,6 +462,7 @@ def send_email_test(ggc):
         #send_email_condo_queue( ggc=ggc , sector=s['sector'])
         frappe.enqueue(
             'condominium_ve.condominium_ve.doctype.condominium_common_expenses.condominium_common_expenses.send_email_condo_queue',
+            queue='short',
             ggc=ggc , sector=s['sector'])
 
 
