@@ -438,7 +438,7 @@ def send_email_condo_queue(ggc  , sector):
 
 
 @frappe.whitelist()
-def send_email_test(ggc, excluded_sectors=[]):
+def send_email_test(ggc):
     #sectors = get_sectors(excluded_sectors)
 
     sectors = frappe.db.sql(

@@ -180,8 +180,7 @@ frappe.ui.form.on("Condominium Common Expenses", {
             method:
               "condominium_ve.condominium_ve.doctype.condominium_common_expenses.condominium_common_expenses.send_email_test",
             args: {
-              ggc: frm.doc.name,
-              excluded_sectors: frm.doc.excluded_sectors
+              ggc: frm.doc.name
             },
 
             btn: $(".primary-action"),
