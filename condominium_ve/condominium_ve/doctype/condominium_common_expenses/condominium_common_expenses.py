@@ -483,7 +483,7 @@ def send_email_test(ggc):
     for s in sectors:
         frappe.enqueue(
             'condominium_ve.condominium_ve.doctype.condominium_common_expenses.condominium_common_expenses.send_email_condo_queue',
-            queue='shrot',
+            queue='short',
             is_async=True,
             ggc=ggc , sector=s['sector'])
         
