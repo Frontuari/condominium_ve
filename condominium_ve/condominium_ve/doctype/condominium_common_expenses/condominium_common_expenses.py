@@ -352,6 +352,23 @@ def cancel_process_sales_invoice(obj):
     frappe.publish_realtime(
         'msgprint', 'Finalizacion de proceso de cancelar recibos de condominio')
 
+def create_attachment(filename='', path=None):
+	if not path:
+		root_directory = frappe.db.get_value('Environment Variables', 'ROOT_DIRECTORY', 'value')
+		file = frappe.get_doc("File",filename)
+		path = root_directory+'/'+frappe.get_site_path(file.file_url)  
+		fname = file.file_name
+	else:
+		fname = os.path.basename(path)
+
+	with open(path, "rb") as fileobj:
+		filedata = fileobj.read() 
+	#frappe.publish_realtime('msgprint', f'enviando correo a {fname}')
+	out = {
+		"fname": fname,
+		"fcontent": filedata
+	}
+	return out 
 
 def send_email_condo_queue(ggc  , sector):
     frappe.publish_realtime(
@@ -373,8 +390,8 @@ def send_email_condo_queue(ggc  , sector):
     })
     ret.save(ignore_permissions=True)
 
-    attachments = [ret.name]
-    attachments_simp = [ret.name]
+    attachments = [create_attachment(filename=ret.name)]#[ret.name]
+    attachments_simp = [create_attachment(filename=ret.name)]#[ret.name]
     
     file = get_pdf_backend_api(report_name='Reporte de Gastos Comunes',
                                doctype="Condominium Common Expenses", name=ggc, as_download=True)
@@ -386,8 +403,8 @@ def send_email_condo_queue(ggc  , sector):
         "content": file.content,
     })
     ret.save(ignore_permissions=True)
-    attachments.append(ret.name)
-    attachments_simp.append(ret.name)
+    attachments.append(create_attachment(filename=ret.name))#(ret.name)
+    attachments_simp.append(create_attachment(filename=ret.name))#(ret.name)
     
     description_email_text = doc_ggc.send_text if doc_ggc.send_text else "Estimado Propietario, Su recibo de condomnio del mes"
     invoice_aux = ""
