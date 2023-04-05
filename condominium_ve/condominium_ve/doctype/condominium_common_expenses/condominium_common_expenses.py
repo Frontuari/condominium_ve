@@ -392,6 +392,9 @@ def send_email_condo_queue(ggc  , sector):
     description_email_text = doc_ggc.send_text if doc_ggc.send_text else "Estimado Propietario, Su recibo de condomnio del mes"
     invoice_aux = ""
     for d in data_emails:
+        with open('/home/erpnext/log_condominios.txt', 'a') as f:
+            f.write('\nemail {0}'.formata(d['email']))
+
         print("# registrar correo en la cola")
         new_attachments = attachments
         file = get_pdf_backend_api_report(
@@ -422,6 +425,9 @@ def send_email_condo_queue(ggc  , sector):
                 d['code'], url_code)
 
         if get_env('MOD_DEV') == 'False':
+            with open('/home/erpnext/log_condominios.txt', 'a') as f:
+                f.write('\nmod_dev false')
+
             send_email_condo(emails=d['email'], name=d['invoice'],
                              description=description_email_text + extra_message, attachments=new_attachments)
         else:
@@ -444,8 +450,12 @@ def send_email_test(ggc):
     sectors = frappe.db.sql(
             "SELECT DISTINCT  sector  from tabHousing ", as_dict=True)
 
-    
-    for s in sectors:  
+    with open('/home/erpnext/log_condominios.txt', 'a') as f:
+        f.write('\nsectores {0}'.formata(sectors))
+
+    for s in sectors:
+        with open('/home/erpnext/log_condominios.txt', 'a') as f:
+            f.write('\nsector {0}'.formata(s['sector'])) 
         frappe.enqueue(
             'condominium_ve.condominium_ve.doctype.condominium_common_expenses.condominium_common_expenses.send_email_condo_queue', ggc=ggc , sector=s['sector'])
 
