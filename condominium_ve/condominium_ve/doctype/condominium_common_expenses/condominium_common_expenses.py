@@ -397,7 +397,7 @@ def send_email_condo_queue(ggc  , sector):
 
         print("# registrar correo en la cola")
         new_attachments = attachments
-        """
+        
         file = get_pdf_backend_api_report(
             report_name='Recibo de Condominio Copia', params=json.dumps({
                 # 'company': doc_ggc.company,
@@ -416,7 +416,7 @@ def send_email_condo_queue(ggc  , sector):
         })
         ret.save(ignore_permissions=True)
         new_attachments.append(ret.name)
-        """
+        
         invoice_aux = d['invoice']
 
         extra_message = ''
