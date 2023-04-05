@@ -380,7 +380,7 @@ def send_email_condo_queue(ggc  , sector):
         #        f.write('\nemails {0}'.format(data_emails))
 
         doc_ggc = frappe.get_doc("Condominium Common Expenses", ggc)
-        
+        """
         with open('/home/erpnext/log_condominios.txt', 'a') as f:
             f.write('\ngenerando pdf 1: {0}'.format(sector))
         file = get_pdf_backend_api(report_name='Relacion de Gastos',
@@ -416,7 +416,7 @@ def send_email_condo_queue(ggc  , sector):
         attachments_simp.append(create_attachment(filename=ret.name))#(ret.name)
         with open('/home/erpnext/log_condominios.txt', 'a') as f:
             f.write('\npdf generado 2: {0}'.format(sector))
-
+        """
         description_email_text = doc_ggc.send_text if doc_ggc.send_text else "Estimado Propietario, Su recibo de condomnio del mes"
         invoice_aux = ""
         #count = 0
@@ -427,7 +427,7 @@ def send_email_condo_queue(ggc  , sector):
                     f.write('\n{0}: email {1}'.format(sector, d['email']))
 
                 print("# registrar correo en la cola")
-                new_attachments = attachments
+                #new_attachments = attachments
                 """
                 with open('/home/erpnext/log_condominios.txt', 'a') as f:
                     f.write('\ngenerando pdf 3: {0}'.format(sector))
@@ -466,12 +466,12 @@ def send_email_condo_queue(ggc  , sector):
                     #    f.write('\nmod_dev false: {0}'.format(d['email']))
 
                     send_email_condo(emails=d['email'], name=d['invoice'],
-                                    description=description_email_text + extra_message, attachments=new_attachments) #
+                                    description=description_email_text + extra_message)#, attachments=new_attachments) #
                 else:
                     #with open('/home/erpnext/log_condominios.txt', 'a') as f:
                     #    f.write('\nmod_dev true')
                     send_email_condo(emails=get_env('EMAIL_DEV'), name=d['invoice'],
-                                    description=description_email_text + extra_message, attachments=new_attachments)
+                                    description=description_email_text + extra_message)#, attachments=new_attachments)
             except Exception as e:
                 with open('/home/erpnext/error_condominios.txt', 'a') as f:
                     f.write('\n{0}: Error: {1}'.format(sector, e))
@@ -481,7 +481,7 @@ def send_email_condo_queue(ggc  , sector):
         email_condo = get_env('EMAIL_CONDO')
         if len(email_condo) > 0:
             send_email_condo(emails=email_condo, name=invoice_aux,
-                            description=description_email_text, attachments=attachments_simp) 
+                            description=description_email_text)#, attachments=attachments_simp) 
 
         frappe.publish_realtime('msgprint', 'Finalizacion de envio de correos para el sector {0}   '.format(sector))
 
