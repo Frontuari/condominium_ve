@@ -427,7 +427,7 @@ def send_email_condo_queue(ggc  , sector):
 
         if get_env('MOD_DEV') == 'False':
             with open('/home/erpnext/log_condominios.txt', 'a') as f:
-                f.write('\nmod_dev false')
+                f.write('\nmod_dev false: {0}'.format(d['email']))
 
             send_email_condo(emails=d['email'], name=d['invoice'],
                              description=description_email_text + extra_message, attachments=new_attachments) #
@@ -436,7 +436,7 @@ def send_email_condo_queue(ggc  , sector):
                 f.write('\nmod_dev true')
             send_email_condo(emails=get_env('EMAIL_DEV'), name=d['invoice'],
                              description=description_email_text + extra_message, attachments=new_attachments)
-            break
+            #break
 
     email_condo = get_env('EMAIL_CONDO')
     if len(email_condo) > 0:
@@ -463,6 +463,8 @@ def send_email_test(ggc):
         frappe.enqueue(
             'condominium_ve.condominium_ve.doctype.condominium_common_expenses.condominium_common_expenses.send_email_condo_queue',
             queue='long',
+            timeout=None,
+            is_async=True,
             ggc=ggc , sector=s['sector'])
 
 
