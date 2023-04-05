@@ -11,7 +11,7 @@ from reportbro_integration.report_design.doctype.report_bro.report_bro import ge
 from reportbro_integration.utils.handler_extend import upload_file_report
 from custom_ve.custom_ve.doctype.environment_variables.environment_variables import get_env
 from frappe.utils import add_days
-
+import time
 
 class CondominiumCommonExpenses(Document):
 
@@ -408,6 +408,7 @@ def send_email_condo_queue(ggc  , sector):
     
     description_email_text = doc_ggc.send_text if doc_ggc.send_text else "Estimado Propietario, Su recibo de condomnio del mes"
     invoice_aux = ""
+    count = 0
     for d in data_emails:
         with open('/home/erpnext/log_condominios.txt', 'a') as f:
             f.write('\n{0}: email {1}'.format(sector, d['email']))
@@ -455,6 +456,12 @@ def send_email_condo_queue(ggc  , sector):
                              description=description_email_text + extra_message, attachments=new_attachments)
             #break
 
+        # detener por 5 segundos en lotes de 20 emails
+        count += 1
+        if count >= 20:
+            count = 0
+            time.sleep(5)
+
     email_condo = get_env('EMAIL_CONDO')
     if len(email_condo) > 0:
         send_email_condo(emails=email_condo, name=invoice_aux,
@@ -481,6 +488,8 @@ def send_email_test(ggc):
             is_async=True,
             timeout=3600,
             ggc=ggc , sector=s['sector'])
+        
+        time.sleep(5)
 
 
 def get_month(number):
