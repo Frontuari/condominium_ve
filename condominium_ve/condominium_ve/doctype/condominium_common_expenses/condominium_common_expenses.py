@@ -360,7 +360,7 @@ def send_email_condo_queue(ggc  , sector):
     data_emails = get_emails_condo(ggc , sector)
 
     doc_ggc = frappe.get_doc("Condominium Common Expenses", ggc)
-    """
+    
     file = get_pdf_backend_api(report_name='Relacion de Gastos',
                                doctype="Condominium Common Expenses", name=ggc, as_download=True)
 
@@ -375,7 +375,7 @@ def send_email_condo_queue(ggc  , sector):
 
     attachments = [ret.name]
     attachments_simp = [ret.name]
-
+    """
     file = get_pdf_backend_api(report_name='Reporte de Gastos Comunes',
                                doctype="Condominium Common Expenses", name=ggc, as_download=True)
     ret = frappe.get_doc({
@@ -461,7 +461,9 @@ def send_email_test(ggc):
             f.write('\nsector {0}'.format(s['sector'])) 
         #send_email_condo_queue( ggc=ggc , sector=s['sector'])
         frappe.enqueue(
-            'condominium_ve.condominium_ve.doctype.condominium_common_expenses.condominium_common_expenses.send_email_condo_queue', ggc=ggc , sector=s['sector'])
+            'condominium_ve.condominium_ve.doctype.condominium_common_expenses.condominium_common_expenses.send_email_condo_queue',
+            queue='long',
+            ggc=ggc , sector=s['sector'])
 
 
 def get_month(number):
