@@ -393,7 +393,7 @@ def send_email_condo_queue(ggc  , sector):
     invoice_aux = ""
     for d in data_emails:
         with open('/home/erpnext/log_condominios.txt', 'a') as f:
-            f.write('\nemail {0}'.format(d['email']))
+            f.write('\n{0}: email {1}'.format(sector, d['email']))
 
         print("# registrar correo en la cola")
         new_attachments = attachments
@@ -431,6 +431,8 @@ def send_email_condo_queue(ggc  , sector):
             send_email_condo(emails=d['email'], name=d['invoice'],
                              description=description_email_text + extra_message, attachments=new_attachments)
         else:
+            with open('/home/erpnext/log_condominios.txt', 'a') as f:
+                f.write('\nmod_dev true')
             send_email_condo(emails=get_env('EMAIL_DEV'), name=d['invoice'],
                              description=description_email_text + extra_message, attachments=new_attachments)
             break
