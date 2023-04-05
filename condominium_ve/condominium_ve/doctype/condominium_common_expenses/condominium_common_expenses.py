@@ -7,8 +7,8 @@ from frappe.utils.response import build_response
 from datetime import datetime  # from python std library
 from frappe.utils import add_to_date
 from frappe.core.doctype.communication import email
-from custom_reports.report_design.doctype.report_bro.report_bro import get_pdf_backend_api, get_pdf_backend_api_report
-from custom_reports.utils.handler_extend import upload_file_report
+from reportbro_integration.report_design.doctype.report_bro.report_bro import get_pdf_backend_api, get_pdf_backend_api_report
+from reportbro_integration.utils.handler_extend import upload_file_report
 from custom_ve.custom_ve.doctype.environment_variables.environment_variables import get_env
 from frappe.utils import add_days
 
@@ -444,7 +444,7 @@ def send_email_test(ggc, excluded_sectors=[]):
     #sectors = frappe.db.sql(
     #        "SELECT DISTINCT  sector  from tabHousing ", as_dict=True)
 
-
+    
     for s in sectors:  
         frappe.enqueue(
             'condominium_ve.condominium_ve.doctype.condominium_common_expenses.condominium_common_expenses.send_email_condo_queue', ggc=ggc , sector=s['sector'])
