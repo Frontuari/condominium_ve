@@ -382,7 +382,7 @@ def send_email_condo_queue(ggc  , sector):
         doc_ggc = frappe.get_doc("Condominium Common Expenses", ggc)
         
         with open('/home/erpnext/log_condominios.txt', 'a') as f:
-            f.write('\ngenerando pdf 1')
+            f.write('\ngenerando pdf 1: {0}'.format(sector))
         file = get_pdf_backend_api(report_name='Relacion de Gastos',
                                 doctype="Condominium Common Expenses", name=ggc, as_download=True)
 
@@ -398,8 +398,10 @@ def send_email_condo_queue(ggc  , sector):
         attachments = [create_attachment(filename=ret.name)]#[ret.name]
         attachments_simp = [create_attachment(filename=ret.name)]#[ret.name]
         with open('/home/erpnext/log_condominios.txt', 'a') as f:
-            f.write('\n pdf 1 generado')
-        """
+            f.write('\n pdf 1 generado: {0}'.format(sector))
+
+        with open('/home/erpnext/log_condominios.txt', 'a') as f:
+            f.write('\ngenerando pdf 2: {0}'.format(sector))
         file = get_pdf_backend_api(report_name='Reporte de Gastos Comunes',
                                 doctype="Condominium Common Expenses", name=ggc, as_download=True)
         ret = frappe.get_doc({
@@ -412,7 +414,9 @@ def send_email_condo_queue(ggc  , sector):
         ret.save(ignore_permissions=True)
         attachments.append(create_attachment(filename=ret.name))#(ret.name)
         attachments_simp.append(create_attachment(filename=ret.name))#(ret.name)
-        """
+        with open('/home/erpnext/log_condominios.txt', 'a') as f:
+            f.write('\npdf generado 2: {0}'.format(sector))
+
         description_email_text = doc_ggc.send_text if doc_ggc.send_text else "Estimado Propietario, Su recibo de condomnio del mes"
         invoice_aux = ""
         #count = 0
