@@ -360,7 +360,7 @@ def send_email_condo_queue(ggc  , sector):
     data_emails = get_emails_condo(ggc , sector)
 
     doc_ggc = frappe.get_doc("Condominium Common Expenses", ggc)
-    """
+    
     file = get_pdf_backend_api(report_name='Relacion de Gastos',
                                doctype="Condominium Common Expenses", name=ggc, as_download=True)
 
@@ -388,7 +388,7 @@ def send_email_condo_queue(ggc  , sector):
     ret.save(ignore_permissions=True)
     attachments.append(ret.name)
     attachments_simp.append(ret.name)
-    """
+    
     description_email_text = doc_ggc.send_text if doc_ggc.send_text else "Estimado Propietario, Su recibo de condomnio del mes"
     invoice_aux = ""
     for d in data_emails:
