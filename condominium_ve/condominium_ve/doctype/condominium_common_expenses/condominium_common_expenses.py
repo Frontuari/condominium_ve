@@ -376,11 +376,11 @@ def send_email_condo_queue(ggc  , sector):
             'msgprint', 'Inicio de proceso de envio de correos para el sector {0}'.format(sector))
         print("Encolar proceso")
         data_emails = get_emails_condo(ggc , sector)
-        with open('/home/erpnext/log_condominios.txt', 'a') as f:
-                f.write('\nemails {0}'.format(data_emails))
+        #with open('/home/erpnext/log_condominios.txt', 'a') as f:
+        #        f.write('\nemails {0}'.format(data_emails))
 
         doc_ggc = frappe.get_doc("Condominium Common Expenses", ggc)
-        
+        """
         file = get_pdf_backend_api(report_name='Relacion de Gastos',
                                 doctype="Condominium Common Expenses", name=ggc, as_download=True)
 
@@ -408,17 +408,17 @@ def send_email_condo_queue(ggc  , sector):
         ret.save(ignore_permissions=True)
         attachments.append(create_attachment(filename=ret.name))#(ret.name)
         attachments_simp.append(create_attachment(filename=ret.name))#(ret.name)
-        
+        """
         description_email_text = doc_ggc.send_text if doc_ggc.send_text else "Estimado Propietario, Su recibo de condomnio del mes"
         invoice_aux = ""
         #count = 0
         for d in data_emails:
-            with open('/home/erpnext/log_condominios.txt', 'a') as f:
-                f.write('\n{0}: email {1}'.format(sector, d['email']))
+            #with open('/home/erpnext/log_condominios.txt', 'a') as f:
+            #    f.write('\n{0}: email {1}'.format(sector, d['email']))
 
             print("# registrar correo en la cola")
-            new_attachments = attachments
-            
+            new_attachments = []#attachments
+            """
             file = get_pdf_backend_api_report(
                 report_name='Recibo de Condominio Copia', params=json.dumps({
                     # 'company': doc_ggc.company,
@@ -437,7 +437,7 @@ def send_email_condo_queue(ggc  , sector):
             })
             ret.save(ignore_permissions=True)
             new_attachments.append(create_attachment(filename=ret.name))#(ret.name)
-            
+            """
             invoice_aux = d['invoice']
 
             extra_message = ''
@@ -447,24 +447,24 @@ def send_email_condo_queue(ggc  , sector):
                     d['code'], url_code)
 
             if get_env('MOD_DEV') == 'False':
-                with open('/home/erpnext/log_condominios.txt', 'a') as f:
-                    f.write('\nmod_dev false: {0}'.format(d['email']))
+                #with open('/home/erpnext/log_condominios.txt', 'a') as f:
+                #    f.write('\nmod_dev false: {0}'.format(d['email']))
 
                 send_email_condo(emails=d['email'], name=d['invoice'],
                                 description=description_email_text + extra_message, attachments=new_attachments) #
             else:
-                with open('/home/erpnext/log_condominios.txt', 'a') as f:
-                    f.write('\nmod_dev true')
+                #with open('/home/erpnext/log_condominios.txt', 'a') as f:
+                #    f.write('\nmod_dev true')
                 send_email_condo(emails=get_env('EMAIL_DEV'), name=d['invoice'],
                                 description=description_email_text + extra_message, attachments=new_attachments)
-                #break
+                break
 
-            # detener por 5 segundos en lotes de 20 emails
+           
     
         email_condo = get_env('EMAIL_CONDO')
         if len(email_condo) > 0:
             send_email_condo(emails=email_condo, name=invoice_aux,
-                            description=description_email_text, attachments=attachments_simp) 
+                            description=description_email_text)#, attachments=attachments_simp) 
 
         frappe.publish_realtime('msgprint', 'Finalizacion de envio de correos para el sector {0}   '.format(sector))
 
@@ -479,16 +479,12 @@ def send_email_test(ggc):
     sectors = frappe.db.sql(
             "SELECT DISTINCT  sector  from tabHousing ", as_dict=True)
 
-    with open('/home/erpnext/log_condominios.txt', 'a') as f:
-        f.write('\nsectores {0}'.format(sectors))
 
     for s in sectors:
-        with open('/home/erpnext/log_condominios.txt', 'a') as f:
-            f.write('\nsector {0}'.format(s['sector'])) 
         frappe.enqueue(
             'condominium_ve.condominium_ve.doctype.condominium_common_expenses.condominium_common_expenses.send_email_condo_queue',
+            queue='shrot',
             is_async=True,
-            timeout=1500,
             ggc=ggc , sector=s['sector'])
         
 
