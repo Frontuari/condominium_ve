@@ -457,11 +457,12 @@ def send_email_condo_queue(ggc  , sector):
             #break
 
         # detener por 5 segundos en lotes de 20 emails
+        """
         count += 1
         if count >= 20:
             count = 0
             time.sleep(5)
-
+        """
     email_condo = get_env('EMAIL_CONDO')
     if len(email_condo) > 0:
         send_email_condo(emails=email_condo, name=invoice_aux,
@@ -486,10 +487,9 @@ def send_email_test(ggc):
         frappe.enqueue(
             'condominium_ve.condominium_ve.doctype.condominium_common_expenses.condominium_common_expenses.send_email_condo_queue',
             is_async=True,
-            timeout=3600,
+            timeout=1500,
             ggc=ggc , sector=s['sector'])
         
-        time.sleep(5)
 
 
 def get_month(number):
