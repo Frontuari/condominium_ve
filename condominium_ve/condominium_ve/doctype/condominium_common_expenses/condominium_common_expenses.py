@@ -421,56 +421,60 @@ def send_email_condo_queue(ggc  , sector):
         invoice_aux = ""
         #count = 0
         for d in data_emails:
-            #with open('/home/erpnext/log_condominios.txt', 'a') as f:
-            #    f.write('\n{0}: email {1}'.format(sector, d['email']))
+            try:
 
-            print("# registrar correo en la cola")
-            new_attachments = attachments
-            """
-            with open('/home/erpnext/log_condominios.txt', 'a') as f:
-                f.write('\ngenerando pdf 3: {0}'.format(sector))
-            
-            file = get_pdf_backend_api_report(
-                report_name='Recibo de Condominio Copia', params=json.dumps({
-                    # 'company': doc_ggc.company,
-                    'condominium_name': ggc,
-                    "customer": d['customer'],
-                    "from_date": "2000-01-01",
-                    "housing":  d['housing'],
-                    "to_date":  "2099-12-31"
-                }))
-            ret = frappe.get_doc({
-                "doctype": "File",
-                "folder": "Home",
-                "file_name": "recibo_de_condominio.pdf",
-                "is_private": 1,
-                "content": file.content,
-            })
-            ret.save(ignore_permissions=True)
-            new_attachments.append(create_attachment(filename=ret.name))#(ret.name)
-            with open('/home/erpnext/log_condominios.txt', 'a') as f:
-                f.write('\npdf generado 3: {0}'.format(sector))
-            """
-            invoice_aux = d['invoice']
+                with open('/home/erpnext/log_condominios.txt', 'a') as f:
+                    f.write('\n{0}: email {1}'.format(sector, d['email']))
 
-            extra_message = ''
-            if d['code']:
-                url_code = get_env('URL_AUTOGESTION') + d['code']
-                extra_message = "<br><br><br>  <p> Su codigo para consulta y realizar pagos es: {0}</p>  <br>  <a href='{1}' > Click aqui para ir a la autogestion </a>    ".format(
-                    d['code'], url_code)
+                print("# registrar correo en la cola")
+                new_attachments = attachments
+                """
+                with open('/home/erpnext/log_condominios.txt', 'a') as f:
+                    f.write('\ngenerando pdf 3: {0}'.format(sector))
+                
+                file = get_pdf_backend_api_report(
+                    report_name='Recibo de Condominio Copia', params=json.dumps({
+                        # 'company': doc_ggc.company,
+                        'condominium_name': ggc,
+                        "customer": d['customer'],
+                        "from_date": "2000-01-01",
+                        "housing":  d['housing'],
+                        "to_date":  "2099-12-31"
+                    }))
+                ret = frappe.get_doc({
+                    "doctype": "File",
+                    "folder": "Home",
+                    "file_name": "recibo_de_condominio.pdf",
+                    "is_private": 1,
+                    "content": file.content,
+                })
+                ret.save(ignore_permissions=True)
+                new_attachments.append(create_attachment(filename=ret.name))#(ret.name)
+                with open('/home/erpnext/log_condominios.txt', 'a') as f:
+                    f.write('\npdf generado 3: {0}'.format(sector))
+                """
+                invoice_aux = d['invoice']
 
-            if get_env('MOD_DEV') == 'False':
-                #with open('/home/erpnext/log_condominios.txt', 'a') as f:
-                #    f.write('\nmod_dev false: {0}'.format(d['email']))
+                extra_message = ''
+                if d['code']:
+                    url_code = get_env('URL_AUTOGESTION') + d['code']
+                    extra_message = "<br><br><br>  <p> Su codigo para consulta y realizar pagos es: {0}</p>  <br>  <a href='{1}' > Click aqui para ir a la autogestion </a>    ".format(
+                        d['code'], url_code)
 
-                send_email_condo(emails=d['email'], name=d['invoice'],
-                                description=description_email_text + extra_message, attachments=new_attachments) #
-            else:
-                #with open('/home/erpnext/log_condominios.txt', 'a') as f:
-                #    f.write('\nmod_dev true')
-                send_email_condo(emails=get_env('EMAIL_DEV'), name=d['invoice'],
-                                description=description_email_text + extra_message, attachments=new_attachments)
-                break
+                if get_env('MOD_DEV') == 'False':
+                    #with open('/home/erpnext/log_condominios.txt', 'a') as f:
+                    #    f.write('\nmod_dev false: {0}'.format(d['email']))
+
+                    send_email_condo(emails=d['email'], name=d['invoice'],
+                                    description=description_email_text + extra_message, attachments=new_attachments) #
+                else:
+                    #with open('/home/erpnext/log_condominios.txt', 'a') as f:
+                    #    f.write('\nmod_dev true')
+                    send_email_condo(emails=get_env('EMAIL_DEV'), name=d['invoice'],
+                                    description=description_email_text + extra_message, attachments=new_attachments)
+            except Exception as e:
+                with open('/home/erpnext/log_condominios.txt', 'a') as f:
+                    f.write('\n{0}: Error: {1}'.format(sector, e))
 
            
     
