@@ -426,7 +426,10 @@ def send_email_condo_queue(ggc  , sector):
 
             print("# registrar correo en la cola")
             new_attachments = attachments
-            """
+
+            with open('/home/erpnext/log_condominios.txt', 'a') as f:
+                f.write('\ngenerando pdf 3: {0}'.format(sector))
+
             file = get_pdf_backend_api_report(
                 report_name='Recibo de Condominio Copia', params=json.dumps({
                     # 'company': doc_ggc.company,
@@ -445,7 +448,9 @@ def send_email_condo_queue(ggc  , sector):
             })
             ret.save(ignore_permissions=True)
             new_attachments.append(create_attachment(filename=ret.name))#(ret.name)
-            """
+            with open('/home/erpnext/log_condominios.txt', 'a') as f:
+                f.write('\npdf generado 3: {0}'.format(sector))
+
             invoice_aux = d['invoice']
 
             extra_message = ''
