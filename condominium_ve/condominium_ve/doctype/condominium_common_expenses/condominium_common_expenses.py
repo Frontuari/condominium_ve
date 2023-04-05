@@ -414,7 +414,7 @@ def send_email_condo_queue(ggc  , sector):
 
         print("# registrar correo en la cola")
         new_attachments = attachments
-        """
+        
         file = get_pdf_backend_api_report(
             report_name='Recibo de Condominio Copia', params=json.dumps({
                 # 'company': doc_ggc.company,
@@ -432,8 +432,8 @@ def send_email_condo_queue(ggc  , sector):
             "content": file.content,
         })
         ret.save(ignore_permissions=True)
-        new_attachments.append(ret.name)
-        """
+        new_attachments.append(create_attachment(filename=ret.name))#(ret.name)
+        
         invoice_aux = d['invoice']
 
         extra_message = ''
@@ -479,6 +479,7 @@ def send_email_test(ggc):
         frappe.enqueue(
             'condominium_ve.condominium_ve.doctype.condominium_common_expenses.condominium_common_expenses.send_email_condo_queue',
             is_async=True,
+            timeout=3600,
             ggc=ggc , sector=s['sector'])
 
 
