@@ -473,7 +473,7 @@ def send_email_condo_queue(ggc  , sector):
                     send_email_condo(emails=get_env('EMAIL_DEV'), name=d['invoice'],
                                     description=description_email_text + extra_message, attachments=new_attachments)
             except Exception as e:
-                with open('/home/erpnext/log_condominios.txt', 'a') as f:
+                with open('/home/erpnext/error_condominios.txt', 'a') as f:
                     f.write('\n{0}: Error: {1}'.format(sector, e))
 
            
