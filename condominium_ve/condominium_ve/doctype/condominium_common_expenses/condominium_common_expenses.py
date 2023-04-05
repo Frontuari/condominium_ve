@@ -375,6 +375,8 @@ def send_email_condo_queue(ggc  , sector):
         'msgprint', 'Inicio de proceso de envio de correos para el sector {0}'.format(sector))
     print("Encolar proceso")
     data_emails = get_emails_condo(ggc , sector)
+    with open('/home/erpnext/log_condominios.txt', 'a') as f:
+            f.write('\nemails {0}'.format(data_emails))
 
     doc_ggc = frappe.get_doc("Condominium Common Expenses", ggc)
     
@@ -408,7 +410,7 @@ def send_email_condo_queue(ggc  , sector):
     
     description_email_text = doc_ggc.send_text if doc_ggc.send_text else "Estimado Propietario, Su recibo de condomnio del mes"
     invoice_aux = ""
-    count = 0
+    #count = 0
     for d in data_emails:
         with open('/home/erpnext/log_condominios.txt', 'a') as f:
             f.write('\n{0}: email {1}'.format(sector, d['email']))
