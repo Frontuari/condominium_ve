@@ -43,16 +43,15 @@ def get_data(filters):
 	data_aux = {}
 	response = frappe.db.get_all('Customer', fields=['name', 'territory'])
 	for res in response:
-		if res.name in count:
-			if res.territory not in data_aux:
-				data_aux[res.territory] = []
-				data_aux[res.territory].append({
-       				'customer': '<b>'+res.territory+'</b>', 
-           			'total_facturas':''})
-    
+		if res.territory not in data_aux:
+			data_aux[res.territory] = []
 			data_aux[res.territory].append({
-       				'customer': res.name, 
-           			'total_facturas': frappe.format(count[res.name], {'fieldtype':'Int'})})
+       			'customer': '<b>'+res.territory+'</b>', 
+           		'total_facturas':''})
+    
+		data_aux[res.territory].append({
+       		'customer': res.name, 
+           	'total_facturas': frappe.format(count[res.name], {'fieldtype':'Int'})})
 	
 	data = []
 	for d in data_aux:
