@@ -48,10 +48,11 @@ def get_data(filters):
 			data_aux[res.territory].append({
        			'customer': '<b>'+res.territory+'</b>', 
            		'total_facturas':''})
-    
+		
+		nFact = count[res.name] or 0
 		data_aux[res.territory].append({
        		'customer': res.name, 
-           	'total_facturas': frappe.format(count[res.name], {'fieldtype':'Int'})})
+           	'total_facturas': frappe.format(nFact, {'fieldtype':'Int'})})
 	
 	data = []
 	for d in data_aux:
