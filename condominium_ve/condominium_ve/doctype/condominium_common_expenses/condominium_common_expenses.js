@@ -3,6 +3,7 @@
 
 frappe.ui.form.on("Condominium Common Expenses", {
   refresh: function (frm) {
+    
     if (!frm.doc.docstatus || frm.doc.docstatus == 0) {
       frm.add_custom_button(__("Search"), () => {
         if (frm.doc.posting_date && frm.doc.condominium) {
@@ -196,6 +197,47 @@ frappe.ui.form.on("Condominium Common Expenses", {
           });
 
       });
+
+      // agregar boton para crear facturas faltantes en caso de que no se hayan generado
+      frappe.call({
+        method:
+          "condominium_ve.condominium_ve.doctype.condominium_common_expenses.condominium_common_expenses.is_invoices_generated",
+        args: {
+          ggc: frm.doc.name,
+          excluded_sectors: frm.doc.excluded_sectors
+        },
+
+        //btn: $(".primary-action"),
+
+        freeze: true,
+        callback: (response) => {
+          console.log(response.data)
+          if (response.data && frm.doc.docstatus == 1){
+            frm.add_custom_button(__("Generate Missing Invoices"), () => {
+              frappe.call({
+                method:
+                  "condominium_ve.condominium_ve.doctype.condominium_common_expenses.condominium_common_expenses.gen_missing_invoices",
+                args: {
+                  ggc: frm.doc.name,
+                  excluded_sectors: frm.doc.excluded_sectors
+                },
+
+                //btn: $(".primary-action"),
+
+                freeze: true,
+                callback: (response) => {},
+                error: (r) => {
+                  console.log(r);
+                }
+              });
+
+            });
+          }else{
+            frm.remove_custom_button(__("Generate Missing Invoices"));
+          }
+        }
+      });
+
     }
   },
 

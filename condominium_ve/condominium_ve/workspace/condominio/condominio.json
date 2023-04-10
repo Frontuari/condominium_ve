@@ -274,9 +274,18 @@
    "link_type": "Report",
    "onboard": 0,
    "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 1,
+   "label": "Count of Documents Generated Per Month",
+   "link_to": "Count of Documents Generated Per Month",
+   "link_type": "Report",
+   "onboard": 0,
+   "type": "Link"
   }
  ],
- "modified": "2023-03-16 11:49:12.131086",
+ "modified": "2023-04-10 11:42:43.687290",
  "modified_by": "Administrator",
  "module": "Condominium Ve",
  "name": "Condominio",

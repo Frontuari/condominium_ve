@@ -9,7 +9,12 @@ app_color = "grey"
 app_email = "armando.develop@gmail.com"
 app_license = "MIT"
 
-fixtures = ['formato email condominio']
+fixtures = [
+    'formato email condominio',
+    {"dt": "Report Bro", "filters": [
+        ["name", "in", ("Reporte de Gastos Comunes", "Relacion de Gastos", "Recibo de Condominio Copia")]]}
+        
+]
 # Includes in <head>
 # ------------------
 
