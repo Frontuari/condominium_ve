@@ -3,7 +3,7 @@
 
 import frappe
 from frappe import _
-from datetime import date, datetime
+import datetime
 
 meses = [
   'Enero',
@@ -28,34 +28,39 @@ def execute(filters=None):
 	return get_columns(), get_data(filters)
 
 def get_data(filters):
-	periodo =  meses.index(filters.period.strip())
-	year = date.today().year
-
-	sql = """
-		SELECT 
-			tc.territory, tc.name as customer, COUNT(tsi.name) as total_facturas
-			FROM `tabSales Invoice` tsi 
-			JOIN tabCustomer tc ON tc.name = tsi.customer
-			WHERE MONTH(tsi.posting_date) = {0} AND YEAR(tsi.posting_date) = {1}
-
-			GROUP BY tc.name, tc.territory
-		
-		ORDER BY tc.territory ASC
-		
-	""".format(periodo, year)
-	result = frappe.db.sql(sql, as_dict=True)
-
-	territorios = []
+	periodo =  meses.index(filters.period.strip())+1
+	year = datetime.date.today().year
+	
+	response = frappe.db.get_all('Sales Invoice', filters={'docstatus':1}, fields=['posting_date', 'customer'])
+	
+	count = {}
+	for res in response:
+		if res.posting_date.month == periodo and res.posting_date.year == year:
+			if res.customer not in count:
+				count[res.customer] = 0
+			count[res.customer] += 1
+	
+	data_aux = {}
+	response = frappe.db.get_all('Customer', fields=['name', 'territory'])
+	for res in response:
+		if res.name in count:
+			if res.territory not in data_aux:
+				data_aux[res.territory] = []
+				data_aux[res.territory].append({
+       				'customer': '<b>'+res.territory+'</b>', 
+           			'total_facturas':''})
+    
+			data_aux[res.territory].append({
+       				'customer': res.name, 
+           			'total_facturas': frappe.format(count[res.name], {'fieldtype':'Int'})})
+	
 	data = []
-	for row in result:
-		if row.territory not in territorios:
-			territorios.append(row.territory)
-			data.append({'customer': '<b>'+row.territory+'</b>', 'total_facturas': ''})
-		else:
-			data.append({'customer': row.customer,
-				'total_facturas': frappe.format(row.total_facturas, {'fieldtype':'Int'})})
+	for d in data_aux:
+		data += data_aux[d]
+	
 	return data
-      
+
+
 
 def get_columns():
     return [
