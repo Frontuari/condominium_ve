@@ -1,7 +1,6 @@
 {
  "actions": [],
  "allow_import": 1,
- "allow_rename": 1,
  "autoname": "GCC-.YYYY.-.MM.-.#####",
  "creation": "2022-10-24 09:26:56.149040",
  "doctype": "DocType",
@@ -18,6 +17,7 @@
   "total_per_unit",
   "funds_expenditure",
   "funds_current",
+  "concept",
   "section_break_13",
   "condominium_common_expenses_detail",
   "amended_from",
@@ -69,8 +69,7 @@
    "fieldname": "condominium_common_expenses_detail",
    "fieldtype": "Table",
    "label": "Gastos Comunes",
-   "options": "Condominium Common Expenses Detail",
-   "read_only": 1
+   "options": "Condominium Common Expenses Detail"
   },
   {
    "fieldname": "amended_from",
@@ -181,6 +180,14 @@
    "fieldtype": "Table",
    "label": "Sectores Excluidos",
    "options": "Condo Exclude Sector"
+  },
+  {
+   "fieldname": "concept",
+   "fieldtype": "Data",
+   "in_filter": 1,
+   "in_list_view": 1,
+   "label": "Concept",
+   "reqd": 1
   }
  ],
  "index_web_pages_for_search": 1,
@@ -192,7 +199,7 @@
    "link_fieldname": "gc_condo"
   }
  ],
- "modified": "2023-01-31 08:42:43.866722",
+ "modified": "2023-04-11 08:24:00.867457",
  "modified_by": "Administrator",
  "module": "Condominium Ve",
  "name": "Condominium Common Expenses",

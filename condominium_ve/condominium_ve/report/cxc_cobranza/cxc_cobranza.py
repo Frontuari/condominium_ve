@@ -29,178 +29,7 @@ def execute(filters=None):
 	return ReceivablePayableReport(filters).run(args)
 	#return get_columns(), get_data(filters)
 
-"""
-def get_columns():
-	return [
-		{
-			'fieldname': 'posting_date',
-			'label': _('Fecha'),
-			'fieldtype': 'Date',
-			'width':100
-		},
-		{
-			'fieldname': 'due_date',
-			'label': _('Dias Vencido'),
-			'fieldtype': 'Data',
-			'width':100
-		},
-		{
-			'fieldname': 'customer',
-			'label': _('Cliente'),
-			'fieldtype': 'Link',
-			'options': 'Customer',
-			'width':150
-		},
 
-		{
-			'fieldname': 'name',
-			'label': _('Comprobante'),
-			'fieldtype': 'Link',
-			'options':'Sales Invoice',
-			'width':150
-		},
-		{
-			'fieldname': 'grand_total',
-			'label': _('Cantidad Facturada'),
-			'fieldtype': 'Data',
-			'width':150
-		},
-		{
-			'fieldname': 'cantidad_pagada',
-			'label': _('Cantidad Pagada'),
-			'fieldtype': 'Data',
-			'width':150
-		},
-		{
-			'fieldname': 'outstanding_amount',
-			'label': _('Cantidad Pendiente'),
-			'fieldtype': 'Data',
-			'width':150
-		},
-		{
-			'fieldname': 'territory',
-			'label': _('Sector'),
-			'fieldtype': 'Data',
-			'width':150
-		}
-	]
-
-def get_data(filters):
-	agrupar_por_cliente = False
-	try:
-		if filters['group_by_party']:
-			agrupar_por_cliente = True
-			del filters['group_by_party']
-	except:
-		pass
-
-	filters = delFilters(filters,['group_by_party','report_date','ageing_based_on','range1','range2','range3','range4'])
-
-	invoices = frappe.db.get_all('Sales Invoice', filters=filters, fields=['posting_date', 'due_date', 'customer', 'name', 'grand_total', 'outstanding_amount', 'territory'])
-	
-	
-	ventas = []
-
-	if not agrupar_por_cliente:
-		total_facturado = 0
-		total_pagado = 0
-		total_pendiente = 0
-
-		for invoice in invoices[::-1]:
-			if invoice.outstanding_amount <= 0:
-				continue
-			cantidad_pagada = invoice.grand_total - invoice.outstanding_amount
-			
-			total_facturado += invoice.grand_total
-			total_pagado += cantidad_pagada
-			total_pendiente += invoice.outstanding_amount
-			
-			dias_vencido = datetime.date.today() - invoice.due_date
-			ventas.append({
-					"posting_date": invoice.posting_date,
-					"due_date": dias_vencido.days,
-					"customer": invoice.customer,
-					"name": invoice.name,
-					"grand_total": frappe.format(invoice.grand_total, {'fieldtype': 'Currency'}),
-					"cantidad_pagada":frappe.format(cantidad_pagada, {'fieldtype': 'Currency'}),
-					"outstanding_amount": frappe.format(invoice.outstanding_amount, {'fieldtype': 'Currency'}),
-					"territory": invoice.territory
-				})
-
-		ventas.append({
-					"posting_date": "",
-					"due_date": "",
-					"customer": "",
-					"name": '<b>'+_('Total')+'</b>',
-					"grand_total": '<b>'+frappe.format(total_facturado, {'fieldtype': 'Currency'})+'</b>',
-					"cantidad_pagada": '<b>'+frappe.format(total_pagado, {'fieldtype': 'Currency'})+'</b>',
-					"outstanding_amount": '<b>'+frappe.format(total_pendiente, {'fieldtype': 'Currency'})+'</b>',
-					"territory": ""
-				})
-	else:
-		total_facturado = 0
-		total_pagado = 0
-		total_pendiente = 0
-
-		invoice_clientes = {}
-		total_clientes = {}
-		for invoice in invoices[::-1]:
-			cantidad_pagada = invoice.grand_total - invoice.outstanding_amount
-			
-			total_facturado += invoice.grand_total
-			total_pagado += cantidad_pagada
-			total_pendiente += invoice.outstanding_amount
-
-			if not invoice.customer in invoice_clientes:
-				invoice_clientes[invoice.customer] = []
-				total_clientes[invoice.customer] = {'grand_total': "", 'cantidad_pagada': "", 'outstanding_amount': 0}
-
-			dias_vencido = datetime.date.today() - invoice.due_date
-			invoice_clientes[invoice.customer].append({
-					"posting_date": invoice.posting_date,
-					"due_date": dias_vencido,
-					"customer": invoice.customer,
-					"name": invoice.name,
-					"grand_total": frappe.format(invoice.grand_total, {'fieldtype': 'Currency'}),
-					"cantidad_pagada":frappe.format(cantidad_pagada, {'fieldtype': 'Currency'}),
-					"outstanding_amount": frappe.format(invoice.outstanding_amount, {'fieldtype': 'Currency'}),
-					"territory": invoice.territory
-				})
-
-			#total_clientes[invoice.customer]['grand_total'] += invoice.grand_total
-			#total_clientes[invoice.customer]['cantidad_pagada'] += cantidad_pagada
-			total_clientes[invoice.customer]['outstanding_amount'] += invoice.outstanding_amount
-
-		# saco el total por cliente y lo agrego a la lista de ventas
-		for cliente in invoice_clientes:
-			for invoice in invoice_clientes[cliente]:
-				ventas.append(invoice)
-
-			ventas.append({
-					"posting_date": "",
-					"due_date": "",
-					"customer": "",
-					"name": '<b>'+_('Total')+'</b>',
-					"grand_total": '<b>'+frappe.format(total_clientes[cliente]['grand_total'], {'fieldtype': 'Currency'})+'</b>',
-					"cantidad_pagada": '<b>'+frappe.format(total_clientes[cliente]['cantidad_pagada'], {'fieldtype': 'Currency'})+'</b>',
-					"outstanding_amount": '<b>'+frappe.format(total_clientes[cliente]['outstanding_amount'], {'fieldtype': 'Currency'})+'</b>',
-					"territory": ""
-				})
-
-
-		ventas.append({
-					"posting_date": "",
-					"due_date": "",
-					"customer": "",
-					"name": '<b>'+_('Total General')+'</b>',
-					"grand_total": '<b>'+frappe.format(total_facturado, {'fieldtype': 'Currency'})+'</b>',
-					"cantidad_pagada": '<b>'+frappe.format(total_pagado, {'fieldtype': 'Currency'})+'</b>',
-					"outstanding_amount": '<b>'+frappe.format(total_pendiente, {'fieldtype': 'Currency'})+'</b>',
-					"territory": ""
-				})
-
-	return ventas	
-"""
 
 def delFilters(filters, toDel):
 	for filter_del in toDel:
@@ -249,15 +78,10 @@ def get_absolute_path():
 	return frappe.utils.get_bench_path()+ '/sites/'+ frappe.get_site_path()[2:]
 
 def img2base64(path):
-	#if get_env('MOD_DEV') == 'True':
-		#frappe.publish_realtime('msgprint', 'Test: path '+path)
 	try:
 		type_logo = os.path.basename(path).split('.')
 		type_logo = type_logo[1]
-		#if get_env('MOD_DEV') == 'True':
-		#	frappe.publish_realtime('msgprint', 'Test: img2base64 function')
-		#	frappe.publish_realtime('msgprint', 'Test: '+type_logo)
-		#	frappe.publish_realtime('msgprint', 'Test: '+path)
+
 		with open(path, 'rb') as f:
 			encoded_logo = base64.b64encode(f.read())
 
@@ -268,12 +92,9 @@ def img2base64(path):
 
 def get_path_file(filename):
 	base_name = os.path.basename(filename)
-	#if get_env('MOD_DEV') == 'True':
-	#	frappe.publish_realtime('msgprint', 'Test: get_path_file '+base_name)
 	try:
 		file = frappe.get_all('File', filters={'file_name':base_name}, fields=['file_url', 'is_private', 'folder'])[0]
-		#if get_env('MOD_DEV') == 'True':
-		#	frappe.publish_realtime('msgprint', 'Test: get_path_file '+file.folder)
+
 		if file.is_private:	
 			return get_absolute_path()+file.file_url
 		else:
@@ -285,8 +106,6 @@ def get_path_file(filename):
 # formatea el correo
 def send_email_queue(customer, data_clientes, empresa):
 	
-	#if get_env('MOD_DEV') == 'True':
-	#	frappe.publish_realtime('msgprint', 'Test: send_email_queue')
 
 	total = {'grand_total':0, 'cantidad_pagada':0, 'outstanding_amount':0}
 	for i in range(len(data_clientes)):
@@ -296,8 +115,6 @@ def send_email_queue(customer, data_clientes, empresa):
 		total['cantidad_pagada'] += data_clientes[i]['grand_total'] - data_clientes[i]['outstanding_amount']
 		total['outstanding_amount'] += data_clientes[i]['outstanding_amount']
 
-	#if get_env('MOD_DEV') == 'True':
-	#	frappe.publish_realtime('msgprint', 'Test: total row obtenido')
 
 	# informacion para formatear el correo
 	propietario = frappe.db.get_all('Sales Invoice', filters={'customer':customer}, fields=['contact_email', 'territory', 'company', 'customer_name'])
@@ -310,26 +127,10 @@ def send_email_queue(customer, data_clientes, empresa):
 	empresa_doc = frappe.get_doc('Company', empresa)
 	path_logo = get_path_file(empresa_doc.company_logo)
 		
-	
-	
-	#if get_env('MOD_DEV') == 'True':
-	#	frappe.publish_realtime('msgprint', 'Test: img2base64')
-	
-
 	embeed_logo = img2base64(path_logo)
-
-	#if get_env('MOD_DEV') == 'True':
-	#	frappe.publish_realtime('msgprint', 'Test: embeed_logo '+embeed_logo)
-	
-
-	#if get_env('MOD_DEV') == 'True':
-	#	frappe.publish_realtime('msgprint', 'Test: logo convertido a base64')
 
 	pdf = generate_pdf(data=data_clientes, customer=customer_name, total=total, condominio=condominio, sector=sector, logo=embeed_logo)
 	
-	#if get_env('MOD_DEV') == 'True':
-	#	frappe.publish_realtime('msgprint', 'Test: pdf generado')
-
 	formato_email = frappe.db.get_all('formato email condominio', filters={'name':'cxc cobranza'}, fields=['subject', 'body'])
 	
 	# formatear variables del email
@@ -342,20 +143,10 @@ def send_email_queue(customer, data_clientes, empresa):
 	body = body.replace('{{condominio}}', condominio)
 
 	# obtengo el archivo adjunto
-	new_attachments = []
-	ret = frappe.get_doc({
-        "doctype": "File",
-        "folder": "Home",
-        "file_name": "estado_de_cuenta_"+customer+".pdf",
-        "is_private": 1,
-        "content": pdf,
-	})
-	ret.save(ignore_permissions=True)
-	#frappe.publish_realtime('msgprint', f'nombre archivo {ret.name}')
-	new_attachments.append(create_attachment(filename=ret.name))#{"file_url":frappe.get_site_path(ret.file_url)})
-
-	#if get_env('MOD_DEV') == 'True':
-	#	frappe.publish_realtime('msgprint', 'Test: attachment creado')
+	new_attachments = [{
+		"fname": "estado_de_cuenta_"+customer+".pdf",
+		"fcontent": pdf
+	}]
 
 	style = '<style>*{font-family:Sans-Serif;}</style>'
 	if get_env('MOD_DEV') == 'False':
