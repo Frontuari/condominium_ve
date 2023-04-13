@@ -126,7 +126,7 @@ class CondominiumCommonExpenses(Document):
                     select_print_heading="Recibo de Condominio",
                     remarks=the_remarks
                 )).insert()
-                #sales_invoice.submit()
+                sales_invoice.submit()
                 
                 # generar los recibos de fondos
                 for fund in doc.funds:
@@ -172,7 +172,7 @@ class CondominiumCommonExpenses(Document):
                         select_print_heading="Recibo de Fondo de Condominio"
                     )).insert()
 
-                    #sales_invoice_2.submit()
+                    sales_invoice_2.submit()
 
         except Exception as e:
             frappe.publish_realtime(
