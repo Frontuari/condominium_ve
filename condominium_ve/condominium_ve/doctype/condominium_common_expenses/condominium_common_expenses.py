@@ -173,7 +173,10 @@ class CondominiumCommonExpenses(Document):
 
                     sales_invoice_2.submit()
 
+                frappe.db.commit()
             except Exception as e:
+                frappe.db.rollback()
+
                 frappe.publish_realtime(
                     'msgprint', 'Error generando recibos para el cliente {0}: {1}'.format(
                         house.owner_customer, e
@@ -684,9 +687,8 @@ def gen_missing_invoice(ggc, customers):
             # sales_invoice.queue_action('submit')
             sales_invoice.submit()
 
-
             for fund in doc.funds:
-
+                
                 cost_center_aux = ""
                 for res in doc_condo.reserve:
                     if res.account == fund.account:
@@ -730,8 +732,12 @@ def gen_missing_invoice(ggc, customers):
                 # sales_invoice_2.queue_action('submit')
                 sales_invoice_2.submit()
 
+            frappe.db.commit()
+
             idx += 1
         except Exception as e:
+            frappe.db.rollback()
+
             frappe.publish_realtime(
                 'msgprint', 'Error Generando recibos faltantes: {0}'.format(e))
 
