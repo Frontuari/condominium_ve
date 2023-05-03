@@ -5,13 +5,11 @@ import frappe
 from frappe.model.document import Document
 from frappe.utils.response import build_response
 from datetime import datetime  # from python std library
-from frappe.utils import add_to_date
+from frappe.utils import add_to_date, now, add_days, password
 from frappe.core.doctype.communication import email
 from reportbro_integration.report_design.doctype.report_bro.report_bro import get_pdf_backend_api, get_pdf_backend_api_report
 from reportbro_integration.utils.handler_extend import upload_file_report
 from custom_ve.custom_ve.doctype.environment_variables.environment_variables import get_env
-from frappe.utils import add_days
-from frappe.utils import password
 
 import time
 
@@ -62,8 +60,9 @@ class CondominiumCommonExpenses(Document):
 
         purchase_invoices_special = self.get_purchase_invoice_special(
             doc.condominium_common_expenses_invoices)
-        try:
-            for idx, house in enumerate(housings):
+        
+        for idx, house in enumerate(housings):
+            try:
                 if house.sector in array_exludes_sector:
                     continue
 
@@ -174,15 +173,15 @@ class CondominiumCommonExpenses(Document):
 
                     sales_invoice_2.submit()
 
-        except Exception as e:
-            frappe.publish_realtime(
-                'msgprint', 'Error generando recibos para el sector {0}: {1}'.format(
-                    sector, e
-                    ))
+            except Exception as e:
+                frappe.publish_realtime(
+                    'msgprint', 'Error generando recibos para el cliente {0}: {1}'.format(
+                        house.owner_customer, e
+                        ))
 
-            with open(app_path+'/error_common_expenses.log', 'a') as f:
-                f.write('\ngenerate_process. generando recibos para el sector {0}: {1}'.format(
-                            sector, e))
+                with open(app_path+'/error_common_expenses.log', 'a') as f:
+                    f.write('\n{2} generate_process. generando recibos para el cliente {0}: {1}'.format(
+                                house.owner_customer, e, now()))
 
     def upgrade_purchase_invoice(self):
         doc = self
@@ -611,9 +610,10 @@ def gen_missing_invoice(ggc, customers):
     purchase_invoices_special = get_purchase_invoice_special_(
         doc.condominium_common_expenses_invoices)
    
-    try:
-        idx = 0
-        for house in housings:
+    
+    idx = 0
+    for house in housings:
+        try:
             # sino esta en la lista de facturas pendientes salta al siguiente indice
             if house.owner_customer not in customers:
                 continue
@@ -731,12 +731,12 @@ def gen_missing_invoice(ggc, customers):
                 sales_invoice_2.submit()
 
             idx += 1
-    except Exception as e:
-        frappe.publish_realtime(
-            'msgprint', 'Error Generando recibos faltantes: {0}'.format(e))
+        except Exception as e:
+            frappe.publish_realtime(
+                'msgprint', 'Error Generando recibos faltantes: {0}'.format(e))
 
-        with open(app_path+'/error_common_expenses.log', 'a') as f:
-            f.write('\ngen_missing_invoice. Generando recibos faltantes: {0}'.format(e))   
+            with open(app_path+'/error_common_expenses.log', 'a') as f:
+                f.write('\n{1} gen_missing_invoice. Generando recibos faltantes: {0}'.format(e, now()))   
 
 def get_total_ggc_detail(ggc_table):
     total = 0.0

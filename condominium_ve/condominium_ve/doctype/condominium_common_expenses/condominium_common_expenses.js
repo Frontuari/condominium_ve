@@ -200,7 +200,7 @@ frappe.ui.form.on("Condominium Common Expenses", {
       });
 
       // agregar boton para crear facturas faltantes en caso de que no se hayan generado
-      /*
+      //console.log(frappe.user_role(frappe.session.user));
       frappe.call({
         method:
           "condominium_ve.condominium_ve.doctype.condominium_common_expenses.condominium_common_expenses.is_invoices_generated",
@@ -239,7 +239,7 @@ frappe.ui.form.on("Condominium Common Expenses", {
           }
         }
       });
-      */
+      
     }
   },
 
