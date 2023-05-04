@@ -502,7 +502,7 @@ def send_email_test(ggc, excluded_sectors):
         excluded_sectors=excluded_sectors)# , sector=s['sector'])
         
 @frappe.whitelist()
-def is_invoices_generated(ggc, excluded_sectors):
+def is_invoices_generated(ggc, excluded_sectors=[]):
     num_invoices = frappe.db.count('Sales Invoice', 
         filters={'gc_condo':ggc, 'select_print_heading':"Recibo de Condominio"})
 
@@ -518,7 +518,7 @@ def is_invoices_generated(ggc, excluded_sectors):
     return build_response("json")
 
 @frappe.whitelist()
-def gen_missing_invoices(ggc, excluded_sectors):
+def gen_missing_invoices(ggc, excluded_sectors=[]):
     
     sectores = get_sectors(excluded_sectors)
     frappe.enqueue(

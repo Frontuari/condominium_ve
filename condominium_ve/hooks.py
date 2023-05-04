@@ -12,7 +12,9 @@ app_license = "MIT"
 fixtures = [
     'formato email condominio',
     {"dt": "Report Bro", "filters": [
-        ["name", "in", ("Reporte de Gastos Comunes", "Relacion de Gastos", "Recibo de Condominio Copia")]]}
+        ["name", "in", ("Reporte de Gastos Comunes", "Relacion de Gastos", "Recibo de Condominio Copia")]]},
+    {"dt": "Custom Field", "filters": [
+        ["name", "in", ("Purchase Invoice Item-is_single_sector")]]}
         
 ]
 # Includes in <head>
