@@ -4,14 +4,13 @@ import json
 import frappe
 from frappe.model.document import Document
 from frappe.utils.response import build_response
-from datetime import datetime  # from python std library
 from frappe.utils import add_to_date, now, add_days, password
 from frappe.core.doctype.communication import email
 from reportbro_integration.report_design.doctype.report_bro.report_bro import get_pdf_backend_api, get_pdf_backend_api_report
 from reportbro_integration.utils.handler_extend import upload_file_report
 from custom_ve.custom_ve.doctype.environment_variables.environment_variables import get_env
+from condominium_ve.utils.utils import add_log
 
-import time
 
 class CondominiumCommonExpenses(Document):
     
@@ -32,9 +31,6 @@ class CondominiumCommonExpenses(Document):
             obj=self, sectors=sectors)
 
     def generate_process(self, sector):
-        # auxiliar para el path de la app
-        app_path = frappe.get_app_path('condominium_ve')
-
         doc = self.get_doc_before_save()
 
         total_details = self.get_total_ggc(doc.condominium_common_expenses_detail)
@@ -181,10 +177,9 @@ class CondominiumCommonExpenses(Document):
                     'msgprint', 'Error generando recibos para el cliente {0}: {1}'.format(
                         house.owner_customer, e
                         ))
-
-                with open(app_path+'/error_common_expenses.log', 'a') as f:
-                    f.write('\n{2} generate_process. generando recibos para el cliente {0}: {1}'.format(
-                                house.owner_customer, e, now()))
+                add_log(e, 'condominium_common_expenses.CondominiumCommonExpenses.generate_process', 
+                        'Error generando recibos para el cliente {0}'
+                        .format(house.owner_customer))
 
     def upgrade_purchase_invoice(self):
         doc = self
@@ -204,13 +199,10 @@ class CondominiumCommonExpenses(Document):
 
         except Exception as e:
             frappe.publish_realtime(
-                'msgprint', 'Error actualizando status de facturas de compra:{0}'.format(
-                    e
-                    ))
-
-            with open(app_path+'/error_common_expenses.log', 'a') as f:
-                f.write('\nupgrade_purchase_invoice. actualizando status de facturas de compra: {0}'
-                    .format(e))
+                'msgprint', 'Error actualizando status de facturas de compra:{0}'.format(e))
+            
+            add_log(e, 'condominium_common_expenses.CondominiumCommonExpenses.upgrade_purchase_invoice', 
+                        'Error actualizando status de facturas de compra')
 
     def get_purchase_invoice_special(self, invoice_ids=[]):
         array_invoice_special = []
@@ -258,8 +250,6 @@ class CondominiumCommonExpenses(Document):
             'condominium_ve.condominium_ve.doctype.condominium_common_expenses.condominium_common_expenses.cancel_process_sales_invoice', obj=self)
 
     def cancel_process(self):
-        app_path = frappe.get_app_path('condominium_ve')
-
         doc = self.get_doc_before_save()
 
         sales_invoices = frappe.db.get_list("Sales Invoice", fields=['*'], filters={
@@ -288,8 +278,8 @@ class CondominiumCommonExpenses(Document):
             frappe.publish_realtime(
             'msgprint', 'Error Cancelando recibos de condominio: {0}'.format(e))
 
-            with open(app_path+'/error_common_expenses.log', 'a') as f:
-                f.write('\nCancel_proccess. Cancelando recibos de condominio: {0}'.format(e))
+            add_log(e, 'condominium_common_expenses.CondominiumCommonExpenses.cancel_process', 
+                        'Error Cancelando recibos de condominio')
 
         try:
             for idx, invoice in enumerate(doc.condominium_common_expenses_invoices):
@@ -305,11 +295,10 @@ class CondominiumCommonExpenses(Document):
             frappe.publish_realtime(
             'msgprint', 'Error actualizando estado de facturas de compra: {0}'.format(e))
 
-            with open(app_path+'/error_common_expenses.log', 'a') as f:
-                f.write('\nCancel_proccess. actualizando facturas de compra: {0}'.format(e))
+            add_log(e, 'condominium_common_expenses.CondominiumCommonExpenses.cancel_process', 
+                        'Error actualizando facturas de compra')
 
 def generate_process_sales_invoice(obj, sectors):
-    app_path = frappe.get_app_path('condominium_ve')
     try:
         frappe.publish_realtime(
             'msgprint', 'Inicio de proceso de generar recibos de condominio')
@@ -322,8 +311,8 @@ def generate_process_sales_invoice(obj, sectors):
                 obj=obj)
 
     except Exception as e:
-        with open(app_path+'/error_submit.txt', 'a') as f:
-            f.write('\nerror: {0}'.format(e))
+        add_log(e, 'condominium_common_expenses.generate_process_sales_invoice', 
+                        '')
 
 def generate_upgrade_purchase_invoice(obj):
     obj.upgrade_purchase_invoice()
@@ -417,8 +406,6 @@ def create_attachment(filename='', path=None):
 	return out 
 
 def send_email_condo_queue(ggc, excluded_sectors):#  , sector):
-    app_path = frappe.get_app_path('condominium_ve')
-
     ####
     attachments = []
     
@@ -433,15 +420,8 @@ def send_email_condo_queue(ggc, excluded_sectors):#  , sector):
         }
         attachments.append(out)
 
-    except Exception as e:
-        frappe.publish_realtime(
-            'msgprint', 'Error generando pdf Relacion de Gastos: {0}'.format(e))
-
-        with open(app_path+'/error_common_expenses.log', 'a') as f:
-            f.write('\nsend_email_condo_queue. generando pdf Relacion de Gastos: {0}'.format(e))
-
-    # obtengo el segundo pdf
-    try:
+        # obtengo el segundo pdf
+    
         file = get_pdf_backend_api(report_name='Reporte de Gastos Comunes',
                 doctype="Condominium Common Expenses", name=ggc, as_download=True)
         out = {
@@ -452,18 +432,11 @@ def send_email_condo_queue(ggc, excluded_sectors):#  , sector):
 
     except Exception as e:
         frappe.publish_realtime(
-            'msgprint', 'Error generando pdf Reporte de Gastos Comunes: {0}'.format(e))
+            'msgprint', 'Error generando pdf a enviar: {0}'.format(e))
+        add_log(e, 'condominium_common_expenses.send_email_condo_queue', 'generando reportes de pdf')
+        return
+ 
 
-        with open(app_path+'/error_common_expenses.log', 'a') as f:
-            f.write('\nsend_email_condo_queue. generando pdf Reporte de Gastos Comunes: {0}'
-                .format(e))
-    
-
-    # busco los sectores 
-    # antes
-    #sectors = frappe.db.sql(
-    #    "SELECT DISTINCT  sector  from tabHousing ", as_dict=True)
-    # ahora
     sectors = get_sectors(excluded_sectors)
 
     # recorro las casas por sectores y obtengo los emails de los propietarios
@@ -509,9 +482,8 @@ def send_email_condo_queue(ggc, excluded_sectors):#  , sector):
             frappe.publish_realtime(
                 'msgprint', 'Error enviando correos para el sector {0}: {1}'.format(sector, e))
 
-            with open(app_path+'/error_common_expenses.log', 'a') as f:
-                f.write('\nsend_email_condo_queue. enviando correos para el sector {0}: {1}'
-                    .format(sector, e))
+            add_log(e, 'condominium_common_expenses.send_email_condo_queue', 'enviando correos para el sector {0}'.format(sector))
+            
 
     # envio el email a la administracion del condominio
     email_condo = get_env('EMAIL_CONDO')
@@ -522,12 +494,13 @@ def send_email_condo_queue(ggc, excluded_sectors):#  , sector):
 
 @frappe.whitelist()
 def send_email_test(ggc, excluded_sectors):
-    frappe.enqueue(
-        'condominium_ve.condominium_ve.doctype.condominium_common_expenses.condominium_common_expenses.send_email_condo_queue',
-        queue='short',
-        is_async=True,
-        ggc=ggc,
-        excluded_sectors=excluded_sectors)# , sector=s['sector'])
+    add_log('error', 'condominium_common_expenses.gen_missing_invoice_queue', 'Error Generando recibos faltantes')
+    #frappe.enqueue(
+    #    'condominium_ve.condominium_ve.doctype.condominium_common_expenses.condominium_common_expenses.send_email_condo_queue',
+    #    queue='short',
+    #    is_async=True,
+    #    ggc=ggc,
+    #    excluded_sectors=excluded_sectors)# , sector=s['sector'])
         
 @frappe.whitelist()
 def is_invoices_generated(ggc, excluded_sectors):
@@ -557,9 +530,6 @@ def gen_missing_invoices(ggc, excluded_sectors):
         sectors=sectores)
 
 def gen_missing_invoice_queue(ggc, sectors):
-    #frappe.publish_realtime(
-    #            'msgprint', 'Buscando propietarios faltantes por factura')
-
     missing_customers = []
     try:
         for sector in sectors:
@@ -581,17 +551,14 @@ def gen_missing_invoice_queue(ggc, sectors):
                 if customer not in invoices:
                     missing_customers.append(customer)
 
+        gen_missing_invoice(ggc, missing_customers)
+
     except Exception as e:
         frappe.publish_realtime(
                 'msgprint', 
                 'Error buscando propietarios: {0}'.format(e) )
-
-    #frappe.publish_realtime(
-    #            'msgprint', 
-    #            'Se encontraron {0} propietarios sin factura'.format(
-    #                len(missing_customers)) )
-
-    gen_missing_invoice(ggc, missing_customers)
+        add_log(e, 'condominium_common_expenses.gen_missing_invoice_queue', 'Error buscando propietarios')
+  
 
 def gen_missing_invoice(ggc, customers):
     doc = frappe.get_doc('Condominium Common Expenses', ggc)
@@ -741,8 +708,7 @@ def gen_missing_invoice(ggc, customers):
             frappe.publish_realtime(
                 'msgprint', 'Error Generando recibos faltantes: {0}'.format(e))
 
-            with open(app_path+'/error_common_expenses.log', 'a') as f:
-                f.write('\n{1} gen_missing_invoice. Generando recibos faltantes: {0}'.format(e, now()))   
+            add_log(e, 'condominium_common_expenses.gen_missing_invoice_queue', 'Error Generando recibos faltantes')
 
 def get_total_ggc_detail(ggc_table):
     total = 0.0
@@ -798,6 +764,7 @@ def get_month(number):
 
     return months[number]
 
+# por revisar
 @frappe.whitelist()
 def send(name):
     cce_doc = frappe.db.get_doc("Condominium Common Expenses")
