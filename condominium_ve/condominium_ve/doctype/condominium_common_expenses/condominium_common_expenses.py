@@ -494,13 +494,12 @@ def send_email_condo_queue(ggc, excluded_sectors):#  , sector):
 
 @frappe.whitelist()
 def send_email_test(ggc, excluded_sectors):
-    add_log('error', 'condominium_common_expenses.gen_missing_invoice_queue', 'Error Generando recibos faltantes')
-    #frappe.enqueue(
-    #    'condominium_ve.condominium_ve.doctype.condominium_common_expenses.condominium_common_expenses.send_email_condo_queue',
-    #    queue='short',
-    #    is_async=True,
-    #    ggc=ggc,
-    #    excluded_sectors=excluded_sectors)# , sector=s['sector'])
+    frappe.enqueue(
+        'condominium_ve.condominium_ve.doctype.condominium_common_expenses.condominium_common_expenses.send_email_condo_queue',
+        queue='short',
+        is_async=True,
+        ggc=ggc,
+        excluded_sectors=excluded_sectors)# , sector=s['sector'])
         
 @frappe.whitelist()
 def is_invoices_generated(ggc, excluded_sectors):
