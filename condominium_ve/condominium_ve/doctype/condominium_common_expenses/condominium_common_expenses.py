@@ -587,7 +587,6 @@ def gen_missing_invoice(ggc, customers):
             if house.owner_customer not in customers:
                 continue
 
-
             # barra de progreso
             progress_percent = (idx+1) * 100 / len(customers)
             frappe.publish_progress(percent=progress_percent, 
@@ -595,7 +594,6 @@ def gen_missing_invoice(ggc, customers):
                 description='{0}/{1}. Vivienda {2} Sector {3}'.format(idx+1, len(customers),
                     house.name, house.sector))
 
-        
             total_ggc_aux = total_ggc
             #aliquot_house = (float(house.aliquot) / 100)
             total_special = 0.0

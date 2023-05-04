@@ -348,9 +348,6 @@ function btn_gen_missing_invoices(frm) {
                 generate_missing_invoices(frm.doc.name, frm.doc.excluded_sectors);
             });
         });
-      }else{
-        console.log('remove');
-        frm.page.remove_menu_item(__("Generate Missing Invoices"));
       }
     },
     error: (r) => {
