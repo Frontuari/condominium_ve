@@ -14,7 +14,7 @@ from custom_ve.custom_ve.doctype.environment_variables.environment_variables imp
 import time
 
 class CondominiumCommonExpenses(Document):
-
+    
     def on_submit(self):
         doc = self.get_doc_before_save()
         
@@ -598,7 +598,7 @@ def gen_missing_invoice(ggc, customers):
 
     total_details = get_total_ggc_detail(doc.condominium_common_expenses_detail)
     total_ggc = total_details['total']
-    total_ggc_per_unit = total_details['total_per_unit']
+    #total_ggc_per_unit = total_details['total_per_unit']
 
     doc_condo = frappe.get_doc('Condominium', doc.condominium)
   

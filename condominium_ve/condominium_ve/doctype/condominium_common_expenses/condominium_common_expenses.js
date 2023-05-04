@@ -199,46 +199,8 @@ frappe.ui.form.on("Condominium Common Expenses", {
 
       });
 
-      // agregar boton para crear facturas faltantes en caso de que no se hayan generado
-      //console.log(frappe.user_role(frappe.session.user));
-      frappe.call({
-        method:
-          "condominium_ve.condominium_ve.doctype.condominium_common_expenses.condominium_common_expenses.is_invoices_generated",
-        args: {
-          ggc: frm.doc.name,
-          excluded_sectors: frm.doc.excluded_sectors
-        },
-
-        //btn: $(".primary-action"),
-
-        freeze: true,
-        callback: (response) => {
-          console.log(response.data)
-          if (response.data && frm.doc.docstatus == 1){
-            frm.add_custom_button(__("Generate Missing Invoices"), () => {
-              frappe.call({
-                method:
-                  "condominium_ve.condominium_ve.doctype.condominium_common_expenses.condominium_common_expenses.gen_missing_invoices",
-                args: {
-                  ggc: frm.doc.name,
-                  excluded_sectors: frm.doc.excluded_sectors
-                },
-
-                //btn: $(".primary-action"),
-
-                freeze: true,
-                callback: (response) => {},
-                error: (r) => {
-                  console.log(r);
-                }
-              });
-
-            });
-          }else{
-            frm.remove_custom_button(__("Generate Missing Invoices"));
-          }
-        }
-      });
+      // agrega o elimina el boton para generar las facturas faltantes
+      btn_gen_missing_invoices(frm);
       
     }
   },
@@ -368,8 +330,55 @@ frappe.ui.form.on("Condominium Common Expenses", {
   },
 });
 
+function btn_gen_missing_invoices(frm) {
+  //return new Promise((resolve, reject) => {
+    frappe.call({
+      method: "condominium_ve.condominium_ve.doctype.condominium_common_expenses.condominium_common_expenses.is_invoices_generated",
+      args: {
+        ggc: frm.doc.name,
+        excluded_sectors: frm.doc.excluded_sectors
+      },
+      freeze: true,
+      callback: (response) => {
+        if (response.data && frm.doc.docstatus == 1){
+          // agregar boton para crear facturas faltantes en caso de que no se hayan generado
+          frm.page.add_menu_item(__("Generate Missing Invoices"), () => {
+            frappe.confirm('Esta a punto de generar recibos de Cuentas por Cobrar a los propietarios que no lo posean, ¿Quiere proceder?',
+              () => {
+                  // si es yes genera las facturas faltantes
+                  generate_missing_invoices(frm.doc.name, frm.doc.excluded_sectors);
+              });
+          });
+        }else{
+          console.log('remove');
+          frm.page.remove_menu_item(__("Generate Missing Invoices"));
+        }
+      },
+      error: (r) => {
+        console.log(r);
+      }
+    });
+//  });
+}
 
+function generate_missing_invoices(docname, excluded_sectors){
+  frappe.call({
+    method:
+      "condominium_ve.condominium_ve.doctype.condominium_common_expenses.condominium_common_expenses.gen_missing_invoices",
+    args: {
+      ggc: docname,
+      excluded_sectors: excluded_sectors
+    },
 
+    //btn: $(".primary-action"),
+
+    freeze: true,
+    callback: (response) => {},
+    error: (r) => {
+      console.log(r);
+    }
+  });
+}
 
 
 frappe.ui.form.on("Detail Funds", {
