@@ -331,34 +331,32 @@ frappe.ui.form.on("Condominium Common Expenses", {
 });
 
 function btn_gen_missing_invoices(frm) {
-  //return new Promise((resolve, reject) => {
-    frappe.call({
-      method: "condominium_ve.condominium_ve.doctype.condominium_common_expenses.condominium_common_expenses.is_invoices_generated",
-      args: {
-        ggc: frm.doc.name,
-        excluded_sectors: frm.doc.excluded_sectors
-      },
-      freeze: true,
-      callback: (response) => {
-        if (response.data && frm.doc.docstatus == 1){
-          // agregar boton para crear facturas faltantes en caso de que no se hayan generado
-          frm.page.add_menu_item(__("Generate Missing Invoices"), () => {
-            frappe.confirm('Esta a punto de generar recibos de Cuentas por Cobrar a los propietarios que no lo posean, ¿Quiere proceder?',
-              () => {
-                  // si es yes genera las facturas faltantes
-                  generate_missing_invoices(frm.doc.name, frm.doc.excluded_sectors);
-              });
-          });
-        }else{
-          console.log('remove');
-          frm.page.remove_menu_item(__("Generate Missing Invoices"));
-        }
-      },
-      error: (r) => {
-        console.log(r);
+  frappe.call({
+    method: "condominium_ve.condominium_ve.doctype.condominium_common_expenses.condominium_common_expenses.is_invoices_generated",
+    args: {
+      ggc: frm.doc.name,
+      excluded_sectors: frm.doc.excluded_sectors
+    },
+    freeze: true,
+    callback: (response) => {
+      if (response.data && frm.doc.docstatus == 1){
+        // agregar boton para crear facturas faltantes en caso de que no se hayan generado
+        frm.page.add_menu_item(__("Generate Missing Invoices"), () => {
+          frappe.confirm('Esta a punto de generar recibos de Cuentas por Cobrar a los propietarios que no lo posean, ¿Quiere proceder?',
+            () => {
+                // si es yes genera las facturas faltantes
+                generate_missing_invoices(frm.doc.name, frm.doc.excluded_sectors);
+            });
+        });
+      }else{
+        console.log('remove');
+        frm.page.remove_menu_item(__("Generate Missing Invoices"));
       }
-    });
-//  });
+    },
+    error: (r) => {
+      console.log(r);
+    }
+  });
 }
 
 function generate_missing_invoices(docname, excluded_sectors){
