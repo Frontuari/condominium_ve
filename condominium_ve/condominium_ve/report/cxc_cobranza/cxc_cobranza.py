@@ -472,28 +472,25 @@ class ReceivablePayableReport(object):
 	def build_data(self):
 		# set outstanding for all the accumulated balances
 		# as we can use this to filter out invoices without outstanding
-		total_row = frappe._dict()
-		total_row.voucher_type = 'Sales Invoice'
-		total_row.voucher_no = '<b>'+_('Total')+'</b>' 
-		total_row.party = '' 
-		total_row.party_account = ''
-		total_row.posting_date = ''
-		total_row.account_currency = 'USD' 
-		total_row.remarks = None
-		total_row.invoiced = 0.0
-		total_row.paid = ''
-		total_row.credit_note = 0.0
-		total_row.outstanding = 0.0
-		total_row.invoiced_in_account_currency = 0.0
-		total_row.paid_in_account_currency = 0.0
-		total_row.credit_note_in_account_currency = 0.0
-		total_row.outstanding_in_account_currency = 0.0
-		total_row.cost_center = ''
+		#total_row = frappe._dict()
+		#total_row.voucher_type = 'Sales Invoice'
+		#total_row.voucher_no = '<b>'+_('Total')+'</b>' 
+		#total_row.party = '' 
+		#total_row.party_account = ''
+		#total_row.posting_date = ''
+		#total_row.account_currency = 'USD' 
+		#total_row.remarks = None
+		#total_row.invoiced = 0.0
+		#total_row.paid = ''
+		#total_row.credit_note = 0.0
+		#total_row.outstanding = 0.0
+		#total_row.invoiced_in_account_currency = 0.0
+		#total_row.paid_in_account_currency = 0.0
+		#total_row.credit_note_in_account_currency = 0.0
+		#total_row.outstanding_in_account_currency = 0.0
+		#total_row.cost_center = ''
 		
-		#print('total row ', total_row)
 		for key, row in self.voucher_balance.items():
-			#print(type(row))
-			#print('\n'*10)
 			row.outstanding = flt(row.invoiced - row.paid - row.credit_note, self.currency_precision)
 			row.outstanding_in_account_currency = flt(
 				row.invoiced_in_account_currency
@@ -529,17 +526,18 @@ class ReceivablePayableReport(object):
 					self.append_row(row)
 
 				# custom
-				total_row.invoiced += row.invoice_grand_total
+				#total_row.invoiced += row.invoice_grand_total
 				#total_row.paid += row.paid
-				total_row.outstanding += row.outstanding
+				#total_row.outstanding += row.outstanding
 				#
 		if self.filters.get("group_by_party"):
 			self.append_subtotal_row(self.previous_party)
 			if self.data:
 				self.data.append(self.total_row_map.get("Total"))
 		else:
+			pass
 			#self.data.append(self.total_row_map.get("Total"))
-			self.append_row(total_row)
+			#self.append_row(total_row)
 	def append_row(self, row):
 		self.allocate_future_payments(row)
 		self.set_invoice_details(row)
