@@ -133,25 +133,8 @@
   {
    "hidden": 0,
    "is_query_report": 0,
-   "label": "Currency Exchange",
-   "link_to": "Currency Exchange",
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Purchase Receipt",
-   "link_to": "Purchase Receipt",
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "hidden": 0,
-   "is_query_report": 0,
    "label": "Reportes",
+   "link_to": "Workspace",
    "link_type": "DocType",
    "onboard": 0,
    "only_for": "Venezuela",
@@ -259,7 +242,7 @@
   },
   {
    "hidden": 0,
-   "is_query_report": 0,
+   "is_query_report": 1,
    "label": "Trial Balance",
    "link_to": "Trial Balance",
    "link_type": "Report",
@@ -268,7 +251,7 @@
   },
   {
    "hidden": 0,
-   "is_query_report": 0,
+   "is_query_report": 1,
    "label": "General Ledger",
    "link_to": "General Ledger",
    "link_type": "Report",
@@ -285,7 +268,7 @@
    "type": "Link"
   }
  ],
- "modified": "2023-04-10 11:42:43.687290",
+ "modified": "2023-05-15 10:21:03.254489",
  "modified_by": "Administrator",
  "module": "Condominium Ve",
  "name": "Condominio",

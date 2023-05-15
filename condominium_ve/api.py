@@ -1,8 +1,8 @@
 
-from custom_reports.utils.print_format import get_pdf
+from reportbro_integration.utils.print_format import get_pdf
 import frappe
 from frappe.utils.response import build_response
-from custom_reports.report_design.doctype.report_bro.report_bro import get_pdf_backend
+from reportbro_integration.report_design.doctype.report_bro.report_bro import get_pdf_backend
 
 
 @frappe.whitelist(allow_guest=True)
