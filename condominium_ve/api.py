@@ -63,10 +63,13 @@ def get_payments(customer):
 def get_sales_invoice(customer):
     
     
-    sql = "SELECT name , customer_name  , grand_total , outstanding_amount , posting_date  from `tabSales Invoice` tsi  where customer = {0} and docstatus=1 and outstanding_amount <> 0 order by posting_date asc ".format(
-        frappe.db.escape(customer))
+    sql = """SELECT name , customer_name  , grand_total , outstanding_amount , posting_date  
+                from `tabSales Invoice` tsi  
+                where customer = {0} 
+                and docstatus=1 
+                and outstanding_amount <> 0 
+                order by posting_date asc """.format(frappe.db.escape(customer))
     
-    print(sql)
     data = frappe.db.sql(sql, as_dict=1)
 
     return data
@@ -87,7 +90,8 @@ def query_code_housing(code=""):
     if exist_housing:
         customer = frappe.db.sql(
             'SELECT tc.name from tabCustomer tc join tabHousing th ON th.owner_customer = tc.name  where th.code ={}'.format(frappe.db.escape(code)))[0]
-        saldo = get_balance(customer[0])[0][0]
+        balance = get_balance(customer[0])
+        print('saldo propietario',balance)
         invoices = get_sales_invoice(customer[0])
         
     else:
@@ -95,7 +99,8 @@ def query_code_housing(code=""):
 
     frappe.local.response.update({"data": {
         "customer": customer,
-        "saldo": saldo,
+        "saldo": balance.saldo_deudor,
+        "credito": balance.saldo_credito,
         "invoices" : invoices
     }})
 
@@ -120,21 +125,32 @@ def get_customer(code):
 
 def get_balance(customer):
     sql = """
-            select sum(t.total)
-            from (
-            Select
-            ROUND(si.grand_total,2) as total
-            from `tabSales Invoice` as si
-            where si.customer =  {0} and  docstatus = 1
-            union all
-            Select
-                (pay.base_paid_amount *-1) as total
-            from `tabPayment Entry` as pay
-            where pay.party_name =  {0}  and pay.docstatus = 1
-            )t
+        SELECT 
+            SUM(t.grand_total) AS saldo_deudor,
+            SUM(t.base_paid_amount) AS saldo_credito
+        FROM (
+            SELECT
+                ROUND(si.outstanding_amount, 2) AS grand_total,
+                0 AS base_paid_amount
+            FROM `tabSales Invoice` AS si
+            WHERE si.customer = {0} AND docstatus = 1 and si.outstanding_amount <> 0
+            UNION ALL
+            SELECT
+                0 AS grand_total,
+                pay.base_paid_amount AS base_paid_amount
+            FROM `tabPayment Entry` AS pay
+            WHERE pay.party_name = {0} AND pay.docstatus = 1 AND pay.unallocated_amount > 0
+        ) t;
+
     """.format(frappe.db.escape(customer))
 
-    return frappe.db.sql(sql)
+    query = frappe.db.sql(sql, as_dict=True)
+    if query:
+        q = query[0]
+        q.saldo_deudor -= q.saldo_credito
+        return q
+    else: 
+        return frappe._dict(saldo_deudor=0, saldo_credito=0)
 
 
 @frappe.whitelist(allow_guest=True)

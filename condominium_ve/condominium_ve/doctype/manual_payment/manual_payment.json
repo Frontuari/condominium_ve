@@ -1,0 +1,152 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "naming_series:",
+ "creation": "2022-10-25 17:30:19.020965",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "naming_series",
+  "buscar",
+  "section_break_2",
+  "customer",
+  "mode_of_payment",
+  "credit",
+  "voucher",
+  "column_break_4",
+  "reference",
+  "posting_date",
+  "balance",
+  "amount",
+  "amended_from",
+  "payment",
+  "column_break_1h55w",
+  "invoices"
+ ],
+ "fields": [
+  {
+   "fieldname": "customer",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Cliente",
+   "options": "Customer",
+   "reqd": 1
+  },
+  {
+   "default": "Transferencia Bancaria",
+   "fieldname": "mode_of_payment",
+   "fieldtype": "Select",
+   "label": "Modo de Pago",
+   "options": "Transferencia Bancaria",
+   "reqd": 1
+  },
+  {
+   "fieldname": "voucher",
+   "fieldtype": "Attach",
+   "label": "Comprobante"
+  },
+  {
+   "fieldname": "reference",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Referencia"
+  },
+  {
+   "fieldname": "column_break_4",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "amount",
+   "fieldtype": "Currency",
+   "label": "Monto Pagado"
+  },
+  {
+   "fieldname": "balance",
+   "fieldtype": "Currency",
+   "label": "Saldo Deudor"
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Manual payment",
+   "print_hide": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "buscar",
+   "fieldtype": "Data",
+   "label": "Buscar"
+  },
+  {
+   "fieldname": "section_break_2",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "posting_date",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "label": "Fecha de Pago"
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "payment",
+   "fieldtype": "Link",
+   "label": "Comprobante de Pago",
+   "options": "Payment Entry",
+   "read_only": 1
+  },
+  {
+   "fieldname": "invoices",
+   "fieldtype": "Table",
+   "hidden": 1,
+   "label": "Facturas",
+   "options": "Manual Payment Detail"
+  },
+  {
+   "fieldname": "column_break_1h55w",
+   "fieldtype": "Section Break"
+  },
+  {
+   "default": "PM-.YYYY.-.#####",
+   "fieldname": "naming_series",
+   "fieldtype": "Data",
+   "label": "Secuencia",
+   "read_only": 1
+  },
+  {
+   "fieldname": "credit",
+   "fieldtype": "Currency",
+   "label": "Credito a Favor"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "is_submittable": 1,
+ "links": [],
+ "modified": "2023-05-16 16:24:05.347730",
+ "modified_by": "Administrator",
+ "module": "Condominium Ve",
+ "name": "Manual payment",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "search_fields": "customer,reference",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "track_changes": 1,
+ "track_views": 1
+}

@@ -14,7 +14,7 @@ fixtures = [
     {"dt": "Report Bro", "filters": [
         ["name", "in", ("Reporte de Gastos Comunes", "Relacion de Gastos", "Recibo de Condominio Copia")]]},
     {"dt": "Custom Field", "filters": [
-        ["name", "in", ("Purchase Invoice Item-is_single_sector")]]}
+        ["name", "in", ("Purchase Invoice Item-is_single_sector", "Sales Invoice-housing")]]}
         
 ]
 # Includes in <head>

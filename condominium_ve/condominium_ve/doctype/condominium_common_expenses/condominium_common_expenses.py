@@ -67,61 +67,63 @@ class CondominiumCommonExpenses(Document):
                 frappe.publish_progress(percent=progress_percent, 
                     title='Generando recibos del sector {0}'.format(sector), 
                     description='{0}/{1}. Vivienda {2}'.format(idx+1, len(housings),house.name))
-            
-                total_ggc_aux = total_ggc
-                total_special = 0.0
+                
+                # generar recibo de cuota de condominio
+                if len(doc.condominium_common_expenses_detail) > 0:
+                    total_ggc_aux = total_ggc
+                    total_special = 0.0
 
-                for p_invoice_special in purchase_invoices_special:
-                    total_ggc_aux = total_ggc_aux - \
-                        p_invoice_special['amount_total']
+                    for p_invoice_special in purchase_invoices_special:
+                        total_ggc_aux = total_ggc_aux - \
+                            p_invoice_special['amount_total']
 
-                    if house.sector in p_invoice_special['sector']:
-                        total_special = p_invoice_special['amount_total_individual']
+                        if house.sector in p_invoice_special['sector']:
+                            total_special = p_invoice_special['amount_total_individual']
 
-                total = total_ggc_aux / int(doc.active_units)
-                total = total + total_special
+                    total = total_ggc_aux / int(doc.active_units)
+                    total = total + total_special
 
-                the_remarks = ' '
-                if doc.is_remarks == 1:
-                    the_remarks = doc.remarks
+                    the_remarks = ' '
+                    if doc.is_remarks == 1:
+                        the_remarks = doc.remarks
 
-                # generar el recibo de cuota
-                sales_invoice = frappe.get_doc(dict(
-                    naming_series="RC-.YYYY..-.########",
-                    doctype="Sales Invoice",
-                    set_posting_time=1,
-                    docstatus=0,
-                    company=doc_condo.company,
-                    customer=house.owner_customer,
-                    posting_date=doc.posting_date,
-                    due_date=after_days,
-                    is_return=0,
-                    disable_rounded_total=0,
-                    cost_center=doc_condo.cost_center,
-                    items=[
-                        dict(
-                            item_code='Cuota de Condominio',
-                            item_name='Cuota de Condominio {0} {1} '.format(
-                                get_month(doc.posting_date.month), doc.posting_date.year),
-                            description='Cuota de Condominio {0} {1} '.format(
-                                get_month(doc.posting_date.month), doc.posting_date.year),
-                            qty=1,
-                            stock_qty=0,
-                            uom="Nos.",
-                            conversion_factor=1,
-                            base_rate=total,
-                            rate=total,
-                            base_amount=total,
-                            amount=total,
-                            income_account=doc_condo.account
-                        )
-                    ],
-                    gc_condo=doc.name,
-                    housing=house.housing,
-                    select_print_heading="Recibo de Condominio",
-                    remarks=the_remarks
-                )).insert()
-                sales_invoice.submit()
+                    # generar factura
+                    sales_invoice = frappe.get_doc(dict(
+                        naming_series="RC-.YYYY..-.########",
+                        doctype="Sales Invoice",
+                        set_posting_time=1,
+                        docstatus=0,
+                        company=doc_condo.company,
+                        customer=house.owner_customer,
+                        posting_date=doc.posting_date,
+                        due_date=after_days,
+                        is_return=0,
+                        disable_rounded_total=1,
+                        cost_center=doc_condo.cost_center,
+                        items=[
+                            dict(
+                                item_code='Cuota de Condominio',
+                                item_name='Cuota de Condominio {0} {1} '.format(
+                                    get_month(doc.posting_date.month), doc.posting_date.year),
+                                description='Cuota de Condominio {0} {1} '.format(
+                                    get_month(doc.posting_date.month), doc.posting_date.year),
+                                qty=1,
+                                stock_qty=0,
+                                uom="Nos.",
+                                conversion_factor=1,
+                                base_rate=total,
+                                rate=total,
+                                base_amount=total,
+                                amount=total,
+                                income_account=doc_condo.account
+                            )
+                        ],
+                        gc_condo=doc.name,
+                        housing=house.housing,
+                        select_print_heading="Recibo de Condominio",
+                        remarks=the_remarks
+                    )).insert()
+                    sales_invoice.submit()
                 
                 # generar los recibos de fondos
                 for fund in doc.funds:
@@ -143,7 +145,7 @@ class CondominiumCommonExpenses(Document):
                         posting_date=doc.posting_date,
                         due_date=after_days,
                         is_return=0,
-                        disable_rounded_total=0,
+                        disable_rounded_total=1,
                         items=[
                             dict(
                                 item_code='',
@@ -623,7 +625,7 @@ def gen_missing_invoice(ggc, customers):
                 posting_date=doc.posting_date,
                 due_date=after_days,
                 is_return=0,
-                disable_rounded_total=0,
+                disable_rounded_total=1,
                 cost_center=doc_condo.cost_center,
                 items=[
                     dict(
@@ -670,7 +672,7 @@ def gen_missing_invoice(ggc, customers):
                     posting_date=doc.posting_date,
                     due_date=after_days,
                     is_return=0,
-                    disable_rounded_total=0,
+                    disable_rounded_total=1,
                     items=[
                         dict(
                             item_code='',

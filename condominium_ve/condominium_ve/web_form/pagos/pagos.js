@@ -154,142 +154,137 @@ frappe.ready(function(){frappe.web_form.after_load = () => {
 		}
 
 		return obj;
-	  }
+	}
 
 
 	  function clearTable(){
 
-		if (frappe.web_form.doc['invoices']) {
+			if (frappe.web_form.doc['invoices']) {
 
-			let len = frappe.web_form.doc['invoices'].length
+				let len = frappe.web_form.doc['invoices'].length
 
-			for (let i = 0; i <= len; i++) {
-				if(frappe.web_form.doc['invoices']){
-					frappe.web_form.doc['invoices'].pop()
-					frappe.web_form.refresh()
+				for (let i = 0; i <= len; i++) {
+					if(frappe.web_form.doc['invoices']){
+						frappe.web_form.doc['invoices'].pop()
+						frappe.web_form.refresh()
+					}
 				}
-			}
 
-		}
+			}
 
 	  }
 
 
 	  function unique_sales_invoice(arr){
 
-		let uniqueIds = []
+			let uniqueIds = []
 
-		const unique = arr.filter(element => {
-			const isDuplicate = uniqueIds.includes(element.name);
+			const unique = arr.filter(element => {
+				const isDuplicate = uniqueIds.includes(element.name);
 
-			if (!isDuplicate && !element.owner) {
-			  uniqueIds.push(element.name);
+					if (!isDuplicate && !element.owner) {
+						uniqueIds.push(element.name);
 
-			  return true;
-			}
+						return true;
+					}
 
-			return false;
-		  });
+					return false;
+				});
 
-		  return unique
+				return unique
 
 	  }
 
 	  function searchCustomer(field , value){
 
-		clearTable()
-		clearTable()
+			clearTable();
+			clearTable();
 
 
-		if (value.length > 8) {
+			if (value.length > 8) {
 
-			clearTable()
-			clearTable()
+				clearTable()
+				clearTable()
 
-			frappe.call({
-				method: "condominium_ve.api.query_code_housing",
-				args: {
-					code: value
-				},
-				callback: (response) => {
+				frappe.call({
+					method: "condominium_ve.api.query_code_housing",
+					args: {
+						code: value
+					},
+					callback: (response) => {
+						let data = response.data
 
-					console.log("consulta")
-					let data = response.data
-
-					frappe.web_form.set_value("customer", data.customer[0])
-					frappe.web_form.set_value("balance", data.saldo)
-
+						frappe.web_form.set_value("customer", data.customer[0])
+						frappe.web_form.set_value("balance", data.saldo)
+						frappe.web_form.set_value("credit", data.credito)
 
 
-					data.invoices.forEach(e => {
 
-							console.log(e)
+						data.invoices.forEach(e => {
 
-							if(!e.label){
+								if(!e.label){
 
-								let me = frappe.web_form;
-								let field = me.get_field('invoices');
-								let row = field.grid.add_new_row(null, null, true)
+									let me = frappe.web_form;
+									let field = me.get_field('invoices');
+									let row = field.grid.add_new_row(null, null, true)
 
-								grid_rows = field.grid.grid_rows
+									grid_rows = field.grid.grid_rows
 
-								row_name = grid_rows[grid_rows.length - 1].doc.name;
+									row_name = grid_rows[grid_rows.length - 1].doc.name;
 
-								frappe.model.set_value(field.grid.doctype, row_name, "posting_date", "2022-01-01");
-								row_number = (grid_rows.length - 1)
-								frappe.web_form.doc['invoices'] = frappe.web_form.get_value('invoices')
-								frappe.web_form.doc['invoices'][row_number].posting_date = e.posting_date
-								frappe.web_form.doc['invoices'][row_number].invoice = `${e.name}`
-								frappe.web_form.doc['invoices'][row_number].btn = `<a href='${url_sales_invoice(e.name)}' > ${e.name} </a>`
-								frappe.web_form.doc['invoices'][row_number].total = e.grand_total
-								frappe.web_form.doc['invoices'][row_number].balance = e.outstanding_amount
+									frappe.model.set_value(field.grid.doctype, row_name, "posting_date", "2022-01-01");
+									row_number = (grid_rows.length - 1)
+									frappe.web_form.doc['invoices'] = frappe.web_form.get_value('invoices')
+									frappe.web_form.doc['invoices'][row_number].posting_date = e.posting_date
+									frappe.web_form.doc['invoices'][row_number].invoice = `${e.name}`
+									frappe.web_form.doc['invoices'][row_number].btn = `<a href='${url_sales_invoice(e.name)}' > ${e.name} </a>`
+									frappe.web_form.doc['invoices'][row_number].total = e.grand_total
+									frappe.web_form.doc['invoices'][row_number].balance = e.outstanding_amount
 
 
 
 
-								if (document.querySelector('.btn-open-row'))
-									document.querySelector('.btn-open-row').remove();
+									if (document.querySelector('.btn-open-row'))
+										document.querySelector('.btn-open-row').remove();
 
-								frappe.web_form.refresh()
-								if(document.querySelector('.grid-row-check'))
-									document.querySelector('.grid-row-check').remove()
-								if(document.querySelector('.grid-row-check'))
-									document.querySelector('.grid-row-check').remove()
+									frappe.web_form.refresh()
+									if(document.querySelector('.grid-row-check'))
+										document.querySelector('.grid-row-check').remove()
+									if(document.querySelector('.grid-row-check'))
+										document.querySelector('.grid-row-check').remove()
 
 
-								if($("div.grid-row:nth-child(3) > div:nth-child(2) > div:nth-child(1) > div:nth-child(1) > span:nth-child(2) > button:nth-child(1)"))
-									$("div.grid-row:nth-child(3) > div:nth-child(2) > div:nth-child(1) > div:nth-child(1) > span:nth-child(2) > button:nth-child(1)").trigger('click');
+									if($("div.grid-row:nth-child(3) > div:nth-child(2) > div:nth-child(1) > div:nth-child(1) > span:nth-child(2) > button:nth-child(1)"))
+										$("div.grid-row:nth-child(3) > div:nth-child(2) > div:nth-child(1) > div:nth-child(1) > span:nth-child(2) > button:nth-child(1)").trigger('click');
 
-								$("#descargar").click(() => {
-								
-									if(!frappe.web_form.doc['invoices']) return ;
-
-									frappe.web_form.doc['invoices'].forEach(si =>{
-										print(si.invoice)
-									})
+									$("#descargar").click(() => {
 									
-								})
+										if(!frappe.web_form.doc['invoices']) return ;
+
+										frappe.web_form.doc['invoices'].forEach(si =>{
+											print(si.invoice)
+										})
+										
+									})
 
 
-							}
-						})
-					frappe.web_form.doc['invoices'] = unique_sales_invoice(frappe.web_form.doc['invoices'])
-					$("select[data-fieldname='mode_of_payment']").val('Transferencia Bancaria')
-					console.log("consulta")
-					console.log(frappe.web_form.doc['invoices'])
+								}
+							})
+						frappe.web_form.doc['invoices'] = unique_sales_invoice(frappe.web_form.doc['invoices'])
+						$("select[data-fieldname='mode_of_payment']").val('Transferencia Bancaria')
 
-					//$('div[data-fieldname="invoice"]').click(e =>{  
-					//	if(e.target.innerText != "Factura" && e.target.innerText != 'Factura`' )
-					//		print(e.target.innerText);  
-					//
-					//})
-				},
-				error: (r) => {
-					console.log(r)
-				},
-			});
+						//$('div[data-fieldname="invoice"]').click(e =>{  
+						//	if(e.target.innerText != "Factura" && e.target.innerText != 'Factura`' )
+						//		print(e.target.innerText);  
+						//
+						//})
+					},
+					error: (r) => {
+						console.log(r)
+					},
+				});
 
-		}
+			}
 
 	  }
 
