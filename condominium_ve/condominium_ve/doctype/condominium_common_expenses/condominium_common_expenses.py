@@ -400,7 +400,6 @@ def create_attachment(filename='', path=None):
 
 	with open(path, "rb") as fileobj:
 		filedata = fileobj.read() 
-	#frappe.publish_realtime('msgprint', f'enviando correo a {fname}')
 	out = {
 		"fname": fname,
 		"fcontent": filedata

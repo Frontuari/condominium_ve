@@ -81,12 +81,13 @@
    "fieldtype": "Link",
    "in_standard_filter": 1,
    "label": "Sector",
-   "options": "Territory"
+   "options": "Territory",
+   "reqd": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2022-11-08 08:43:23.601518",
+ "modified": "2023-05-17 08:35:06.012440",
  "modified_by": "Administrator",
  "module": "Condominium Ve",
  "name": "Housing",

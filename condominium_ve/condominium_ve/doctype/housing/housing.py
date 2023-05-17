@@ -29,3 +29,21 @@ def generate_code():
 	frappe.local.response.update({"data": {  'code': code  } })
 
 	return build_response("json")
+
+@frappe.whitelist()
+def update_condominium_houses(condominium, active, inserted=0):
+	print('active: ',active, type(active), '\ncondominium: ',condominium, type(condominium), '\ninserted: ', inserted, type(inserted))
+	active = int(active)
+	inserted = int(inserted)
+	print('active: ',active, type(active), '\ncondominium: ',condominium, type(condominium), '\ninserted: ', inserted, type(inserted))
+	condominium_doc = frappe.get_doc('Condominium', condominium)
+	if inserted:
+		condominium_doc.n_houses += 1
+		if active:
+			condominium_doc.n_houses_active += 1
+	else:
+		if active:
+			condominium_doc.n_houses_active += 1
+		else:
+			condominium_doc.n_houses_active -= 1
+	condominium_doc.save()
