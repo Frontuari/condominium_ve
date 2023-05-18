@@ -214,9 +214,10 @@ frappe.ready(function(){frappe.web_form.after_load = () => {
 					callback: (response) => {
 						let data = response.data
 
-						frappe.web_form.set_value("customer", data.customer[0])
-						frappe.web_form.set_value("balance", data.saldo)
-						frappe.web_form.set_value("credit", data.credito)
+						frappe.web_form.set_value("customer", data.customer[0]);
+						frappe.web_form.set_value("balance", data.saldo);
+						frappe.web_form.set_value("credit", data.credito);
+						frappe.web_form.set_value("debit_balance", data.credito+data.saldo);
 
 
 
@@ -226,9 +227,9 @@ frappe.ready(function(){frappe.web_form.after_load = () => {
 
 									let me = frappe.web_form;
 									let field = me.get_field('invoices');
-									let row = field.grid.add_new_row(null, null, true)
+									let row = field.grid.add_new_row(null, null, true);
 
-									grid_rows = field.grid.grid_rows
+									grid_rows = field.grid.grid_rows;
 
 									row_name = grid_rows[grid_rows.length - 1].doc.name;
 

@@ -13,6 +13,7 @@
   "customer",
   "mode_of_payment",
   "credit",
+  "debit_balance",
   "voucher",
   "column_break_4",
   "reference",
@@ -120,12 +121,17 @@
    "fieldname": "credit",
    "fieldtype": "Currency",
    "label": "Credito a Favor"
+  },
+  {
+   "fieldname": "debit_balance",
+   "fieldtype": "Currency",
+   "label": "Total Saldo Deudor"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2023-05-16 16:24:05.347730",
+ "modified": "2023-05-18 09:38:30.992240",
  "modified_by": "Administrator",
  "module": "Condominium Ve",
  "name": "Manual payment",

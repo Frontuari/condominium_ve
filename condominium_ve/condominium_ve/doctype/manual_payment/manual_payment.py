@@ -82,7 +82,7 @@ class Manualpayment(WebsiteGenerator):
         self.save()
 
         link_payment = "<b><a href='/app/payment-entry/{0}'>{0}</a></b>".format(payment.name)
-        frappe.msgprint(_("Your payment receipt {0} has been created successfully, please verify and validate it").format(link_payment))
+        frappe.msgprint(_("Your payment receipt {0} has been created successfully please verify and validate it").format(link_payment))
 
     def upload_file(self , payload):
         url_api = get_env('URL_API')
