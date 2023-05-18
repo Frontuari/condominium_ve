@@ -45,7 +45,8 @@
    "default": "0",
    "fieldname": "n_houses",
    "fieldtype": "Int",
-   "label": "Number of Houses"
+   "label": "Number of Houses",
+   "read_only": 1
   },
   {
    "fieldname": "column_break_3",
@@ -55,7 +56,8 @@
    "default": "0",
    "fieldname": "n_houses_active",
    "fieldtype": "Int",
-   "label": "Active Number of Houses"
+   "label": "Active Number of Houses",
+   "read_only": 1
   },
   {
    "fieldname": "account",
@@ -94,7 +96,7 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2023-05-17 08:17:39.309889",
+ "modified": "2023-05-18 11:54:35.782087",
  "modified_by": "Administrator",
  "module": "Condominium Ve",
  "name": "Condominium",

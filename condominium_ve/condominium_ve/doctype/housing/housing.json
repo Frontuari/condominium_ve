@@ -16,7 +16,8 @@
   "column_break_4",
   "aliquot",
   "address",
-  "active"
+  "active",
+  "inserted"
  ],
  "fields": [
   {
@@ -83,11 +84,19 @@
    "label": "Sector",
    "options": "Territory",
    "reqd": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "inserted",
+   "fieldtype": "Check",
+   "hidden": 1,
+   "label": "Insertado",
+   "no_copy": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2023-05-17 08:35:06.012440",
+ "modified": "2023-05-18 11:56:48.856501",
  "modified_by": "Administrator",
  "module": "Condominium Ve",
  "name": "Housing",
