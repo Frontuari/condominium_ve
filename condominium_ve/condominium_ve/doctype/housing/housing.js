@@ -19,6 +19,29 @@ frappe.ui.form.on('Housing', {
 				},
 			});
 		});
+	},
+	after_save(frm){
+		update_house_condominium(frm);
 	}
 });
 
+function update_house_condominium(frm){
+	frappe.call({
+		method: "condominium_ve.condominium_ve.doctype.housing.housing.update_condominium_houses",
+		args: {
+			house: frm.doc.name, 
+			condominium: frm.doc.condominium, 
+			active: frm.doc.active, 
+			inserted: frm.doc.inserted
+		},
+		btn: $(".primary-action"),
+		freeze: true,
+		callback: (response) => {
+		},
+		error: (r) => {
+			console.log(r)
+		},
+	});
+	if (frm.doc.inserted)
+		frm.reload()
+}

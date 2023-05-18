@@ -9,7 +9,7 @@ from frappe.model.document import Document
 from frappe.utils.response import build_response
 
 class Housing(Document):
-	def validate(self):
+	"""def validate(self):
 		
 		condominium_doc = frappe.get_doc('Condominium', self.condominium)
 
@@ -28,7 +28,8 @@ class Housing(Document):
 			else:
 				condominium_doc.n_houses_active -= 1
 		condominium_doc.save()
-	
+	"""
+
 	def on_trash(self):
 		is_house_active = frappe.db.get_value('Housing', self.name, 'active')
 		condominium_doc = frappe.get_doc('Condominium', self.condominium)
@@ -56,7 +57,7 @@ def generate_code():
 	frappe.local.response.update({"data": {  'code': code  } })
 
 	return build_response("json")
-"""
+
 @frappe.whitelist()
 def update_condominium_houses(house, condominium, active, inserted):
 	active = int(active)
@@ -78,4 +79,4 @@ def update_condominium_houses(house, condominium, active, inserted):
 		else:
 			condominium_doc.n_houses_active -= 1
 	condominium_doc.save()
-"""
+
