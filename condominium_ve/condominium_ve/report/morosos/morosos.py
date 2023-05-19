@@ -70,7 +70,7 @@ class AccountsReceivableSummary(ReceivablePayableReport):
                 row.party_name = frappe.get_cached_value(
                     self.party_type, party, scrub(self.party_type) + "_name"
                 )
-            print(row)
+
             row.update(party_dict)
 
             # Advance against party
@@ -86,6 +86,8 @@ class AccountsReceivableSummary(ReceivablePayableReport):
 
             self.data.append(row)
 
+        self.group_data_by_sector()
+    
     def get_number_house(self, customer):
         data = ''
         housings = frappe.db.sql(
@@ -98,7 +100,6 @@ class AccountsReceivableSummary(ReceivablePayableReport):
     def get_number_months(self, housing, report_date):
         count_sales_invoice = frappe.db.sql(
             "select coalesce((period_diff((SELECT DATE_FORMAT( '{1}','%Y%m') ),min(DATE_FORMAT(due_date,'%Y%m')))),0) from `tabSales Invoice` tsi where gc_condo is not null  and housing='{0}' and  docstatus=1 and status <> 'Paid' and due_date<=(SELECT DATE_ADD(CAST(DATE_FORMAT( '{1}','%Y-%m-01') AS DATE),INTERVAL -1 DAY)) ".format(housing,report_date))
-        print(count_sales_invoice)
         
         if not count_sales_invoice:
             return 0
@@ -157,18 +158,19 @@ class AccountsReceivableSummary(ReceivablePayableReport):
             fieldname="party",
             fieldtype="Link",
             options=self.party_type,
-            width=180,
+            width=300,
         )
         self.add_column(label=_("Housing"),
                         fieldname="housing",
-                        fieldtype="Data",
-                        width=140)
+                        fieldtype="Link",
+                        width=80,
+                        options='Housing')
         
         
         self.add_column(label=_("Meses"),
                         fieldname="months",
                         fieldtype="Data",
-                        width=140)
+                        width=80)
         
         
 
@@ -191,9 +193,9 @@ class AccountsReceivableSummary(ReceivablePayableReport):
         # self.setup_ageing_columns()
 
         if self.party_type == "Customer":
-            self.add_column(
-                label=_("Territory"), fieldname="territory", fieldtype="Link", options="Territory"
-            )
+            #self.add_column(
+            #    label=_("Territory"), fieldname="territory", fieldtype="Link", options="Territory"
+            #)
             self.add_column(
                 label=_("Customer Group"),
                 fieldname="customer_group",
@@ -214,28 +216,27 @@ class AccountsReceivableSummary(ReceivablePayableReport):
             label=_("Currency"), fieldname="currency", fieldtype="Link", options="Currency", width=80
         )
 
-    def setup_ageing_columns(self):
-        pass
-    #   #  for i, label in enumerate(
-    #   #          [
-    #   #              "0-{range1}".format(range1=self.filters["range1"]),
-    #   #              "{range1}-{range2}".format(
-    #                     range1=cint(self.filters["range1"]) + 1, range2=self.filters["range2"]
-    #   #              ),
-    #                 "{range2}-{range3}".format(
-    #                     range2=cint(self.filters["range2"]) + 1, range3=self.filters["range3"]
-    #                 ),
-    #                 "{range3}-{range4}".format(
-    #                     range3=cint(self.filters["range3"]) + 1, range4=self.filters["range4"]
-    #                 ),
-    #                 "{range4}-{above}".format(range4=cint(
-    #                     self.filters["range4"]) + 1, above=_("Above")),
-    #             ]
-    #     ):
-    #   #      self.add_column(label=label, fieldname="range" + str(i + 1))
+    def group_data_by_sector(self):
+        group = {}
+        for data in self.data:
+            territory = data['territory']
+            # elimino el territorio para no repetirlo en el formato de impresion
+            del data['territory']
+            
+            if territory not in group:
+                group[territory] = []#{'party': data.territory, 'indent': 0}]
+            
+            
+            data.indent = 1
+            group[territory].append(data)
+        
+        # sort data
+        data_formated = []
+        for key in group:
+            sorted_data = sorted(group[key], key=lambda x: x['housing'])
+            data_formated += [{'party': key, 'territory': key,'indent': 0}] + sorted_data
 
-    #     # Add column for total due amount
-    #    # self.add_column(label="Total Amount Due", fieldname="total_due")
+        self.data = data_formated
 
 
 def get_gl_balance(report_date):

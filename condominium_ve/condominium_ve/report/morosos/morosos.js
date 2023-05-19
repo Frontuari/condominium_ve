@@ -23,7 +23,7 @@ frappe.query_reports["Morosos"] = {
 			"options": 'Posting Date\nDue Date',
 			"default": "Due Date"
 		},
-		{
+		/*{
 			"fieldname":"finance_book",
 			"label": __("Finance Book"),
 			"fieldtype": "Link",
@@ -42,14 +42,14 @@ frappe.query_reports["Morosos"] = {
 					}
 				}
 			}
-		},
+		},*/
 		{
 			"fieldname":"customer",
 			"label": __("Customer"),
 			"fieldtype": "Link",
 			"options": "Customer"
 		},
-		{
+		/*{
 			"fieldname":"customer_group",
 			"label": __("Customer Group"),
 			"fieldtype": "Link",
@@ -60,14 +60,14 @@ frappe.query_reports["Morosos"] = {
 			"label": __("Payment Terms Template"),
 			"fieldtype": "Link",
 			"options": "Payment Terms Template"
-		},
+		},*/
 		{
 			"fieldname":"territory",
 			"label": __("Territory"),
 			"fieldtype": "Link",
 			"options": "Territory"
 		},
-		{
+		/*{
 			"fieldname":"sales_partner",
 			"label": __("Sales Partner"),
 			"fieldtype": "Link",
@@ -93,15 +93,39 @@ frappe.query_reports["Morosos"] = {
 			"fieldname":"show_gl_balance",
 			"label": __("Show GL Balance"),
 			"fieldtype": "Check",
-		},
+		},*/
 	],
 
 	onload: function(report) {
 		report.page.add_inner_button(__("Accounts Receivable"), function() {
 			var filters = report.get_values();
-			frappe.set_route('query-report', 'Accounts Receivable', { company: filters.company });
+			frappe.set_route('query-report', 'CxC Cobranza', { company: filters.company });
 		});
-	}
+	},
+
+	"formatter":function (value, row, column, data, default_formatter) {
+		value = default_formatter(value, row, column, data);
+		// cambia el href al indicado
+		if (column.id == "origin_commission"){
+			if (data.is_invoice){
+				value = value.replace("Item Group",'Sales Invoice');
+				value = value.replace("item-group",'sales-invoice');
+			}else{
+				value = value.replace("Sales Invoice",'Item Group');
+				value = value.replace("sales-invoice",'item-group');
+			}
+		}
+
+		if (column.id == 'party' && data.indent == 0){
+			//console.log(value);
+			value = "<span style='font-weight:bold'>" + value + "</span>";
+		}
+		
+
+		return value;
+	},
+	"tree": true,
+	"initial_depth": 2
 }
 
 erpnext.utils.add_dimensions('Accounts Receivable Summary', 9);

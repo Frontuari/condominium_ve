@@ -120,7 +120,7 @@
 						<th style="width: 10%">{%= __("Remaining Balance") %}</th>
 					{% } %}
 				{% } else { %}
-
+					<th style="width: 10%; text-align: left">{%= __("Territory") %}</th>
 					<th style="width: 10%; text-align: left">{%= __("Vivienda") %}</th>
 
 					<th style="width: 40%">{%= (filters.customer || filters.supplier) ? __("Remarks"): __("Party") %}</th>
@@ -212,9 +212,20 @@
 					{% if(data[i]["party"]|| "&nbsp;") { %}
 						{% if(!data[i]["is_total_row"]) { %}
 						<td>
-							{%= data[i]["housing"] %}
+							
+							{% if(data[i]['territory']) { %}
+
+								<b>{%= data[i]["party"] %}</b>
+							
+							{% } %}
 						</td>
 						<td>
+							{%= data[i]["housing"] %}
+						</td>
+						<td>	
+
+							{% if(!data[i]['territory']) { %}
+
 								{% if(!(filters.customer || filters.supplier)) { %}
 									{%= data[i]["party"] %}
 									{% if(data[i]["customer_name"] && data[i]["customer_name"] != data[i]["party"]) { %}
@@ -224,7 +235,10 @@
 									{% } %}
 								{% } %}
 								<br>
-							</td>
+							
+							{% } %}
+								
+						</td>
 							
 						{% } else { %}
 							<td><b>{%= __("Total") %}</b></td>

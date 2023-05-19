@@ -275,9 +275,18 @@
    "link_type": "Report",
    "onboard": 0,
    "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 1,
+   "label": "Morosos",
+   "link_to": "Morosos",
+   "link_type": "Report",
+   "onboard": 0,
+   "type": "Link"
   }
  ],
- "modified": "2023-05-16 16:43:47.690293",
+ "modified": "2023-05-19 15:41:17.498630",
  "modified_by": "Administrator",
  "module": "Condominium Ve",
  "name": "Condominio",
