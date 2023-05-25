@@ -116,9 +116,10 @@ frappe.query_reports["Morosos"] = {
 			}
 		}
 
-		if (column.id == 'party' && data.indent == 0){
+		if (column.id == 'party' ){
 			//console.log(value);
-			value = "<span style='font-weight:bold'>" + value + "</span>";
+			if (data.indent == 0 || data.party == 'Total')
+				value = "<span style='font-weight:bold'>" + value + "</span>";
 		}
 		
 

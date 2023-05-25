@@ -225,7 +225,9 @@
 						<td>	
 
 							{% if(!data[i]['territory']) { %}
-
+								{% if(data[i]["party"] == "Total") { %}
+									<b>
+								{%}%}
 								{% if(!(filters.customer || filters.supplier)) { %}
 									{%= data[i]["party"] %}
 									{% if(data[i]["customer_name"] && data[i]["customer_name"] != data[i]["party"]) { %}
@@ -235,7 +237,11 @@
 									{% } %}
 								{% } %}
 								<br>
-							
+								
+								{% if(data[i]["party"] == "Total") { %}
+									</b>
+								{%}%}
+
 							{% } %}
 								
 						</td>
@@ -247,7 +253,12 @@
 			
 	
 						<td style="text-align: center">{%= data[i]["months"] %}</td>
-						<td style="text-align: right">{%= format_currency(data[i]["outstanding"], data[i]["currency"]) %}</td>
+
+						<td style="text-align: right">
+							
+							{%= format_currency(data[i]["outstanding"], data[i]["currency"]) %}
+							
+						</td>
 					{% } %}
 				{% } %}
 				</tr>

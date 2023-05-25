@@ -236,8 +236,14 @@ class AccountsReceivableSummary(ReceivablePayableReport):
         data_formated = []
         for key in group:
             sorted_data = sorted(group[key], key=lambda x: x['housing'])
+            
+            total = 0
+            # total row por sector
+            for r in sorted_data:
+                total += r['outstanding']
             data_formated += [{'party': key, 'territory': key,'indent': 0}] + sorted_data
-
+            data_formated += [{'party': 'Total', 'indent': 1, 'outstanding': total}]
+            
         self.data = data_formated
 
 
