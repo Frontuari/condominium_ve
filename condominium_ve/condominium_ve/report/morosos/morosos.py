@@ -219,7 +219,7 @@ class AccountsReceivableSummary(ReceivablePayableReport):
     def group_data_by_sector(self):
         group = {}
         for data in self.data:
-            if data['outstanding'] <= 0:
+            if data['outstanding'] <= 0 or not data['housing']:
                 continue
             territory = data['territory']
             # elimino el territorio para no repetirlo en el formato de impresion
