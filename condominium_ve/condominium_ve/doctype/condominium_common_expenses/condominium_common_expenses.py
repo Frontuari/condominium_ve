@@ -133,7 +133,7 @@ class CondominiumCommonExpenses(Document):
                         if res.account == fund.account:
                             cost_center_aux = res.cost_center
 
-                    total_fund = float(fund.amount) * (float(house.aliquot) / 100)
+                    total_fund = float(fund.amount) / int(self.active_units)#* (float(house.aliquot) / 100)
                     sales_invoice_2 = frappe.get_doc(dict(
                         naming_series="RFC-.YYYY..-.########",
                         doctype="Sales Invoice",
@@ -651,7 +651,7 @@ def gen_missing_invoice(ggc, customers):
                 remarks=the_remarks
             )).insert()
             # sales_invoice.queue_action('submit')
-            sales_invoice.submit()
+            #sales_invoice.submit()
 
             for fund in doc.funds:
                 
@@ -696,7 +696,7 @@ def gen_missing_invoice(ggc, customers):
                     select_print_heading="Recibo de Fondo de Condominio"
                 )).insert()
                 # sales_invoice_2.queue_action('submit')
-                sales_invoice_2.submit()
+                #sales_invoice_2.submit()
 
             frappe.db.commit()
 
@@ -904,6 +904,9 @@ def get_sectors(excluded_sectors=[]):
         if isinstance(excluded_sectors, str):
             excluded_sectors = json.loads(excluded_sectors)
         for excluded_sector in excluded_sectors:
+            if 'territory' not in excluded_sector:
+                continue
+            
             territory = excluded_sector['territory']
             
             for i in range(len(sectors)):
@@ -919,6 +922,8 @@ def get_active_house_sectors(excluded_sectors=[]):
 
     total_active_units = 0
     for sector in sectores:
+        if 'sector' not in sector:
+            continue
         houses = frappe.db.get_all('Housing', filters={'sector':sector['sector'], 'active': 1})
         total_active_units += len(houses)
         
