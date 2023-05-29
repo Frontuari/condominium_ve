@@ -123,7 +123,7 @@ class CondominiumCommonExpenses(Document):
                         select_print_heading="Recibo de Condominio",
                         remarks=the_remarks
                     )).insert()
-                    sales_invoice.submit()
+                    #sales_invoice.submit()
                 
                 # generar los recibos de fondos
                 for fund in doc.funds:
@@ -169,7 +169,7 @@ class CondominiumCommonExpenses(Document):
                         select_print_heading="Recibo de Fondo de Condominio"
                     )).insert()
 
-                    sales_invoice_2.submit()
+                    #sales_invoice_2.submit()
 
                 frappe.db.commit()
             except Exception as e:
@@ -299,6 +299,7 @@ class CondominiumCommonExpenses(Document):
 
             add_log(e, 'condominium_common_expenses.CondominiumCommonExpenses.cancel_process', 
                         'Error actualizando facturas de compra')
+
 
 def generate_process_sales_invoice(obj, sectors):
     try:
@@ -893,7 +894,6 @@ def expedition_funds(from_date, to_date, company, cost_center_parent):
         where  tpi.posting_date >= '{0}' and tpi.posting_date <= '{1}' and (tcc.parent_cost_center = '{2}' or  tcc.name = '{2}'   ) and tpi.company = '{3}' and tpi.docstatus = 1 """.format(from_date, to_date,   cost_center_parent, company)
     data = frappe.db.sql(sql)
 
-    print(sql)
     return data[0][0]
 
 def get_sectors(excluded_sectors=[]):
@@ -1110,3 +1110,38 @@ def get_invoice_condo(condo, date):
     }})
 
     return build_response("json")
+
+@frappe.whitelist()
+def get_total_draft_doc(gcc):
+    print(gcc)
+    if not gcc:
+        return
+
+    total_doc = frappe.db.count('Sales Invoice', {'gc_condo': gcc, 'docstatus': 0})
+    print(total_doc)
+    frappe.local.response.update({"total_doc": total_doc})
+
+    return build_response("json")
+
+@frappe.whitelist()
+def validate_recipts_doc(gcc):
+    documents = frappe.get_list('Sales Invoice', {'docstatus': 0, 'gc_condo': gcc})
+    total_documents = len(documents)
+    count = 1
+    for idx, docname in enumerate(documents):
+        # barra de progreso
+        progress_percent = (idx+1) * 100 / total_documents
+        frappe.publish_progress(percent=progress_percent, 
+            title='Validando Recibos', 
+            description='{0}/{1}. Recibo {2} '.format(idx+1, total_documents, docname.name))
+        
+        doc = frappe.get_doc('Sales Invoice', docname.name)
+        doc.submit()
+
+        # contador para hacer commit cada 50 registros
+        if count >= 50:
+            frappe.db.commit()
+            count = 0
+        count += 1
+        
+        

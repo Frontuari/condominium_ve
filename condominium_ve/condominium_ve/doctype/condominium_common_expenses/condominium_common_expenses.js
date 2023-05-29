@@ -201,6 +201,9 @@ frappe.ui.form.on("Condominium Common Expenses", {
 
       // agrega o elimina el boton para generar las facturas faltantes
       btn_gen_missing_invoices(frm);
+
+      // agregar o eliminar el boton para validar los recibos de condominio
+      btn_validate_documents(frm);
       
     }
   },
@@ -263,6 +266,11 @@ frappe.ui.form.on("Condominium Common Expenses", {
       }
 
   },
+
+  on_submit: function(frm){
+    frm.refresh()
+  },
+
   caculate_funds(frm){
 
     let data = frm.doc 
@@ -356,6 +364,34 @@ function btn_gen_missing_invoices(frm) {
   });
 }
 
+function btn_validate_documents(frm) {
+  frappe.call({
+    method: "condominium_ve.condominium_ve.doctype.condominium_common_expenses.condominium_common_expenses.get_total_draft_doc",
+    args: {
+      gcc: frm.doc.name
+    },
+    freeze: true,
+    callback: (response) => {
+      if (response.total_doc && response.total_doc > 0 && frm.doc.docstatus == 1){
+
+        // agregar boton para validar los recibos de condominio
+        frm.add_custom_button(__("Validate Receipts"), () => {
+          frappe.confirm('Esta a punto de validar los recibos de condominio, ¿Quiere proceder?',
+            () => {
+                // si es yes genera las facturas faltantes
+                validate_receipts_doc(frm);
+            });
+        });
+        frm.change_custom_button_type(__("Validate Receipts"), null, 'primary');
+      }
+    },
+    error: (r) => {
+      console.log(r);
+    }
+  });
+}
+
+
 function generate_missing_invoices(docname, excluded_sectors){
   frappe.call({
     method:
@@ -375,6 +411,25 @@ function generate_missing_invoices(docname, excluded_sectors){
   });
 }
 
+function validate_receipts_doc(frm){
+  frappe.call({
+    method:
+      "condominium_ve.condominium_ve.doctype.condominium_common_expenses.condominium_common_expenses.validate_recipts_doc",
+    args: {
+      gcc: frm.doc.name,
+    },
+
+    btn: $(".primary-action"),
+
+    freeze: true,
+    callback: (response) => {
+      frm.refresh()
+    },
+    error: (r) => {
+      console.log(r);
+    }
+  });
+}
 
 frappe.ui.form.on("Detail Funds", {
 
