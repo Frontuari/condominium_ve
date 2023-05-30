@@ -336,6 +336,25 @@ frappe.ui.form.on("Condominium Common Expenses", {
     
     frm.events.caculate_funds_detail(frm)
   },
+
+  excluded_sectors(frm){
+    let sectores = [];
+
+    for (let i = 0; i < frm.doc.excluded_sectors.length; i++) {
+      const element = frm.doc.excluded_sectors[i];
+      if (element !== '')
+        sectores.push(element.territory);
+      
+    }
+    console.log(sectores); 
+    frm.set_query("excluded_sectors", function() {
+      return {
+        "filters": [
+          ["Territory", "name", "in", frm.doc.platform]
+        ]
+      };
+    });
+  }
 });
 
 function btn_gen_missing_invoices(frm) {
@@ -456,3 +475,31 @@ frappe.ui.form.on("Detail Funds", {
  
   
 });
+
+
+frappe.ui.form.on("Condo Exclude Sector",{
+
+  excluded_sectors_add(frm, cdt, cdn){
+    // agregar filtro para que solo muestre los sectores que aun no estan excluidos en el campo de enlace
+    let sectores = [];
+
+    for (let i = 0; i < frm.doc.excluded_sectors.length; i++) {
+      const element = frm.doc.excluded_sectors[i];
+      if (element.territory !== '' && element.territory)
+        sectores.push(element.territory);
+      
+    }
+    console.log(sectores); 
+    frm.set_query("territory", 'excluded_sectors', () => {
+      return {
+        filters: {
+          name:["not in", sectores],
+          is_group: 0,
+          parent_territory: ["!=", "Todos los territorios"]
+        }
+      };
+    });
+  }
+  
+});
+
