@@ -1014,7 +1014,7 @@ def get_invoice_condo(condo, date):
     data_item = []
     data_cost_center = {}
 
-    active_units = doc_condo.n_houses_active
+    active_units = frappe.db.count('Housing', {'active': 1, 'condominium': doc_condo.name})
     parent_cost_center = ""
 
     for purchase_invoice_data in purchase_invoice_list:
@@ -1024,7 +1024,7 @@ def get_invoice_condo(condo, date):
 
         is_for_fund = 0
 
-        cost_center_aux = invoice.cost_center
+        #cost_center_aux = invoice.cost_center
 
         if not invoice.cost_center:
             parent_cost_center = "Gastos Comunes Variables"
@@ -1059,7 +1059,7 @@ def get_invoice_condo(condo, date):
 
         element['amount'] = element['amount'] + invoice.total
         element['per_unit'] = element['per_unit'] + \
-            (invoice.total / doc_condo.n_houses_active)
+            (invoice.total / active_units)
         element['supplier'] = element['supplier']
 
         data_cost_center[invoice.description + invoice.supplier] = element
@@ -1073,14 +1073,14 @@ def get_invoice_condo(condo, date):
         if is_fund(invoice.cost_center) == 0:
             total = total + invoice.total
             total_per_unit = total_per_unit + \
-                (invoice.total / doc_condo.n_houses_active)
+                (invoice.total / active_units)
 
     data_cost_center_copy = data_cost_center
     data_cost_center = []
     data_cost_center_fund = []
 
     keys_reserve = []
-    fund_total_reserve = []
+    #fund_total_reserve = []
 
     for fund in doc_condo.reserve:
         if fund.active == 0:
@@ -1100,10 +1100,10 @@ def get_invoice_condo(condo, date):
             continue
 
         funds.append({'concept': fund.description, 'amount': fund.amount,
-                      'amount_per_unit': fund.amount / doc_condo.n_houses_active,  'account': fund.account})
+                      'amount_per_unit': fund.amount / active_units,  'account': fund.account})
         
         total = total + fund.amount
-        total_per_unit = total_per_unit + fund.amount / doc_condo.n_houses_active
+        total_per_unit = total_per_unit + fund.amount / active_units
 
     detail_funds_use = []
     previous_gcc = None

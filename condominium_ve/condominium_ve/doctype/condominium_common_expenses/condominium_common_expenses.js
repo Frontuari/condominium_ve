@@ -19,7 +19,7 @@ frappe.ui.form.on("Condominium Common Expenses", {
 
             freeze: true,
             callback: (response) => {
-              let fecha_doc = new Date(frm.doc.posting_date+' 23:59:00')
+              //let fecha_doc = new Date(frm.doc.posting_date+' 23:59:00')
 
               let data = response.data;
 
