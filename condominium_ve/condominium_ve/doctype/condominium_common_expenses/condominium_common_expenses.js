@@ -174,7 +174,7 @@ frappe.ui.form.on("Condominium Common Expenses", {
     } else {
       frm.remove_custom_button(__("Search"));
 
-      frm.add_custom_button(__("Enviar Correos"), () => {
+      frm.page.add_menu_item(__("Enviar Correos"), () => {
 
           
           frappe.call({
@@ -362,17 +362,18 @@ function btn_gen_missing_invoices(frm) {
     method: "condominium_ve.condominium_ve.doctype.condominium_common_expenses.condominium_common_expenses.is_invoices_generated",
     args: {
       ggc: frm.doc.name,
-      excluded_sectors: frm.doc.excluded_sectors
+      active_units: frm.doc.active_units,
+      n_funds: frm.doc.funds.length
     },
     freeze: true,
     callback: (response) => {
       if (response.data && frm.doc.docstatus == 1){
         // agregar boton para crear facturas faltantes en caso de que no se hayan generado
-        frm.page.add_menu_item(__("Generate Missing Invoices"), () => {
+        frm.add_custom_button(__("Generate Missing Invoices"), () => {
           frappe.confirm('Esta a punto de generar recibos de Cuentas por Cobrar a los propietarios que no lo posean, ¿Quiere proceder?',
             () => {
                 // si es yes genera las facturas faltantes
-                generate_missing_invoices(frm.doc.name, frm.doc.excluded_sectors);
+                generate_missing_invoices(frm, frm.doc.name, frm.doc.excluded_sectors);
             });
         });
       }
@@ -411,7 +412,7 @@ function btn_validate_documents(frm) {
 }
 
 
-function generate_missing_invoices(docname, excluded_sectors){
+function generate_missing_invoices(frm, docname, excluded_sectors){
   frappe.call({
     method:
       "condominium_ve.condominium_ve.doctype.condominium_common_expenses.condominium_common_expenses.gen_missing_invoices",
@@ -423,7 +424,9 @@ function generate_missing_invoices(docname, excluded_sectors){
     //btn: $(".primary-action"),
 
     freeze: true,
-    callback: (response) => {},
+    callback: (response) => {
+      frm.refresh();
+    },
     error: (r) => {
       console.log(r);
     }
@@ -488,8 +491,7 @@ frappe.ui.form.on("Condo Exclude Sector",{
       if (element.territory !== '' && element.territory)
         sectores.push(element.territory);
       
-    }
-    console.log(sectores); 
+    } 
     frm.set_query("territory", 'excluded_sectors', () => {
       return {
         filters: {
