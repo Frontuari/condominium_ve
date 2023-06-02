@@ -212,6 +212,7 @@ class CondominiumCommonExpenses(Document):
                         'Error generando recibos para el cliente {0}'
                         .format(house.owner_customer))
 
+        self.reload()
     def upgrade_purchase_invoice(self):
         doc = self
         try:
@@ -283,12 +284,17 @@ class CondominiumCommonExpenses(Document):
     def cancel_process(self):
         doc = self.get_doc_before_save()
 
-        sales_invoices = frappe.db.get_list("Sales Invoice", fields=['*'], filters={
-            'gc_condo': doc.name,
-            'docstatus' : 1
-        })
+        
 
         try:
+            # cancel de documents
+            #sales_invoices = frappe.db.get_list("Sales Invoice", fields=['*'], filters={
+            #    'gc_condo': doc.name,
+            #    'docstatus' : 1
+            #})
+            sales_invoices = frappe.db.get_list("Sales Invoice", fields=['*'], filters={
+                'gc_condo': doc.name
+            })
             for idx, d in enumerate(sales_invoices):
                 # barra de progreso
                 progress_percent = (idx+1) * 100 / len(sales_invoices)
@@ -301,7 +307,11 @@ class CondominiumCommonExpenses(Document):
                 # ahora
                 if sales_invoice.docstatus == 1:
                     sales_invoice.cancel()
+                
+                if sales_invoice.docstatus == 0:
+                    sales_invoice.delete()
 
+            
         except Exception as e:
             frappe.publish_realtime(
             'msgprint', 'Error Cancelando recibos de condominio: {0}'.format(e))
@@ -618,9 +628,9 @@ def gen_missing_invoice(ggc, data_receipts, sectors):
                 has_receipt = False
                 for recibo_name in recibos:
                     recibo_doc = frappe.get_doc('Sales Invoice', recibo_name.name)
-                    items_name = []
+                    #items_name = []
                     for item in recibo_doc.items:
-                        items_name.append(item.item_name)
+                        #items_name.append(item.item_name)
                         if item.item_name.strip() == data['item_name'].strip():
                             
                             has_receipt = True
@@ -981,7 +991,10 @@ def get_active_house_sectors(excluded_sectors=[]):
     return build_response("json")    
 
 @frappe.whitelist()
-def get_invoice_condo(condo, date):
+def get_invoice_condo(condo, date, excluded_sectors):
+    # convertir el str de los sectores excluidos a una lista
+    import ast
+    excluded_sectors = ast.literal_eval(excluded_sectors)
 
     funds = []
     total = 0
@@ -1014,7 +1027,12 @@ def get_invoice_condo(condo, date):
     data_item = []
     data_cost_center = {}
 
-    active_units = frappe.db.count('Housing', {'active': 1, 'condominium': doc_condo.name})
+    # obtener las unidades activas del condominio en base a si se excluyen sectores o no
+    filters_active_units = {'active': 1, 'condominium': doc_condo.name}
+    if excluded_sectors:
+        filters_active_units['sector'] = ['not in', tuple(excluded_sectors)]
+    active_units = frappe.db.count('Housing', filters_active_units)
+    
     parent_cost_center = ""
 
     for purchase_invoice_data in purchase_invoice_list:

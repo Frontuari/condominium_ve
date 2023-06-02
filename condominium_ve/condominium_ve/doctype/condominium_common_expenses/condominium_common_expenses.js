@@ -7,12 +7,15 @@ frappe.ui.form.on("Condominium Common Expenses", {
     if (!frm.doc.docstatus || frm.doc.docstatus == 0) {
       frm.add_custom_button(__("Search"), () => {
         if (frm.doc.posting_date && frm.doc.condominium) {
+          
+          
           frappe.call({
             method:
               "condominium_ve.condominium_ve.doctype.condominium_common_expenses.condominium_common_expenses.get_invoice_condo",
             args: {
               condo: frm.doc.condominium,
               date: frm.doc.posting_date,
+              excluded_sectors: get_excluded_sectors_name(frm),
             },
 
             btn: $(".primary-action"),
@@ -267,10 +270,6 @@ frappe.ui.form.on("Condominium Common Expenses", {
 
   },
 
-  on_submit: function(frm){
-    frm.refresh()
-  },
-
   caculate_funds(frm){
 
     let data = frm.doc 
@@ -346,7 +345,6 @@ frappe.ui.form.on("Condominium Common Expenses", {
         sectores.push(element.territory);
       
     }
-    console.log(sectores); 
     frm.set_query("excluded_sectors", function() {
       return {
         "filters": [
@@ -453,6 +451,17 @@ function validate_receipts_doc(frm){
   });
 }
 
+function get_excluded_sectors_name(frm){
+  var excluded_sectors = [];
+  if (frm.doc.excluded_sectors) {
+    frm.doc.excluded_sectors.forEach(element => {
+      if (element.hasOwnProperty("territory"))
+        excluded_sectors.push(element.territory);
+    });
+  }
+  return excluded_sectors;
+}
+
 frappe.ui.form.on("Detail Funds", {
 
   funds_receive(frm, cdt, cdn) {
@@ -504,4 +513,5 @@ frappe.ui.form.on("Condo Exclude Sector",{
   }
   
 });
+
 
