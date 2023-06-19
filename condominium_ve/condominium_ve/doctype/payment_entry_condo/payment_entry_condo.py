@@ -30,7 +30,7 @@ from erpnext.controllers.accounts_controller import (
 	get_supplier_block_status,
 	validate_taxes_and_charges,
 )
-from erpnext.hr.doctype.expense_claim.expense_claim import update_reimbursed_amount
+from hrms.hr.doctype.expense_claim.expense_claim import update_reimbursed_amount
 from erpnext.setup.utils import get_exchange_rate
 
 

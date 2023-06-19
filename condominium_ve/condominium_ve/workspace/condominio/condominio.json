@@ -1,91 +1,88 @@
 {
- "cards_label": "Condominio",
- "category": "Modules",
  "charts": [
   {
-   "chart_name": "CxC Condominio"
+   "chart_name": "CxC Condominio",
+   "label": "CxC Condominio"
   },
   {
-   "chart_name": "Disponibilidad"
+   "chart_name": "Disponibilidad",
+   "label": "Disponibilidad"
   }
  ],
- "charts_label": "",
- "creation": "2022-11-15 08:56:36.316018",
- "developer_mode_only": 0,
- "disable_user_customization": 1,
+ "content": "[{\"id\":\"SsymMG8_bF\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Condominio</span>\",\"col\":12}},{\"id\":\"NuTWaL5yaW\",\"type\":\"chart\",\"data\":{\"chart_name\":\"CxC Condominio\",\"col\":12}},{\"id\":\"zbcbgmT0_7\",\"type\":\"chart\",\"data\":{\"chart_name\":\"Disponibilidad\",\"col\":12}},{\"id\":\"JGwoNZRsk0\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Grafico\",\"col\":3}},{\"id\":\"-0xdn1il26\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Propietario\",\"col\":3}},{\"id\":\"og4l7220-N\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"_QwcPeECXy\",\"type\":\"card\",\"data\":{\"card_name\":\"Maestros\",\"col\":4}},{\"id\":\"_ZAX2Y-pFq\",\"type\":\"card\",\"data\":{\"card_name\":\"Procesos\",\"col\":4}},{\"id\":\"BygpGwnWqk\",\"type\":\"card\",\"data\":{\"card_name\":\"Reportes\",\"col\":4}}]",
+ "creation": "2023-06-19 15:59:36.577612",
  "docstatus": 0,
  "doctype": "Workspace",
- "extends_another_page": 0,
+ "for_user": "",
  "hide_custom": 1,
  "icon": "organization",
  "idx": 0,
- "is_default": 0,
- "is_standard": 1,
+ "is_hidden": 0,
  "label": "Condominio",
  "links": [
   {
    "hidden": 0,
    "is_query_report": 0,
    "label": "Maestros",
-   "link_type": "DocType",
+   "link_count": 6,
    "onboard": 0,
-   "only_for": "Venezuela",
    "type": "Card Break"
   },
   {
    "hidden": 0,
    "is_query_report": 0,
-   "label": "Condominio ",
+   "label": "Condominio",
+   "link_count": 0,
    "link_to": "Condominium",
    "link_type": "DocType",
    "onboard": 1,
-   "only_for": "Venezuela",
    "type": "Link"
   },
   {
    "hidden": 0,
    "is_query_report": 0,
    "label": "Viviendas",
+   "link_count": 0,
    "link_to": "Housing",
    "link_type": "DocType",
    "onboard": 0,
-   "only_for": "Venezuela",
    "type": "Link"
   },
   {
    "hidden": 0,
    "is_query_report": 0,
    "label": "Propietarios",
+   "link_count": 0,
    "link_to": "Customer",
    "link_type": "DocType",
    "onboard": 0,
-   "only_for": "Venezuela",
    "type": "Link"
   },
   {
    "hidden": 0,
    "is_query_report": 0,
    "label": "Supplier",
+   "link_count": 0,
    "link_to": "Supplier",
    "link_type": "DocType",
    "onboard": 0,
-   "only_for": "Venezuela",
    "type": "Link"
   },
   {
    "hidden": 0,
    "is_query_report": 0,
    "label": "Productos y Servicios",
+   "link_count": 0,
    "link_to": "Item",
    "link_type": "DocType",
    "onboard": 0,
-   "only_for": "",
    "type": "Link"
   },
   {
    "hidden": 0,
    "is_query_report": 0,
    "label": "Cost Center",
+   "link_count": 0,
    "link_to": "Cost Center",
    "link_type": "DocType",
    "onboard": 0,
@@ -95,45 +92,45 @@
    "hidden": 0,
    "is_query_report": 0,
    "label": "Procesos",
-   "link_type": "DocType",
+   "link_count": 4,
    "onboard": 0,
-   "only_for": "Venezuela",
    "type": "Card Break"
   },
   {
    "hidden": 0,
    "is_query_report": 0,
    "label": "Recibo de Condominio",
+   "link_count": 0,
    "link_to": "Sales Invoice",
    "link_type": "DocType",
    "onboard": 0,
-   "only_for": "",
    "type": "Link"
   },
   {
    "hidden": 0,
    "is_query_report": 0,
    "label": "Generar Gastos Comunes",
+   "link_count": 0,
    "link_to": "Condominium Common Expenses",
    "link_type": "DocType",
    "onboard": 1,
-   "only_for": "Venezuela",
    "type": "Link"
   },
   {
    "hidden": 0,
    "is_query_report": 0,
    "label": "Factura de Compra ",
+   "link_count": 0,
    "link_to": "Purchase Invoice",
    "link_type": "DocType",
    "onboard": 0,
-   "only_for": "",
    "type": "Link"
   },
   {
    "hidden": 0,
    "is_query_report": 0,
    "label": "Pagos de Autogestion",
+   "link_count": 0,
    "link_to": "Manual payment",
    "link_type": "DocType",
    "onboard": 0,
@@ -143,17 +140,15 @@
    "hidden": 0,
    "is_query_report": 0,
    "label": "Reportes",
-   "link_to": "Workspace",
-   "link_type": "DocType",
+   "link_count": 11,
    "onboard": 0,
-   "only_for": "Venezuela",
    "type": "Card Break"
   },
   {
-   "dependencies": "condominio",
    "hidden": 0,
    "is_query_report": 0,
    "label": "Condominio Panel de control",
+   "link_count": 0,
    "link_to": "dashboard-view",
    "link_type": "Page",
    "onboard": 0,
@@ -163,6 +158,7 @@
    "hidden": 0,
    "is_query_report": 1,
    "label": "Cuentas por Cobrar",
+   "link_count": 0,
    "link_to": "CxC Cobranza",
    "link_type": "Report",
    "onboard": 0,
@@ -171,7 +167,8 @@
   {
    "hidden": 0,
    "is_query_report": 1,
-   "label": "Accounts Payable",
+   "label": "Cuentas por pagar",
+   "link_count": 0,
    "link_to": "Accounts Payable",
    "link_type": "Report",
    "onboard": 0,
@@ -180,79 +177,48 @@
   {
    "hidden": 0,
    "is_query_report": 1,
-   "label": "Customer Ledger Summary",
+   "label": "Resumen del Libro mayor de clientes",
+   "link_count": 0,
    "link_to": "Customer Ledger Summary",
    "link_type": "Report",
    "onboard": 0,
-   "only_for": "",
    "type": "Link"
   },
   {
    "hidden": 0,
    "is_query_report": 1,
-   "label": "Supplier Ledger Summary",
+   "label": "Resumen del libro mayor de proveedores",
+   "link_count": 0,
    "link_to": "Supplier Ledger Summary",
    "link_type": "Report",
    "onboard": 0,
-   "only_for": "",
    "type": "Link"
   },
   {
    "hidden": 0,
    "is_query_report": 1,
-   "label": "CxC Statement of Account",
+   "label": "Estado de Cuenta CxC",
+   "link_count": 0,
    "link_to": "CxC Statement of Account",
    "link_type": "Report",
    "onboard": 0,
-   "only_for": "",
    "type": "Link"
   },
   {
    "hidden": 0,
    "is_query_report": 1,
-   "label": "CXP Statement of Account",
+   "label": "Estado de cuenta CXP",
+   "link_count": 0,
    "link_to": "CXP Statement of Account",
    "link_type": "Report",
    "onboard": 0,
-   "only_for": "",
-   "type": "Link"
-  },
-  {
-   "dependencies": "housing",
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Listado de Propietarios",
-   "link_to": "Listado de Propietarios",
-   "link_type": "Report",
-   "onboard": 0,
-   "only_for": "",
-   "type": "Link"
-  },
-  {
-   "dependencies": "payment-entry",
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Pagos Realizados",
-   "link_to": "Pagos Realizados",
-   "link_type": "Report",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "dependencies": "payment-entry",
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Pagos Recibidos",
-   "link_to": "Pagos Recibidos",
-   "link_type": "Report",
-   "onboard": 0,
-   "only_for": "",
    "type": "Link"
   },
   {
    "hidden": 0,
    "is_query_report": 1,
-   "label": "Trial Balance",
+   "label": "Balanza de Comprobaci\u00f3n",
+   "link_count": 0,
    "link_to": "Trial Balance",
    "link_type": "Report",
    "onboard": 0,
@@ -261,7 +227,8 @@
   {
    "hidden": 0,
    "is_query_report": 1,
-   "label": "General Ledger",
+   "label": "Balance general",
+   "link_count": 0,
    "link_to": "General Ledger",
    "link_type": "Report",
    "onboard": 0,
@@ -270,7 +237,8 @@
   {
    "hidden": 0,
    "is_query_report": 1,
-   "label": "Count of Documents Generated Per Month",
+   "label": "Conteo de Documentos Generados por Mes",
+   "link_count": 0,
    "link_to": "Count of Documents Generated Per Month",
    "link_type": "Report",
    "onboard": 0,
@@ -280,33 +248,40 @@
    "hidden": 0,
    "is_query_report": 1,
    "label": "Morosos",
+   "link_count": 0,
    "link_to": "Morosos",
    "link_type": "Report",
    "onboard": 0,
    "type": "Link"
   }
  ],
- "modified": "2023-05-19 15:41:17.498630",
+ "modified": "2023-06-19 16:44:15.337245",
  "modified_by": "Administrator",
  "module": "Condominium Ve",
  "name": "Condominio",
+ "number_cards": [],
  "owner": "Administrator",
- "pin_to_bottom": 0,
- "pin_to_top": 0,
+ "parent_page": "",
+ "public": 1,
+ "quick_lists": [],
+ "restrict_to_domain": "Condominium Ve",
+ "roles": [],
+ "sequence_id": 44.0,
  "shortcuts": [
   {
-   "doc_view": "",
-   "label": "Graficos",
+   "color": "Grey",
+   "doc_view": "List",
+   "label": "Grafico",
    "link_to": "Condominio",
    "type": "Dashboard"
   },
   {
-   "color": "#449CF0",
+   "color": "Grey",
    "doc_view": "List",
-   "label": "Propietarios",
+   "label": "Propietario",
    "link_to": "Customer",
-   "restrict_to_domain": "Condominium Ve",
    "type": "DocType"
   }
- ]
+ ],
+ "title": "Condominio"
 }
