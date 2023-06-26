@@ -4,10 +4,9 @@ import json
 import frappe
 from frappe.model.document import Document
 from frappe.utils.response import build_response
-from frappe.utils import add_to_date, now, add_days, password
+from frappe.utils import add_days
 from frappe.core.doctype.communication import email
-from reportbro_integration.report_design.doctype.report_bro.report_bro import get_pdf_backend_api, get_pdf_backend_api_report
-from reportbro_integration.utils.handler_extend import upload_file_report
+from reportbro_integration.report_design.doctype.report_bro.report_bro import get_pdf_backend_api
 from custom_ve.custom_ve.doctype.environment_variables.environment_variables import get_env
 from condominium_ve.utils.utils import add_log
 

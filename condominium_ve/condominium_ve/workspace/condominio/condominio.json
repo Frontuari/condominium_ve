@@ -11,6 +11,7 @@
  ],
  "content": "[{\"id\":\"SsymMG8_bF\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Condominio</span>\",\"col\":12}},{\"id\":\"NuTWaL5yaW\",\"type\":\"chart\",\"data\":{\"chart_name\":\"CxC Condominio\",\"col\":12}},{\"id\":\"zbcbgmT0_7\",\"type\":\"chart\",\"data\":{\"chart_name\":\"Disponibilidad\",\"col\":12}},{\"id\":\"JGwoNZRsk0\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Grafico\",\"col\":3}},{\"id\":\"-0xdn1il26\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Propietario\",\"col\":3}},{\"id\":\"og4l7220-N\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"_QwcPeECXy\",\"type\":\"card\",\"data\":{\"card_name\":\"Maestros\",\"col\":4}},{\"id\":\"_ZAX2Y-pFq\",\"type\":\"card\",\"data\":{\"card_name\":\"Procesos\",\"col\":4}},{\"id\":\"BygpGwnWqk\",\"type\":\"card\",\"data\":{\"card_name\":\"Reportes\",\"col\":4}}]",
  "creation": "2023-06-19 15:59:36.577612",
+ "custom_blocks": [],
  "docstatus": 0,
  "doctype": "Workspace",
  "for_user": "",
@@ -255,7 +256,7 @@
    "type": "Link"
   }
  ],
- "modified": "2023-06-19 16:44:15.337245",
+ "modified": "2023-06-23 11:19:21.990627",
  "modified_by": "Administrator",
  "module": "Condominium Ve",
  "name": "Condominio",
@@ -266,7 +267,7 @@
  "quick_lists": [],
  "restrict_to_domain": "Condominium Ve",
  "roles": [],
- "sequence_id": 44.0,
+ "sequence_id": 6.0,
  "shortcuts": [
   {
    "color": "Grey",
