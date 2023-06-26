@@ -44,14 +44,6 @@ class CondominiumCommonExpenses(Document):
             ['sector', 'in', sectors]
         ])
         
-        #after_days = add_to_date(doc.posting_date, days=3, as_string=True)
-        #after_days = doc.posting_date
-
-        #array_exludes_sector = []
-
-        # obtengo los sectores excluidos en el documento
-        #for es in doc.excluded_sectors:
-        #    array_exludes_sector.append(es.territory)
 
         purchase_invoices_special = self.get_purchase_invoice_special(
             doc.condominium_common_expenses_invoices)
@@ -61,8 +53,6 @@ class CondominiumCommonExpenses(Document):
         idx_receipts_made = 1
         for idx, house in enumerate(housings):
             try:
-                #if house.sector in array_exludes_sector:
-                #    continue
 
                 # barra de progreso
                 progress_percent = (idx+1) * 100 / len(housings)
@@ -91,113 +81,6 @@ class CondominiumCommonExpenses(Document):
                         idx_receipts_made = 0
                     idx_receipts_made += 1
                 
-                #    borrar luego de revisar
-                # generar recibo de cuota de condominio
-                """if len(doc.condominium_common_expenses_detail) > 0:
-                    total_ggc_aux = total_ggc
-                    total_special = 0.0
-
-                    for p_invoice_special in purchase_invoices_special:
-                        total_ggc_aux = total_ggc_aux - \
-                            p_invoice_special['amount_total']
-
-                        if house.sector in p_invoice_special['sector']:
-                            total_special = p_invoice_special['amount_total_individual']
-
-                    total = total_ggc_aux / int(doc.active_units)
-                    total = total + total_special
-
-                    the_remarks = ' '
-                    if doc.is_remarks == 1:
-                        the_remarks = doc.remarks
-
-                    # generar factura
-                    sales_invoice = frappe.get_doc(dict(
-                        naming_series="RC-.YYYY..-.########",
-                        doctype="Sales Invoice",
-                        set_posting_time=1,
-                        docstatus=0,
-                        company=doc_condo.company,
-                        customer=house.owner_customer,
-                        posting_date=doc.posting_date,
-                        due_date=after_days,
-                        is_return=0,
-                        disable_rounded_total=1,
-                        cost_center=doc_condo.cost_center,
-                        items=[
-                            dict(
-                                item_code='Cuota de Condominio',
-                                item_name='Cuota de Condominio {0} {1} '.format(
-                                    get_month(doc.posting_date.month), doc.posting_date.year),
-                                description='Cuota de Condominio {0} {1} '.format(
-                                    get_month(doc.posting_date.month), doc.posting_date.year),
-                                qty=1,
-                                stock_qty=0,
-                                uom="Nos.",
-                                conversion_factor=1,
-                                base_rate=total,
-                                rate=total,
-                                base_amount=total,
-                                amount=total,
-                                income_account=doc_condo.account
-                            )
-                        ],
-                        gc_condo=doc.name,
-                        housing=house.housing,
-                        select_print_heading="Recibo de Condominio",
-                        remarks=the_remarks
-                    )).insert()
-                    #sales_invoice.submit()
-                """
-
-                # generar los recibos de fondos
-                """
-                for fund in doc.funds:
-
-                    cost_center_aux = ""
-                    for res in doc_condo.reserve:
-                        if res.account == fund.account:
-                            cost_center_aux = res.cost_center
-
-                    total_fund = float(fund.amount) / int(self.active_units)#* (float(house.aliquot) / 100)
-                    sales_invoice_2 = frappe.get_doc(dict(
-                        naming_series="RFC-.YYYY..-.########",
-                        doctype="Sales Invoice",
-                        set_posting_time=1,
-                        cost_center=cost_center_aux,
-                        docstatus=0,
-                        company=doc_condo.company,
-                        customer=house.owner_customer,
-                        posting_date=doc.posting_date,
-                        due_date=after_days,
-                        is_return=0,
-                        disable_rounded_total=1,
-                        items=[
-                            dict(
-                                item_code='',
-                                item_name='{2}  {0} {1} '.format(
-                                    get_month(doc.posting_date.month), doc.posting_date.year, fund.concept),
-                                description='{2}  {0} {1} '.format(
-                                    get_month(doc.posting_date.month), doc.posting_date.year, fund.concept),
-                                qty=1,
-                                stock_qty=0,
-                                uom="Nos.",
-                                conversion_factor=1,
-                                base_rate=total_fund,
-                                rate=total_fund,
-                                base_amount=total_fund,
-                                amount=total_fund,
-                                income_account=fund.account
-                            )
-                        ],
-                        gc_condo=doc.name,
-                        housing=house.housing,
-                        select_print_heading="Recibo de Fondo de Condominio"
-                    )).insert()
-
-                    #sales_invoice_2.submit()
-                """
-                ########################
 
                 frappe.db.commit()
             except Exception as e:
@@ -212,6 +95,7 @@ class CondominiumCommonExpenses(Document):
                         .format(house.owner_customer))
 
         self.reload()
+
     def upgrade_purchase_invoice(self):
         doc = self
         try:
@@ -286,11 +170,6 @@ class CondominiumCommonExpenses(Document):
         
 
         try:
-            # cancel de documents
-            #sales_invoices = frappe.db.get_list("Sales Invoice", fields=['*'], filters={
-            #    'gc_condo': doc.name,
-            #    'docstatus' : 1
-            #})
             sales_invoices = frappe.db.get_list("Sales Invoice", fields=['*'], filters={
                 'gc_condo': doc.name
             })
