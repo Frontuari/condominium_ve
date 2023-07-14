@@ -1067,7 +1067,7 @@ def get_total_draft_doc(gcc):
         return
 
     total_doc = frappe.db.count('Sales Invoice', {'gc_condo': gcc, 'docstatus': 0})
-    print(total_doc)
+    
     frappe.local.response.update({"total_doc": total_doc})
 
     return build_response("json")

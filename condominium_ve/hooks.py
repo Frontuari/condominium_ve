@@ -13,8 +13,26 @@ fixtures = [
     'formato email condominio',
     {"dt": "Report Bro", "filters": [
         ["name", "in", ("Reporte de Gastos Comunes", "Relacion de Gastos", "Recibo de Condominio Copia")]]},
+
     {"dt": "Custom Field", "filters": [
-        ["name", "in", ("Purchase Invoice Item-is_single_sector", "Sales Invoice-housing")]]}
+        ["name", "in", ("Purchase Invoice Item-is_single_sector", "Sales Invoice-housing", 
+                        "Purchase Invoice-condominium", "Purchase Invoice-is_for_condominium",
+                        "Purchase Invoice-apply_process_condo", "Sales Invoice-condominium")]]},
+    
+    {"dt": "Customer Group", "filters": [
+        ["name", "in", ("Condominio")]]},
+    
+    {"dt": "Print Heading", "filters": [
+        ["name", "in", ("Recibo de Fondo de Condominio", "Recibo de Condominio")]]},
+    
+    {"dt": "Role", "filters": [
+        ["name", "in", ("Condominium Guest", "Condominium User", "Condominium Manager")]]},
+    
+    {"dt": "formato email condominio", "filters": [
+        ["name", "in", ("cxc cobranza")]]},
+    
+    {"dt": "Domain", "filters": [
+        ["name", "in", ("Condominium Ve")]]}
         
 ]
 # Includes in <head>

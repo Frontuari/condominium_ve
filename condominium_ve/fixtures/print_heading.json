@@ -1,0 +1,18 @@
+[
+ {
+  "description": null,
+  "docstatus": 0,
+  "doctype": "Print Heading",
+  "modified": "2023-07-14 10:50:36.334794",
+  "name": "Recibo de Condominio",
+  "print_heading": "Recibo de Condominio"
+ },
+ {
+  "description": null,
+  "docstatus": 0,
+  "doctype": "Print Heading",
+  "modified": "2023-07-14 10:50:36.371554",
+  "name": "Recibo de Fondo de Condominio",
+  "print_heading": "Recibo de Fondo de Condominio"
+ }
+]

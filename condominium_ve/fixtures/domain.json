@@ -1,6 +1,9 @@
-{
-    "name": "Condominium Ve",
-    "domain": "Condominium Ve",
-    "doctype": "Domain",
-    "__last_sync_on": "2022-10-27T13:30:41.458Z"
-}
+[
+ {
+  "docstatus": 0,
+  "doctype": "Domain",
+  "domain": "Condominium Ve",
+  "modified": "2023-07-14 10:50:31.131008",
+  "name": "Condominium Ve"
+ }
+]

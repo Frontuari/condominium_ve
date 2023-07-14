@@ -256,7 +256,7 @@
    "type": "Link"
   }
  ],
- "modified": "2023-06-23 11:19:21.990627",
+ "modified": "2023-07-04 13:43:52.567584",
  "modified_by": "Administrator",
  "module": "Condominium Ve",
  "name": "Condominio",
@@ -267,7 +267,7 @@
  "quick_lists": [],
  "restrict_to_domain": "Condominium Ve",
  "roles": [],
- "sequence_id": 6.0,
+ "sequence_id": 8.0,
  "shortcuts": [
   {
    "color": "Grey",

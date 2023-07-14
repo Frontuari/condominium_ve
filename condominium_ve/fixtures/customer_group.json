@@ -1,0 +1,16 @@
+[
+ {
+  "accounts": [],
+  "credit_limits": [],
+  "customer_group_name": "Condominio",
+  "default_price_list": null,
+  "docstatus": 0,
+  "doctype": "Customer Group",
+  "is_group": 0,
+  "modified": "2023-07-14 10:50:36.233249",
+  "name": "Condominio",
+  "old_parent": "Todas las categor\u00edas de clientes",
+  "parent_customer_group": "Todas las categor\u00edas de clientes",
+  "payment_terms": null
+ }
+]
