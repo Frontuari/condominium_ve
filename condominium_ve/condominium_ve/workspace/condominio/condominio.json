@@ -4,9 +4,6 @@
  "charts": [
   {
    "chart_name": "CxC Condominio"
-  },
-  {
-   "chart_name": "Disponibilidad"
   }
  ],
  "charts_label": "",
@@ -286,7 +283,7 @@
    "type": "Link"
   }
  ],
- "modified": "2023-05-19 15:41:17.498630",
+ "modified": "2023-08-30 10:55:38.489751",
  "modified_by": "Administrator",
  "module": "Condominium Ve",
  "name": "Condominio",

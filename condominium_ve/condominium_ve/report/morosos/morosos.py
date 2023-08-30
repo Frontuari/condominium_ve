@@ -6,7 +6,7 @@ import frappe
 from frappe import _, scrub
 from frappe.utils import cint, flt
 from six import iteritems
-
+from datetime import timedelta
 from erpnext.accounts.party import get_partywise_advanced_payment_amount
 from erpnext.accounts.report.accounts_receivable.accounts_receivable import ReceivablePayableReport
 
@@ -98,9 +98,21 @@ class AccountsReceivableSummary(ReceivablePayableReport):
         return data
 
     def get_number_months(self, housing, report_date):
+        print("fecha del reporte",type(report_date))
         count_sales_invoice = frappe.db.sql(
-            "select coalesce((period_diff((SELECT DATE_FORMAT( '{1}','%Y%m') ),min(DATE_FORMAT(due_date,'%Y%m')))),0) from `tabSales Invoice` tsi where gc_condo is not null  and housing='{0}' and  docstatus=1 and status <> 'Paid' and due_date<=(SELECT DATE_ADD(CAST(DATE_FORMAT( '{1}','%Y-%m-01') AS DATE),INTERVAL -1 DAY)) ".format(housing,report_date))
-        
+            """
+                SELECT 
+                    DATEDIFF('{1}', due_date) AS diferencia_dias 
+                FROM `tabSales Invoice` tsi
+                WHERE gc_condo IS NOT NULL  
+                    AND housing = '{0}' 
+                    AND docstatus = 1 
+                    AND status <> 'Paid' 
+                    AND due_date < '{1}' ;
+
+
+            """.format(housing,report_date)
+        )
         if not count_sales_invoice:
             return 0
         else:  
@@ -167,7 +179,7 @@ class AccountsReceivableSummary(ReceivablePayableReport):
                         options='Housing')
         
         
-        self.add_column(label=_("Meses"),
+        self.add_column(label=_("Due Days"),
                         fieldname="months",
                         fieldtype="Data",
                         width=80)
