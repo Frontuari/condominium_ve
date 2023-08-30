@@ -1,7 +1,8 @@
-// Copyright (c) 2015, Frappe Technologies Pvt. Ltd. and Contributors
-// License: GNU General Public License v3. See license.txt
+// Copyright (c) 2023, Armando Rojas and contributors
+// For license information, please see license.txt
+/* eslint-disable */
 
-frappe.query_reports["Morosos"] = {
+frappe.query_reports["Defaulters"] = {
 	"filters": [
 		{
 			"fieldname":"company",
@@ -68,6 +69,4 @@ frappe.query_reports["Morosos"] = {
 	},
 	"tree": true,
 	"initial_depth": 2
-}
-
-erpnext.utils.add_dimensions('Accounts Receivable Summary', 9);
+};
