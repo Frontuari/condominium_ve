@@ -277,13 +277,13 @@
    "hidden": 0,
    "is_query_report": 1,
    "label": "Morosos",
-   "link_to": "Morosos",
+   "link_to": "Defaulters",
    "link_type": "Report",
    "onboard": 0,
    "type": "Link"
   }
  ],
- "modified": "2023-08-30 10:55:38.489751",
+ "modified": "2023-08-30 15:18:57.630198",
  "modified_by": "Administrator",
  "module": "Condominium Ve",
  "name": "Condominio",
