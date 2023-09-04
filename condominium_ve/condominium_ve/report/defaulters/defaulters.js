@@ -35,7 +35,14 @@ frappe.query_reports["Defaulters"] = {
 			"label": __("Territory"),
 			"fieldtype": "Link",
 			"options": "Territory"
-		}
+		},
+		{
+			"fieldname":"balance_type",
+			"label": __("Balance Type"),
+			"fieldtype": "Select",
+			"options": '\nCon deuda\nSin deuda\nSaldo a favor',
+			"default": "Con deuda"
+		},
 	],
 
 	onload: function(report) {
@@ -68,5 +75,9 @@ frappe.query_reports["Defaulters"] = {
 		return value;
 	},
 	"tree": true,
-	"initial_depth": 2
+	"initial_depth": 2,
+	onload: function(report) {
+		let titulo_e = $(report.page.parent).find('h3[title="'+report.page.title+'"]');
+		titulo_e.text("Estatus de Propietarios");
+	}
 };

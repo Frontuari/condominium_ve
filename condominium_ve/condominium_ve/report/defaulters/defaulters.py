@@ -18,7 +18,8 @@ def execute(filters=None):
         "range1" : "30", 
         "range2" : "60", 
         "range3" : "80", 
-        "range4" : "90", 
+        "range4" : "90",
+        "balance_type": filters.balance_type
     }
 
     return AccountsReceivableSummary(filters).run(args)
@@ -37,9 +38,7 @@ class AccountsReceivableSummary(ReceivablePayableReport):
 
     def get_data(self, args):
         self.data = []
-
         self.receivables = ReceivablePayableReport(self.filters).run(args)[1]
-
         self.get_party_total(args)
 
         party_advance_amount = (
@@ -56,14 +55,10 @@ class AccountsReceivableSummary(ReceivablePayableReport):
             gl_balance_map = get_gl_balance(self.filters.report_date)
 
         for party, party_dict in iteritems(self.party_total):
-            if party_dict.outstanding == 0:
-                continue
-
             row = frappe._dict()
 
             row.party = party
             row['housing'] = self.get_number_house(row.party)
-            
             row['months'] = self.get_number_months(row.housing , self.filters.report_date)
 
             if self.party_naming_by == "Naming Series":
@@ -86,7 +81,7 @@ class AccountsReceivableSummary(ReceivablePayableReport):
 
             self.data.append(row)
 
-        self.group_data_by_sector()
+        self.group_data_by_sector(args)
     
     def get_number_house(self, customer):
         data = ''
@@ -98,7 +93,7 @@ class AccountsReceivableSummary(ReceivablePayableReport):
         return data
 
     def get_number_months(self, housing, report_date):
-        print("fecha del reporte",type(report_date))
+        # esta funcion se cambio para que retornase los dias entre dos fechas en lugar de los meses
         count_sales_invoice = frappe.db.sql(
             """
                 SELECT 
@@ -228,11 +223,14 @@ class AccountsReceivableSummary(ReceivablePayableReport):
             label=_("Currency"), fieldname="currency", fieldtype="Link", options="Currency", width=80
         )
 
-    def group_data_by_sector(self):
+
+
+    def group_data_by_sector(self, args):
         group = {}
         for data in self.data:
-            if data['outstanding'] <= 0 or not data['housing']:
+            if not data['housing'] or not filter_estatus(args["balance_type"], data['outstanding']):
                 continue
+
             territory = data['territory']
             # elimino el territorio para no repetirlo en el formato de impresion
             del data['territory']
@@ -270,3 +268,16 @@ def get_gl_balance(report_date):
             as_list=1,
         )
     )
+
+
+def filter_estatus(request_estatus, balance):
+    if request_estatus == "Con deuda" and balance > 0:
+        return True
+    elif request_estatus == "Sin deuda" and balance == 0:
+        return True
+    elif request_estatus == "Saldo a favor" and balance < 0:
+        return True
+    elif not request_estatus:
+        return True
+    
+    return False

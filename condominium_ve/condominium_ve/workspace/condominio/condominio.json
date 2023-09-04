@@ -276,15 +276,15 @@
   {
    "hidden": 0,
    "is_query_report": 1,
-   "label": "Morosos",
+   "label": "Estatus de Propietarios",
    "link_to": "Defaulters",
    "link_type": "Report",
    "onboard": 0,
    "type": "Link"
   }
  ],
- "modified": "2023-08-30 15:18:57.630198",
- "modified_by": "Administrator",
+ "modified": "2023-09-04 15:47:37.423730",
+ "modified_by": "akkalameo.o@gmail.com",
  "module": "Condominium Ve",
  "name": "Condominio",
  "owner": "Administrator",
