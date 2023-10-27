@@ -19,7 +19,7 @@ fixtures = [
         
 ]
 
-after_uninstall = "condominium_ve.uninstall.after_uninstall"
+before_uninstall = "condominium_ve.uninstall.before_uninstall"
 
 # Includes in <head>
 # ------------------
