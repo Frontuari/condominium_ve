@@ -14,9 +14,13 @@ fixtures = [
     {"dt": "Report Bro", "filters": [
         ["name", "in", ("Reporte de Gastos Comunes", "Relacion de Gastos", "Recibo de Condominio Copia")]]},
     {"dt": "Custom Field", "filters": [
-        ["name", "in", ("Purchase Invoice Item-is_single_sector", "Sales Invoice-housing")]]}
+        ["name", "in", ("Purchase Invoice Item-is_single_sector", "Sales Invoice-housing", "Sales Invoice-condominium",
+						"Purchase Invoice-condominium", "Purchase Invoice-apply_process_condo", "Purchase Invoice-is_for_condominium")]]}
         
 ]
+
+after_uninstall = "condominium_ve.uninstall.after_uninstall"
+
 # Includes in <head>
 # ------------------
 
