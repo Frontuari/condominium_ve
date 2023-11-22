@@ -2,7 +2,7 @@
 // For license information, please see license.txt
 /* eslint-disable */
 
-frappe.query_reports["Defaulters"] = {
+frappe.query_reports["Estatus de Propietarios"] = {
 	"filters": [
 		{
 			"fieldname":"company",

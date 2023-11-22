@@ -277,14 +277,14 @@
    "hidden": 0,
    "is_query_report": 1,
    "label": "Estatus de Propietarios",
-   "link_to": "Defaulters",
+   "link_to": "Estatus de Propietarios",
    "link_type": "Report",
    "onboard": 0,
    "type": "Link"
   }
  ],
- "modified": "2023-09-04 15:47:37.423730",
- "modified_by": "akkalameo.o@gmail.com",
+ "modified": "2023-11-22 15:30:33.016705",
+ "modified_by": "Administrator",
  "module": "Condominium Ve",
  "name": "Condominio",
  "owner": "Administrator",

@@ -2,11 +2,11 @@ from . import __version__ as app_version
 
 app_name = "condominium_ve"
 app_title = "Condominium Ve"
-app_publisher = "Armando Rojas"
+app_publisher = "Datacomm, C.A."
 app_description = "Condominios para Venezuela"
 app_icon = "octicon octicon-file-directory"
 app_color = "grey"
-app_email = "armando.develop@gmail.com"
+app_email = "oficinadatacomm@gmail.com"
 app_license = "MIT"
 
 fixtures = [

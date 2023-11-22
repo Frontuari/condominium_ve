@@ -54,12 +54,20 @@ class AccountsReceivableSummary(ReceivablePayableReport):
         if self.filters.show_gl_balance:
             gl_balance_map = get_gl_balance(self.filters.report_date)
 
+        houses_in_data = []
         for party, party_dict in iteritems(self.party_total):
+            if (self.filters.territory and  party_dict.territory != self.filters.territory) \
+                or not filter_estatus(args["balance_type"], party_dict.outstanding):
+                continue
+            
             row = frappe._dict()
 
             row.party = party
             row['housing'] = self.get_number_house(row.party)
             row['months'] = self.get_number_months(row.housing , self.filters.report_date)
+
+            if row.housing not in houses_in_data:
+                houses_in_data.append(row.housing)
 
             if self.party_naming_by == "Naming Series":
                 row.party_name = frappe.get_cached_value(
@@ -74,12 +82,14 @@ class AccountsReceivableSummary(ReceivablePayableReport):
             # In AR/AP, advance shown in paid columns,
             # but in summary report advance shown in separate column
             row.paid -= row.advance
-
+            
             if self.filters.show_gl_balance:
                 row.gl_balance = gl_balance_map.get(party)
                 row.diff = flt(row.outstanding) - flt(row.gl_balance)
 
             self.data.append(row)
+        
+        self.add_houses_with_zero(houses_in_data)
 
         self.group_data_by_sector(args)
     
@@ -187,30 +197,15 @@ class AccountsReceivableSummary(ReceivablePayableReport):
 
         credit_debit_label = "Credit Note" if self.party_type == "Customer" else "Debit Note"
 
-        # self.add_column(_("Advance Amount"), fieldname="advance")
-        # self.add_column(_("Invoiced Amount"), fieldname="invoiced")
-        # self.add_column(_("Paid Amount"), fieldname="paid")
-        # self.add_column(_(credit_debit_label), fieldname="credit_note")
         self.add_column(_("Outstanding Amount"), fieldname="outstanding")
 
-        # if self.filters.show_gl_balance:
-        #	self.add_column(_("GL Balance"), fieldname="gl_balance")
-        #	self.add_column(_("Difference"), fieldname="diff")
-
-        # self.setup_ageing_columns()
-
         if self.party_type == "Customer":
-            #self.add_column(
-            #    label=_("Territory"), fieldname="territory", fieldtype="Link", options="Territory"
-            #)
             self.add_column(
                 label=_("Customer Group"),
                 fieldname="customer_group",
                 fieldtype="Link",
                 options="Customer Group",
             )
-            # if self.filters.show_sales_person:
-            #	self.add_column(label=_("Sales Person"), fieldname="sales_person", fieldtype="Data")
         else:
             self.add_column(
                 label=_("Supplier Group"),
@@ -223,14 +218,36 @@ class AccountsReceivableSummary(ReceivablePayableReport):
             label=_("Currency"), fieldname="currency", fieldtype="Link", options="Currency", width=80
         )
 
+    def add_houses_with_zero(self, houses):
+        if filter_estatus(self.filters.balance_type, 0):
+            currency = frappe.db.get_value("Company", self.filters.company, "default_currency")
+            cond = ""
+            if self.filters.territory:
+                cond += " where h.sector = '{0}'".format(self.filters.territory)
+            sql = """
+                select h.owner_customer as party, 
+                    h.housing,
+                    h.sector as territory,
+                    0 as months,
+                    0 as outstanding,
+                    c.customer_group,
+                    '{1}' as currency
 
+                from `tabHousing` h
+                join `tabCustomer` c on c.name = h.owner_customer
+                {0}
+            """.format(cond, currency)
+            query = frappe.db.sql(sql, as_dict=True)
+            if query:
+                result = [q for q in query if q.housing not in houses]
+                self.data += result
 
     def group_data_by_sector(self, args):
         group = {}
         for data in self.data:
-            if not data['housing'] or not filter_estatus(args["balance_type"], data['outstanding']):
+            skip = not data['housing']
+            if skip:
                 continue
-
             territory = data['territory']
             # elimino el territorio para no repetirlo en el formato de impresion
             del data['territory']
@@ -277,7 +294,7 @@ def filter_estatus(request_estatus, balance):
         return True
     elif request_estatus == "Saldo a favor" and balance < 0:
         return True
-    elif not request_estatus:
+    elif not request_estatus or request_estatus == "":
         return True
     
     return False
