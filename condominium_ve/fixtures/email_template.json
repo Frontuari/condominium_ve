@@ -1,0 +1,15 @@
+[
+ {
+  "docstatus": 0,
+  "doctype": "Email Template",
+  "modified": "2023-11-21 16:01:01.724509",
+  "name": "Recibo de Pago",
+  "parent": null,
+  "parentfield": null,
+  "parenttype": null,
+  "response": "<div class=\"ql-editor read-mode\"><p>Sr(a). <strong>{{ party }},</strong></p><p><br></p><p>Se le adjunta a este correo el soporte de pago recibido en fecha {{ posting_date }}.</p><p><br></p><p><br></p><p>Saludos cordiales.</p><p><br></p><p><img src=\"/files/casa_campo.png\" width=\"219\"></p></div>",
+  "response_html": null,
+  "subject": "Recibo de pago: {{ name }}",
+  "use_html": 0
+ }
+]

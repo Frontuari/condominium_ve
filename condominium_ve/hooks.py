@@ -15,8 +15,13 @@ fixtures = [
         ["name", "in", ("Reporte de Gastos Comunes", "Relacion de Gastos", "Recibo de Condominio Copia")]]},
     {"dt": "Custom Field", "filters": [
         ["name", "in", ("Purchase Invoice Item-is_single_sector", "Sales Invoice-housing", "Sales Invoice-condominium",
-						"Purchase Invoice-condominium", "Purchase Invoice-apply_process_condo", "Purchase Invoice-is_for_condominium")]]}
-        
+						"Purchase Invoice-condominium", "Purchase Invoice-apply_process_condo", "Purchase Invoice-is_for_condominium")]]},
+    {"dt": "Print Format", "filters": [
+    	["name", "in", ("Recibo de Cobranza")]
+    ]},
+    {"dt": "Email Template", "filters": [
+    	["name", "in", ("Recibo de Pago")]
+    ]}        
 ]
 
 before_uninstall = "condominium_ve.uninstall.before_uninstall"
