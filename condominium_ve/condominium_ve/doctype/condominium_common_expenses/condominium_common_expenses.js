@@ -191,6 +191,7 @@ frappe.ui.form.on("Condominium Common Expenses", {
       
     } else{
       frm.remove_custom_button(__("Search"));
+      btn_cancel_missing_invoices(frm);
     }
   },
 
@@ -450,7 +451,7 @@ function cancel_missing_invoices(frm, docname, excluded_sectors){
 
     //btn: $(".primary-action"),
 
-    freeze: true,
+    freeze: false,
     callback: (response) => {
       frm.refresh();
     },

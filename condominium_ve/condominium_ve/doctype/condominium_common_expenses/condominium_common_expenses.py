@@ -278,12 +278,14 @@ class CondominiumCommonExpenses(Document):
 		return {'total':total, 'total_per_unit':total_per_unit}
 
 	def on_cancel(self):
-		frappe.enqueue(
-			'condominium_ve.condominium_ve.doctype.condominium_common_expenses.condominium_common_expenses.cancel_process_sales_invoice', obj=self)
+		pass
+		#frappe.enqueue(
+		#	'condominium_ve.condominium_ve.doctype.condominium_common_expenses.condominium_common_expenses.cancel_process_sales_invoice', obj=self)
 
 	
-	def cancel_process(self):
-		doc = self.get_doc_before_save()
+	def cancel_process(self, doc=None):
+		if not doc:
+			doc = self.get_doc_before_save()
 		try:
 			# cancel de documents
 			#sales_invoices = frappe.db.get_list("Sales Invoice", fields=['*'], filters={
@@ -311,11 +313,9 @@ class CondominiumCommonExpenses(Document):
 
 			
 		except Exception as e:
-			frappe.publish_realtime(
-			'msgprint', 'Error Cancelando recibos de condominio: {0}'.format(e))
-
 			add_log(e, 'condominium_common_expenses.CondominiumCommonExpenses.cancel_process', 
 						'Error Cancelando recibos de condominio')
+			frappe.throw('Error Cancelando recibos de condominio: {0}'.format(e))
 
 		try:
 			for idx, invoice in enumerate(doc.condominium_common_expenses_invoices):
@@ -362,11 +362,12 @@ def cancel_process_sales_invoice(obj=None, docname=None):
 	if not obj and (not docname or docname==""):
 		frappe.throw("No se ha iniciado el proceso de cancelacion por falta del nombre del gasto común")
 	if not obj:
+		print(docname,"\n\n\n")
 		obj = frappe.get_doc("Condominium Common Expenses", docname)
 	frappe.publish_realtime(
 		'msgprint', 'Inicio de proceso de cancelar recibos de condominio')
 	
-	obj.cancel_process()
+	obj.cancel_process(obj)
 
 def get_emails(owner):
 	emails = ""
