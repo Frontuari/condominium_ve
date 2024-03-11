@@ -321,9 +321,13 @@ class CondominiumCommonExpenses(Document):
 			frappe.db.rollback()
 			frappe.throw('Error Cancelando recibos de condominio: {0}'.format(e))
 
+		self.restore_purchase_invoice()
+		
+	@frappe.whitelist()
+	def restore_purchase_invoice(self):
 		try:
-			
-			self.restore_purchase_invoice()
+			for idx, invoice in enumerate(self.condominium_common_expenses_invoices):
+				frappe.db.sql("update `tabPurchase Invoice` set apply_process_condo=0 where name='{0}'".format(invoice.invoice))
 			frappe.publish_realtime(
 				'msgprint', 'Estado de facturas de compra restaurado')
 
@@ -333,13 +337,7 @@ class CondominiumCommonExpenses(Document):
 
 			add_log(e, 'condominium_common_expenses.CondominiumCommonExpenses.cancel_process', 
 						'Error actualizando facturas de compra')
-
-	def restore_purchase_invoice(self):
-		for idx, invoice in enumerate(self.condominium_common_expenses_invoices):
-			doc_invoice = frappe.get_doc(
-				'Purchase Invoice', invoice.invoice)
-			doc_invoice.apply_process_condo = 0
-			doc_invoice.save(ignore_permissions=True)
+		
 
 def generate_process_sales_invoice(obj, sectors):
 	try:

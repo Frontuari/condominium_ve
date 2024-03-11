@@ -189,10 +189,10 @@ frappe.ui.form.on("Condominium Common Expenses", {
       // agregar o eliminar el boton para validar los recibos de condominio
       btn_validate_documents(frm);
       
-    } else{
+    } /*else{
       frm.remove_custom_button(__("Search"));
       btn_cancel_missing_invoices(frm);
-    }
+    }*/
   },
 
   before_save: function(frm){
