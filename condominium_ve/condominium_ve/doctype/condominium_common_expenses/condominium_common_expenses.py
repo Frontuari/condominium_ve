@@ -290,7 +290,9 @@ class CondominiumCommonExpenses(Document):
 			sales_invoices = frappe.db.get_list("Sales Invoice", fields=['*'], filters={
 				'gc_condo': doc.name, "docstatus":["!=", 2]
 			})
+			index = 1
 			for idx, d in enumerate(sales_invoices):
+				
 				# barra de progreso
 				progress_percent = (idx+1) * 100 / len(sales_invoices)
 				frappe.publish_progress(percent=progress_percent, 
@@ -305,11 +307,18 @@ class CondominiumCommonExpenses(Document):
 				
 				if sales_invoice.docstatus == 0:
 					sales_invoice.delete()
+				
+				if index == 10:
+					frappe.db.commit()
+					index = 0
+				index += 1
 
 			
 		except Exception as e:
 			add_log(e, 'condominium_common_expenses.CondominiumCommonExpenses.cancel_process', 
 						'Error Cancelando recibos de condominio')
+
+			frappe.db.rollback()
 			frappe.throw('Error Cancelando recibos de condominio: {0}'.format(e))
 
 		try:
