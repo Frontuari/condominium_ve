@@ -293,7 +293,7 @@ class CondominiumCommonExpenses(Document):
 			#    'docstatus' : 1
 			#})
 			sales_invoices = frappe.db.get_list("Sales Invoice", fields=['*'], filters={
-				'gc_condo': doc.name, "docstatus":["<>", 2]
+				'gc_condo': doc.name, "docstatus":["!=", 2]
 			})
 			for idx, d in enumerate(sales_invoices):
 				# barra de progreso
