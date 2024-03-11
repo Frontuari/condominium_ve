@@ -26,22 +26,6 @@ frappe.ui.form.on("Condominium Common Expenses", {
 
               let data = response.data;
 
-              // retirar el monto del fondo del monto total
-              /*
-              for (var k = 0; k < data.creation_funds_date.length; k++) {
-                  if (fecha_doc < new Date(data.creation_funds_date[k].creation) ){
-                    
-                    for (var j = 0; j < data.funds.length; j++) {
-                      if (data.funds[j].concept == data.creation_funds_date[k].description ){
-                        data.total -= data.funds[j].amount;
-                      }
-                    }
-
-                  }
-              }
-
-              data.total_per_unit = data.total / data.active_units
-              */
               frm.set_value("condominium_common_expenses_invoices", []);
               frm.set_value("condominium_common_expenses_detail", []);
               frm.set_value("detail_funds", []);
@@ -174,12 +158,9 @@ frappe.ui.form.on("Condominium Common Expenses", {
           });
         }
       });
-    } else {
+    } else if (frm.doc.docstatus == 1){
       frm.remove_custom_button(__("Search"));
-
       frm.page.add_menu_item(__("Enviar Correos"), () => {
-
-          
           frappe.call({
             method:
               "condominium_ve.condominium_ve.doctype.condominium_common_expenses.condominium_common_expenses.send_email_test",
@@ -208,6 +189,8 @@ frappe.ui.form.on("Condominium Common Expenses", {
       // agregar o eliminar el boton para validar los recibos de condominio
       btn_validate_documents(frm);
       
+    } else{
+      frm.remove_custom_button(__("Search"));
     }
   },
 
@@ -409,6 +392,32 @@ function btn_validate_documents(frm) {
   });
 }
 
+function btn_cancel_missing_invoices(frm) {
+  frappe.call({
+    method: "condominium_ve.condominium_ve.doctype.condominium_common_expenses.condominium_common_expenses.is_invoices_canceled",
+    args: {
+      ggc: frm.doc.name,
+      active_units: frm.doc.active_units,
+      n_funds: frm.doc.funds.length
+    },
+    freeze: true,
+    callback: (response) => {
+      if (response.message > 0){
+        // agregar boton para crear facturas faltantes en caso de que no se hayan generado
+        frm.add_custom_button(__("Cancel Missing Invoices"), () => {
+          frappe.confirm('Esta a punto de cancelar recibos de propietarios que no pudieron ser cancelados, ¿Quiere proceder?',
+            () => {
+                // si es yes genera las facturas faltantes
+                cancel_missing_invoices(frm, frm.doc.name, frm.doc.excluded_sectors);
+            });
+        });
+      }
+    },
+    error: (r) => {
+      console.log(r);
+    }
+  });
+}
 
 function generate_missing_invoices(frm, docname, excluded_sectors){
   frappe.call({
@@ -417,6 +426,26 @@ function generate_missing_invoices(frm, docname, excluded_sectors){
     args: {
       ggc: docname,
       excluded_sectors: excluded_sectors
+    },
+
+    //btn: $(".primary-action"),
+
+    freeze: true,
+    callback: (response) => {
+      frm.refresh();
+    },
+    error: (r) => {
+      console.log(r);
+    }
+  });
+}
+
+function cancel_missing_invoices(frm, docname, excluded_sectors){
+  frappe.call({
+    method:
+      "condominium_ve.condominium_ve.doctype.condominium_common_expenses.condominium_common_expenses.cancel_process_sales_invoice",
+    args: {
+      docname: docname
     },
 
     //btn: $(".primary-action"),
